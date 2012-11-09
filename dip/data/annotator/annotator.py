@@ -38,7 +38,7 @@ if __name__ == "__main__":
     for entry in get_entry(cur):
         lang = entry[0]
         classification = entry[1]
-        text = re.sub(r'"', '\'', entry[2])
+        text = entry[2]
 
         # automatic classification from DB
         if classification > 0.5:
@@ -51,6 +51,7 @@ if __name__ == "__main__":
         # print text
         print '############################################################'
         print 'text:'
+        print '############################################################'
         print text
 
         # manage answer
@@ -67,13 +68,10 @@ if __name__ == "__main__":
             annotation = auto
 
         # update database
-        querry = 'update docs set annotation=' + str(annotation) + \
-                ' where lang="' + lang + '" and text="' + text + '"'
-        cur.execute(querry)
+        cur.execute('update docs set annotation=? where lang=? and text=?', (annotation, lang, text))
 
         # store in dest database
-        querry = 'INSERT INTO docs VALUES("' + lang + '", ' + str(classification) + ', "' + text + '", ' + annotation + ')'
-        cur_dest.execute(querry)
+        cur_dest.execute('INSERT INTO docs VALUES(?, ?, ?, ?)', (lang, classification, text, annotation))
 
         #commit
         conn.commit()
