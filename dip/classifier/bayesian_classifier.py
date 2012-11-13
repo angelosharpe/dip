@@ -147,7 +147,7 @@ class Bayesian_Classifier:
                 ((clas_res['true_positive'] + clas_res['true_negative'] + \
                 clas_res['false_positive'] + clas_res['false_negative']) + 0.0000000000001)
         f_measure = 2 * ((precision * recall)/((precision + recall) + 0.0000000000001))
-        ret += 'True positive = ' + str(clas_res['true_positive']) + '\n'
+        ret = 'True positive = ' + str(clas_res['true_positive']) + '\n'
         ret += 'True negative = ' + str(clas_res['true_negative']) + '\n'
         ret += 'False positive = ' + str(clas_res['false_positive']) + '\n'
         ret += 'False negative = ' + str(clas_res['false_negative']) + '\n'
