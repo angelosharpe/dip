@@ -41,8 +41,9 @@ class WordDictionary:
         for language in self.words:
             print >> f, '   <bayes_dictionary language="' + language + '">'
             for token in sorted(self.words[language],
-                    key=lambda x: (self.words[language][x]['weight'] / self.words[language][x]['count'],
-                    self.words[language][x]['count']), reverse=True):
+                    key=lambda x: (self.words[language][x]['weight'] / 
+                        self.words[language][x]['count'],
+                        self.words[language][x]['count']), reverse=True):
                 # if specification is entered
                 if specification:
                     contains = False
@@ -54,7 +55,9 @@ class WordDictionary:
                         continue;
                 info = self.words[language][token]
                 probability = round((info['weight'] / info['count']) * 100, 2)
-                print >> f, '       <token weight="' + str(info['weight']) + '" count="' + str(info['count']) + '" probability="' + str(probability) + '%">'
+                print >> f, '       <token weight="' + str(info['weight']) + \
+                        '" count="' + str(info['count']) + '" probability="' + \
+                        str(probability) + '%">'
                 for word in token:
                     print >> f, '           <word>' + word + '</word>'
                 print >> f, '       </token>'
