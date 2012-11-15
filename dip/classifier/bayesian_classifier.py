@@ -40,7 +40,7 @@ class Bayesian_Classifier:
         language = entry.get_language()
         for i in xrange(1, self.MAX_TOKEN_SIZE + 1):
             # for each token add to word dictionary
-            for token in entry.get_token(i):
+            for token in entry.get_token(i, language):
                 self.word_dict.words.setdefault(language, {}).setdefault(token, {'count':0, 'weight':0})['count'] += 1
                 if classification:
                     self.word_dict.words[language][token]['weight'] += self.HR_PROB
@@ -66,7 +66,7 @@ class Bayesian_Classifier:
         a = 1.0
         b = 1.0
         for i in xrange(1, self.MAX_TOKEN_SIZE + 1):
-            for token in input_entry.get_token(i):
+            for token in input_entry.get_token(i, language):
                 if not token in self.word_dict.words[language]:
                     probability = 0.5
                 else:
