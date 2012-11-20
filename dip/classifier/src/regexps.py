@@ -2,39 +2,37 @@ import re
 
 ### EMOTICONS ###
 # facee moticon definitions
-anger = '>?'
-eyes = '[:=8X;]'
-tear = '\'?'
-nose = '[oO-]?'
+anger = r'>?'
+eyes = r'[:=8X;]'
+tear = r'\'?'
+nose = r'[oO-]?'
 # d, D, ), ], /, S, (. [, \, |, p, P, o, O
-mouths = '[dD\)\]/S\(\[\\\|pPoO]'
+mouths = r'[dD\)\]/S\(\[\\\|pPoO]'
+faces = ''.join([anger, eyes, tear, nose, mouths])
 # other emoticons definitions
 other_emoticons = [
-    '\^_+\^', 'o\.O', '@_@', '-_+-',
-    '\.\.+', ',,+', '<3',
+    r'\^_+\^', r'o\.O', r'@_+@', r'-_+-',
+    r'\.\.+', r',,+', r'<3',
 ]
 emoticons_re = re.compile(
-    '|'.join(other_emoticons) + '|' +
-    anger +
-    eyes +
-    tear +
-    nose +
-    mouths
+    '\s(' + '|'.join(other_emoticons + [faces]) + ')\s'
 )
 
+
 ### URLs ###
-urls_re = r'\s(https?:\/\/)?([\da-z\.-]+)\.([a-z\.]{2,6})([\/\w \.-]*)*\/?\s'
+urls_re = re.compile(
+    r'\s(https?|s?ftp)(://)(www\.)?([\w\d]+\.[\w\d]{2,4}(:\d*)?)(/?\S*)\\n?'
+)
 
 
 ### emails ###
-email_re = r'\s([a-z0-9_\.-]+)@([\da-z\.-]+)\.([a-z\.]{2,6})\s'
+emails_re = re.compile(r'\s([a-z0-9_\.-]+)(@)([\da-z\.-]+)(\.)([a-z\.]{2,6})\s')
 
 
 ### tweet tags ###
-tags = r'#\w+'
+tags_re = re.compile(r'\s(#\w+)\s')
 
 
-### Punctuation ###
 ### Timelike ###
 ### All kind of numbers ###
 ### Embeded apostrophe ###

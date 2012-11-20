@@ -82,16 +82,18 @@ class Entry:
             for i in xrange(len(sentence) - n + 1):
                 yield tuple(sentence[i:i+n])
 
-    def _get_re_token(self, token_re):
+    def _get_re_token_and_rm(self, token_re):
         '''
         This method returns yields tokens matched with regexp in the original
-        text and removes every occurance of matched patterns
+        text and removes every occurance of matched patterns. Findall returns
+        tuple of re groups which have to be joined back into one to be removed
+        from original text.
+        @param token_re regexp which determines token
         '''
-        print token_re
         tokens = re.findall(token_re, self.text)
         if tokens:
             for token in set(tokens):
-                re.sub(re.escape(token), '', self.text)
+                self.text = re.sub(re.escape(''.join(list(token))), '', self.text)
             for token in tokens:
                 yield token
 
@@ -105,22 +107,23 @@ class Entry:
         @param language  language determines which tokenizer will be used
         '''
         # yield URLs
-        for url in self._get_re_token(regexps.urls_re):
-            print 'url:', url
+        for url in self._get_re_token_and_rm(regexps.urls_re):
+            print 'url:', ''.join(list(url))
             yield url
 
         # yield emails
-        for email in self._get_re_token(regexps.emails_re):
-            print 'email:', email
+        for email in self._get_re_token_and_rm(regexps.emails_re):
+            print 'email:', ''.join(list(email))
             yield email
 
         # yield twitter tags
-        for tag in self._get_re_token(regexps.tags_re):
-            print 'tag:', tag
+        for tag in self._get_re_token_and_rm(regexps.tags_re):
+            print 'tag:', ''.join(list(tag))
             yield tag
 
         # yield emoticons
-        for emoticon in self._get_re_token(regexps.emoticons_re):
+        for emoticon in self._get_re_token_and_rm(regexps.emoticons_re):
+            print 'emoticon:', ''.join(list(emoticon))
             yield emoticon
 
         # yield n-tuples
