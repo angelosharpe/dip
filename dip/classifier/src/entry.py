@@ -9,16 +9,19 @@ import regexps
 #   Features:
 #       Emoticons
 #       n-tuples
+#       URL
+#       email
 #TODO:
 #   stematization
 #   features:
+#       URL - basename? whole?
+#       email - only presence or whole address?
 #       Count of sentences
 #       message length
 #       number count
 #       count of ilnesses in text (from db)
 #       count of symptoms in text (from db)
 #       is there a date in text?
-#       is there URL in text?
 #       are there some #tags?
 #       does the message contain email address?
 #       others????
@@ -33,18 +36,6 @@ class Entry:
         self.text = entry
         self.language = language
 
-    def _get_emoticon_token(self):
-        '''
-        This method returns list of emoticons in original sentence and removes
-        found patterns
-        Regexps are stored in 'regexps.py'
-        '''
-        emoticons = re.findall(regexps.emoticons_re, self.text)
-        if emoticons:
-            for emoticon in set(emoticons):
-                re.sub(re.escape(emoticon), '', self.text)
-            for emoticon in emoticons:
-                yield emoticon
 
     def _to_sentences(self, entry, language):
         ''''
@@ -91,6 +82,19 @@ class Entry:
             for i in xrange(len(sentence) - n + 1):
                 yield tuple(sentence[i:i+n])
 
+    def _get_re_token(self, token_re):
+        '''
+        This method returns yields tokens matched with regexp in the original
+        text and removes every occurance of matched patterns
+        '''
+        print token_re
+        tokens = re.findall(token_re, self.text)
+        if tokens:
+            for token in set(tokens):
+                re.sub(re.escape(token), '', self.text)
+            for token in tokens:
+                yield token
+
     def get_token(self, n, language):
         '''
         This method yields all possible tokens - uses all features 
@@ -100,8 +104,23 @@ class Entry:
         @param n defines maximaln n-tuple size (pass to _get_ntuple_token)
         @param language  language determines which tokenizer will be used
         '''
+        # yield URLs
+        for url in self._get_re_token(regexps.urls_re):
+            print 'url:', url
+            yield url
+
+        # yield emails
+        for email in self._get_re_token(regexps.emails_re):
+            print 'email:', email
+            yield email
+
+        # yield twitter tags
+        for tag in self._get_re_token(regexps.tags_re):
+            print 'tag:', tag
+            yield tag
+
         # yield emoticons
-        for emoticon in self._get_emoticon_token():
+        for emoticon in self._get_re_token(regexps.emoticons_re):
             yield emoticon
 
         # yield n-tuples
