@@ -74,16 +74,17 @@ class Entry:
             word_list.append(words)
         return word_list
 
-    def _get_ntuple_token(self, n, language):
+    def _get_ntuple_token(self, max_n, language):
         '''
         This method generates tokens(N-tuples) from word lists
-        @param n defines maximaln n-tuple size
+        @param max_n defines maximal n-tuple size
         @param language language determines which tokenizer will be used
         '''
         word_list = self._to_words(self.text, language)
         for sentence in word_list:
-            for i in xrange(len(sentence) - n + 1):
-                yield tuple(sentence[i:i+n])
+            for n in xrange(1, max_n + 1):
+                for i in xrange(len(sentence) - n + 1):
+                    yield tuple(sentence[i:i+n])
 
     def _get_re_token_and_rm(self, token_re):
         '''

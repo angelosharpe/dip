@@ -38,14 +38,14 @@ class Bayesian_Classifier:
     def _add_classification(self, entry, classification):
         '''Add each token to word dictionary for futher classification.'''
         language = entry.get_language()
-        for i in xrange(1, self.MAX_TOKEN_SIZE + 1):
-            # for each token add to word dictionary
-            for token in entry.get_token(i, language):
-                self.word_dict.words.setdefault(language, {}).setdefault(token, {'count':0, 'weight':0})['count'] += 1
-                if classification:
-                    self.word_dict.words[language][token]['weight'] += self.HR_PROB
-                else:
-                    self.word_dict.words[language][token]['weight'] += (1 - self.HR_PROB)
+        # for each token add to word dictionary
+        for token in entry.get_token(self.MAX_TOKEN_SIZE, language):
+            self.word_dict.words.setdefault(language, {}).setdefault(
+                    token, {'count':0, 'weight':0})['count'] += 1
+            if classification:
+                self.word_dict.words[language][token]['weight'] += self.HR_PROB
+            else:
+                self.word_dict.words[language][token]['weight'] += (1 - self.HR_PROB)
 
     def classify(self, text, language):
         '''
@@ -65,15 +65,14 @@ class Bayesian_Classifier:
         self.word_dict.words.setdefault(language, {})
         a = 1.0
         b = 1.0
-        for i in xrange(1, self.MAX_TOKEN_SIZE + 1):
-            for token in input_entry.get_token(i, language):
-                if not token in self.word_dict.words[language]:
-                    probability = 0.5
-                else:
-                    token_stats = self.word_dict.words[language][token]
-                    probability = token_stats['weight'] / token_stats['count']
-            a *= probability
-            b *= 1 - probability
+        for token in input_entry.get_token(self.MAX_TOKEN_SIZE, language):
+            if not token in self.word_dict.words[language]:
+                probability = 0.5
+            else:
+                token_stats = self.word_dict.words[language][token]
+                probability = token_stats['weight'] / token_stats['count']
+        a *= probability
+        b *= 1 - probability
 
         if a + b == 0:
             return 0
