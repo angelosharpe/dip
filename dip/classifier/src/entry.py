@@ -1,6 +1,7 @@
 import logging
 import nltk
 import re
+from nltk.stem.wordnet import WordNetLemmatizer
 
 # import regexps for feature extraction
 import regexps
@@ -27,6 +28,9 @@ import regexps
 #       others????
 
 class Entry:
+    # lemmatizer class member
+    lmtzr = WordNetLemmatizer()
+
     def __init__(self, id, guid, entry, language):
         self._logger = logging.getLogger()
         # entry id in dabatase
@@ -66,8 +70,7 @@ class Entry:
         sentences = self._to_sentences(text, language)
         for sentence in sentences:
             raw_words = re.split(r'\W+', sentence)
-            #words = [common.st.stem(word) for word in filter(None, raw_words)]
-            words = [word for word in filter(None, raw_words)]
+            words = [self.lmtzr.lemmatize(word) for word in filter(None, raw_words)]
             word_list.append(words)
         return word_list
 
