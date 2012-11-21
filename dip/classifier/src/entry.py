@@ -1,7 +1,7 @@
 import logging
 import nltk
 import re
-from nltk.stem.wordnet import WordNetLemmatizer
+from nltk.stem.snowball import EnglishStemmer
 
 # import regexps for feature extraction
 import regexps
@@ -29,7 +29,7 @@ import regexps
 
 class Entry:
     # lemmatizer class member
-    lmtzr = WordNetLemmatizer()
+    stmr = EnglishStemmer()
 
     def __init__(self, id, guid, entry, language):
         self._logger = logging.getLogger()
@@ -70,7 +70,7 @@ class Entry:
         sentences = self._to_sentences(text, language)
         for sentence in sentences:
             raw_words = re.split(r'\W+', sentence)
-            words = [self.lmtzr.lemmatize(word) for word in filter(None, raw_words)]
+            words = [self.stmr.stem(word) for word in filter(None, raw_words)]
             word_list.append(words)
         return word_list
 
@@ -100,6 +100,17 @@ class Entry:
             for token in tokens:
                 yield token
 
+    def _get_re_token(self, token_re):
+        '''
+        This method returns yields tokens matched with regexp in the original
+        text. Findall returns tuple of re groups.
+        @param token_re regexp which determines token
+        '''
+        tokens = re.findall(token_re, self.text)
+        if tokens:
+            for token in tokens:
+                yield token
+
     def get_token(self, n, language):
         '''
         This method yields all possible tokens - uses all features 
@@ -119,15 +130,15 @@ class Entry:
             print 'email:', ''.join(list(email))
             yield email
 
-        # yield twitter tags
-        for tag in self._get_re_token_and_rm(regexps.tags_re):
-            print 'tag:', ''.join(list(tag))
-            yield tag
-
         # yield emoticons
         for emoticon in self._get_re_token_and_rm(regexps.emoticons_re):
             print 'emoticon:', ''.join(list(emoticon))
             yield emoticon
+
+        # yield twitter tags
+        for tag in self._get_re_token(regexps.tags_re):
+            print 'tag:', ''.join(list(tag))
+            yield tag
 
         # yield n-tuples
         for ntuple in self._get_ntuple_token(n, language):
