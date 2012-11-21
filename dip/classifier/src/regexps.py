@@ -21,12 +21,16 @@ emoticons_re = re.compile(
 
 ### URLs ###
 urls_re = re.compile(
-    r'\s(https?|s?ftp)(://)(www\.)?([\w\d]+\.[\w\d]{2,4}(:\d*)?)(/?\S*)\\n?'
+    r'\s(https?|s?ftp)(://)(www\.)?([\w\.-]+\.[a-zA-Z]{2,4})(:\d*)?' +
+    r'(/[-_~$.+!*\'()\[\],;:@&=\?/~#%\w#]*)' +
+    r'|' +
+    r'(www\.)([\w\d\.-]+\.[a-zA-Z]{2,4})(:\d*)?' +
+    r'(/[-_~$.+!*\'()\[\],;:@&=\?/~#%\w#]*)'
 )
 
 
 ### emails ###
-emails_re = re.compile(r'\s([a-z0-9_\.-]+)(@)([\da-z\.-]+)(\.)([a-z\.]{2,6})\s')
+emails_re = re.compile(r'\s([\w_\.-]+)(@)([\w\.-]+)(\.)([a-zA-Z]{2,6})\s')
 
 
 ### tweet tags ###
