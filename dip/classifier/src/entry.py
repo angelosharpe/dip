@@ -111,6 +111,15 @@ class Entry:
             for token in tokens:
                 yield token
 
+    def _get_sentenc_count_token(self, language):
+        '''
+        This method yields only one token containing count of sentences in input
+        text
+        @param language language determines which tokenizer will be used
+        '''
+        return str(len(self._to_sentences(self.text, language)))
+
+
     def get_token(self, n, language):
         '''
         This method yields all possible tokens - uses all features 
@@ -122,23 +131,33 @@ class Entry:
         '''
         # yield URLs
         for url in self._get_re_token_and_rm(regexps.urls_re):
-            print 'url:', ''.join(list(url))
-            yield url
+            out = '###feature###url:' + ''.join(list(url))
+            print out
+            yield out
 
         # yield emails
         for email in self._get_re_token_and_rm(regexps.emails_re):
-            print 'email:', ''.join(list(email))
-            yield email
+            out = '###feature###email:' + ''.join(list(email))
+            print out
+            yield out
 
         # yield emoticons
         for emoticon in self._get_re_token_and_rm(regexps.emoticons_re):
-            print 'emoticon:', ''.join(list(emoticon))
-            yield emoticon
+            out = '###feature###emoticon:' + ''.join(list(emoticon))
+            print out
+            yield out
 
         # yield twitter tags
         for tag in self._get_re_token(regexps.tags_re):
-            print 'tag:', ''.join(list(tag))
-            yield tag
+            out = '###feature###tag:' + ''.join(list(tag))
+            print out
+            yield out
+
+        # yield sentence count
+        count = self._get_sentenc_count_token(language)
+        out = '###feature###sentence_count=' + count
+        print out
+        yield out
 
         # yield n-tuples
         for ntuple in self._get_ntuple_token(n, language):
