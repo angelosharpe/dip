@@ -79,13 +79,11 @@ class Bayesian_Classifier:
         else:
             return  a / (a + b)
 
-
-    # TODO: FIX!!!!
-    def _test_corelation(self, human_classified_pickle, language):
+    def _test_corelation(self, test_res):
         '''
         This method prints corelation between user defined input
         in human_classified_pickle and automatic classification.
-
+        @param test_res containst list of tuples (classified_prob, real_prob)
         --------------------------------------------------------------
                           covariance
                               |
@@ -103,21 +101,15 @@ class Bayesian_Classifier:
         a = E(XY), b = E(X), c = E(Y), d,= E(X^2), e = E(Y^2)
         --------------------------------------------------------------
         '''
-        human_classified = HumanClassification(human_classified_pickle)
-        human_classified.load()
-        entry_count = len(human_classified.classification)
+        entry_count = len(test_res)
         a = 0.0
         b = 0.0
         c = 0.0
         d = 0.0
         e = 0.0
-        for entry_id in human_classified.classification:
-            processed_entry = self.db.get_entry_by_id(entry_id)
-            probability_auto = self.classify(processed_entry.original_entry, language)
-            if human_classified.classification[entry_id]:
-                probability_human = self.HR_PROB
-            else:
-                probability_human = (1 - self.HR_PROB)
+        for res in test_res:
+            probability_auto = res[0]
+            probability_human = res[1]
 
             a += probability_human * probability_auto
             b += probability_auto
@@ -132,7 +124,8 @@ class Bayesian_Classifier:
         d /= entry_count
         e /= entry_count
 
-        return (a - (b * c)) / (sqrt(d - (b * b)) * sqrt(e - (c * c)))
+        return (a - (b * c)) / (sqrt(d - (b * b)) * sqrt(e - (c * c)) +
+                0.0000000000001)
 
     def _calculate_results(self, clas_res):
         '''
@@ -144,8 +137,10 @@ class Bayesian_Classifier:
                 clas_res['false_negative']) + 0.0000000000001)
         acc = (clas_res['true_positive'] + clas_res['true_negative']) / \
                 ((clas_res['true_positive'] + clas_res['true_negative'] + \
-                clas_res['false_positive'] + clas_res['false_negative']) + 0.0000000000001)
-        f_measure = 2 * ((precision * recall)/((precision + recall) + 0.0000000000001))
+                clas_res['false_positive'] + clas_res['false_negative']) + \
+                0.0000000000001)
+        f_measure = 2 * ((precision * recall)/((precision + recall) + \
+                0.0000000000001))
         ret = 'True positive = ' + str(clas_res['true_positive']) + '\n'
         ret += 'True negative = ' + str(clas_res['true_negative']) + '\n'
         ret += 'False positive = ' + str(clas_res['false_positive']) + '\n'
@@ -155,6 +150,7 @@ class Bayesian_Classifier:
         ret += 'Recall = ' + str(recall) + '\n'
         ret += 'Accuracy = ' + str(acc) + '\n'
         ret += 'F-measure = ' + str(f_measure) + '\n'
+        ret += 'Corelation = ' + str(clas_res['corelation']) + '\n'
         print ret
 
     def run(self, count=100, n_fold_cv=10):
@@ -226,8 +222,10 @@ class Bayesian_Classifier:
             clas_res['false_positive'] = 0
             clas_res['false_negative'] = 0
             clas_res['unknown'] = 0
+            corelation_test_res = []
             for db_entry in to_test_relevant:
                 result = self.classify(db_entry[1], db_entry[0])
+                corelation_test_res.append((result, self.HR_PROB))
                 if result >= self._high:
                     clas_res['true_positive'] += 1
                 elif result > self._low:
@@ -236,6 +234,7 @@ class Bayesian_Classifier:
                     clas_res['false_negative'] += 1
             for db_entry in to_test_irelevant:
                 result = self.classify(db_entry[1], db_entry[0])
+                corelation_test_res.append((result, 1.0 - self.HR_PROB))
                 if result <= self._low:
                     clas_res['true_negative'] += 1
                 elif result < self._high:
@@ -244,6 +243,12 @@ class Bayesian_Classifier:
                     clas_res['false_positive'] += 1
             self._logger.info('Tested {0} relevant and {1} irelevant entries'.format(
                 len(to_test_relevant), len(to_test_irelevant)))
+
+            # calculate corelation
+            print corelation_test_res
+            clas_res['corelation'] = self._test_corelation(corelation_test_res)
+
+            #add results to final results
             results.append(clas_res)
 
             # calculating iteration results
@@ -258,10 +263,12 @@ class Bayesian_Classifier:
         clas_res['false_positive'] = 0.0
         clas_res['false_negative'] = 0.0
         clas_res['unknown'] = 0.0
+        clas_res['corelation'] = 0.0
         for res in results:
             clas_res['true_positive'] += res['true_positive'] / float(n_fold_cv)
             clas_res['true_negative'] += res['true_negative'] / float(n_fold_cv)
             clas_res['false_positive'] += res['false_positive'] / float(n_fold_cv)
             clas_res['false_negative'] += res['false_negative'] / float(n_fold_cv)
             clas_res['unknown'] += res['unknown'] / float(n_fold_cv)
+            clas_res['corelation'] += res['corelation'] / float(n_fold_cv)
         self._calculate_results(clas_res)
