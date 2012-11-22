@@ -1,8 +1,10 @@
 import logging
 import nltk
 import re
+# stemmer
 from nltk.stem.snowball import EnglishStemmer
-
+#url parser for feature extraction
+from urlparse import urlparse
 # import regexps for feature extraction
 import regexps
 
@@ -130,9 +132,22 @@ class Entry:
         @param n defines maximaln n-tuple size (pass to _get_ntuple_token)
         @param language  language determines which tokenizer will be used
         '''
-        # yield URLs
-        for url in self._get_re_token_and_rm(regexps.urls_re):
-            out = '###feature###url:' + ''.join(list(url))
+        ## yield URLs -- use whole url
+        #for found_url in self._get_re_token_and_rm(regexps.urls_re):
+        #    full_url = ''.join(list(found_url))
+        #    out = '###feature###url:' + url
+        #    print out
+        #    yield out
+
+        # yield URLs -- use only domain names
+        for found_url in self._get_re_token_and_rm(regexps.urls_re):
+            full_url = ''.join(list(found_url))
+            if re.match(r'^w', full_url):
+                full_url = 'http://' + full_url
+            url = urlparse(full_url).netloc
+            if not url:
+                url = full_url
+            out = '###feature###url:' + url
             print out
             yield out
 
