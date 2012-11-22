@@ -71,8 +71,8 @@ class Bayesian_Classifier:
             else:
                 token_stats = self.word_dict.words[language][token]
                 probability = token_stats['weight'] / token_stats['count']
-        a *= probability
-        b *= 1 - probability
+            a *= probability
+            b *= 1 - probability
 
         if a + b == 0:
             return 0
@@ -245,7 +245,6 @@ class Bayesian_Classifier:
                 len(to_test_relevant), len(to_test_irelevant)))
 
             # calculate corelation
-            print corelation_test_res
             clas_res['corelation'] = self._test_corelation(corelation_test_res)
 
             #add results to final results
