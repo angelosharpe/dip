@@ -1,4 +1,4 @@
-#!/usr/local/bin/python2.5
+#!/usr/bin/env python
 
 import logging
 import pickle
@@ -217,8 +217,10 @@ class Bayesian_Classifier:
 
             # create test and train sets
             self._logger.info('Creating dataset...')
-            to_test_relevant = used_relevant[i*(count/n_fold_cv):(i+1)*(count/n_fold_cv)]
-            to_test_irelevant = used_irelevant[i*(count/n_fold_cv):(i+1)*(count/n_fold_cv)]
+            to_test_relevant = \
+                    used_relevant[i*(count/n_fold_cv):(i+1)*(count/n_fold_cv)]
+            to_test_irelevant = \
+                    used_irelevant[i*(count/n_fold_cv):(i+1)*(count/n_fold_cv)]
             to_train_relevant = used_relevant[:i*(count/n_fold_cv)]
             to_train_relevant.extend(used_relevant[(i+1)*(count/n_fold_cv):])
             to_train_irelevant = used_irelevant[:i*(count/n_fold_cv)]
@@ -227,7 +229,7 @@ class Bayesian_Classifier:
             # train
             self._logger.info('Training starts...')
             for db_entry in to_train_relevant:
-                entry = Entry(id=None, guid=None, entry=db_entry[1], language=db_entry[0])
+                entry =  Entry(id=None, guid=None, entry=db_entry[1], language=db_entry[0])
                 self._add_classification(entry, True)
             for db_entry in to_train_irelevant:
                 entry = Entry(id=None, guid=None, entry=db_entry[1], language=db_entry[0])

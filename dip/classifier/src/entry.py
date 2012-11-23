@@ -255,7 +255,6 @@ class Entry:
         should be removed by the _get function.
         @param n defines maximaln n-tuple size (pass to _get_ntuple_token)
         '''
-
         # yield features
         for feature_type in self.features_func:
             for feature in self.features_func[feature_type][0]():
