@@ -19,7 +19,7 @@ class Bayesian_Classifier:
     '''
 
     # defines word count in dictionary tuples
-    MAX_TOKEN_SIZE = 6
+    MAX_TOKEN_SIZE = 2
     HR_PROB = 0.99
 
     def __init__(self, dbfile=None, low=0.5, high=0.5):
@@ -49,9 +49,14 @@ class Bayesian_Classifier:
 
     def classify(self, text, language):
         '''
-        Given input text and language, method calculates probability
-        of text being relevant to topic. @result probability that
-        text is relevant
+        Given input text and language, method calculates probability of text
+        being relevant to topic. Classifier consists of two separate ones.
+        First one classifies tokens(n-tuples) and second one classifis features.
+        Currently both results from both classifiers are merged into result with
+        classical average
+        @param text input text
+        @param language input text language
+        @result probability that text is relevant
         --------------------------------------------------------------
         For each token claculate probability of being relevant to topic
         and calculate according to bayes theorem
@@ -65,19 +70,33 @@ class Bayesian_Classifier:
         self.word_dict.words.setdefault(language, {})
         a = 1.0
         b = 1.0
+        a_feature = 1.0
+        b_feature = 1.0
         for token in input_entry.get_token(self.MAX_TOKEN_SIZE, language):
             if not token in self.word_dict.words[language]:
-                probability = 0.5
+                    probability = 0.5
             else:
                 token_stats = self.word_dict.words[language][token]
                 probability = token_stats['weight'] / token_stats['count']
-            a *= probability
-            b *= 1 - probability
-
+            # separate classifiers for tokens and features
+            if isinstance(token, tuple):
+                a *= probability
+                b *= 1 - probability
+            else:
+                a_feature *= probability
+                b_feature *= 1 - probability
+        # classifiers results
         if a + b == 0:
-            return 0
+            token_classifier = 0
         else:
-            return  a / (a + b)
+            token_classifier = a / (a + b)
+        # feature results
+        if a_feature + b_feature == 0:
+            feature_classifier = 0
+        else:
+            feature_classifier = a_feature / (a_feature + b_feature)
+        #return weighted average
+        return (feature_classifier + token_classifier) / 2
 
     def _test_corelation(self, test_res):
         '''
