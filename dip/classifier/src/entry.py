@@ -32,6 +32,8 @@ import regexps
 class Entry:
     # lemmatizer class member
     stmr = EnglishStemmer()
+    # defines word count in dictionary tuples
+    MAX_TOKEN_SIZE = 2
 
     def __init__(self, id, guid, entry, language):
         self._logger = logging.getLogger()
@@ -41,48 +43,62 @@ class Entry:
         self.classified = None
         self.text = entry
         self.language = language
+        self.features_func = {
+                'url':[
+                    self._feature_url_whole,
+                    self._feature_url_domain,
+                    self._feature_url_y,
+                    self._feature_url_y_n],
+                'email':[
+                    self._feature_email_whole,
+                    self._feature_email_y,
+                    self._feature_email_y_n],
+                'emoticon':[
+                    self._feature_emoticon],
+                'tag':[
+                    self._feature_tag],
+                'sentence':[
+                    self._feature_sentence_count],
+                }
 
 
-    def _to_sentences(self, entry, language):
+    def _to_sentences(self, entry):
         ''''
         This method splits string into sentences according to language of
         the string. Other languages are also supported but not yet implemented.
         '''
         if not entry:
             return []
-        if language == 'de':
+        if self.language == 'de':
             tokenizer = nltk.data.load('tokenizers/punkt/german.pickle')
-        elif language == 'cs':
+        elif self.language == 'cs':
             tokenizer = nltk.data.load('tokenizers/punkt/czech.pickle')
         else:
             tokenizer = nltk.data.load('tokenizers/punkt/english.pickle')
         return tokenizer.tokenize(entry)
 
-    # TODO: stemming is soooooo inefficient
-    def _to_words(self, text, language):
+    def _to_words(self, text):
         '''
         This method splits text into sentences and those sentences into
         words. Sentences are split on nonaplha characters then empty words
         are removed. Then stematizer is used to simplyfy words used as tokens
         in classifier.
         @param text whole text (this is the last step of feature export)
-        @param language language to pass to nltk tokenizer
         '''
         word_list = []
-        sentences = self._to_sentences(text, language)
+        sentences = self._to_sentences(text)
         for sentence in sentences:
             raw_words = re.split(r'\W+', sentence)
             words = [self.stmr.stem(word) for word in filter(None, raw_words)]
             word_list.append(words)
         return word_list
 
-    def _get_ntuple_token(self, max_n, language):
+    def _get_ntuple_token(self, max_n):
         '''
         This method generates tokens(N-tuples) from word lists
         @param max_n defines maximal n-tuple size
-        @param language language determines which tokenizer will be used
         '''
-        word_list = self._to_words(self.text, language)
+        word_list = self._to_words(self.text)
         for sentence in word_list:
             for n in xrange(1, max_n + 1):
                 for i in xrange(len(sentence) - n + 1):
@@ -114,32 +130,27 @@ class Entry:
             for token in tokens:
                 yield token
 
-    def _get_sentenc_count_token(self, language):
+    def _get_sentence_count_token(self):
         '''
         This method yields only one token containing count of sentences in input
         text
-        @param language language determines which tokenizer will be used
         '''
-        return str(len(self._to_sentences(self.text, language)))
+        return str(len(self._to_sentences(self.text)))
 
-
-    def get_token(self, n, language):
+    #FEATURES
+    def _feature_url_whole(self):
         '''
-        This method yields all possible tokens - uses all features 
-        The most complex tokens should be extracted and then deleted first
-        (eg. URLs, emails, emoticons,....,n-tuples). Found not-word tokens
-        should be removed by the _get function.
-        @param n defines maximaln n-tuple size (pass to _get_ntuple_token)
-        @param language  language determines which tokenizer will be used
+        Yield URLs -- use whole url.
         '''
-        ## yield URLs -- use whole url
-        #for found_url in self._get_re_token_and_rm(regexps.urls_re):
-        #    full_url = ''.join(list(found_url))
-        #    out = '###feature###url:' + url
-        #    print out
-        #    yield out
+        for found_url in self._get_re_token_and_rm(regexps.urls_re):
+            full_url = ''.join(list(found_url))
+            out = '###feature###url:' + full_url
+            yield out
 
-        # yield URLs -- use only domain names
+    def _feature_url_domain(self):
+        '''
+        Yield URLs -- use only domain names.
+        '''
         for found_url in self._get_re_token_and_rm(regexps.urls_re):
             full_url = ''.join(list(found_url))
             if re.match(r'^w', full_url):
@@ -148,35 +159,110 @@ class Entry:
             if not url:
                 url = full_url
             out = '###feature###url:' + url
-            print out
             yield out
 
-        # yield emails
-        for email in self._get_re_token_and_rm(regexps.emails_re):
-            out = '###feature###email:' + ''.join(list(email))
-            print out
-            yield out
-
-        # yield emoticons
-        for emoticon in self._get_re_token_and_rm(regexps.emoticons_re):
-            out = '###feature###emoticon:' + ''.join(list(emoticon))
-            print out
-            yield out
-
-        # yield twitter tags
-        for tag in self._get_re_token(regexps.tags_re):
-            out = '###feature###tag:' + ''.join(list(tag))
-            print out
-            yield out
-
-        # yield sentence count
-        count = self._get_sentenc_count_token(language)
-        out = '###feature###sentence_count=' + count
-        print out
+    def _feature_url_y(self):
+        '''
+        Yield emails -- is url present? Add token only if present.
+        '''
+        found = 0
+        for found_url in self._get_re_token_and_rm(regexps.urls_re):
+            found = 1
+            break
+        if found:
+            out = '###feature###url:YES'
         yield out
 
+    def _feature_url_y_n(self):
+        '''
+        Yield emails -- is url present? Add yes token if present and no it not.
+        '''
+        found = 0
+        for found_url in self._get_re_token_and_rm(regexps.urls_re):
+            found = 1
+            break
+        if found:
+            out = '###feature###url:YES'
+        else:
+            out = '###feature###url:NO'
+        yield out
+
+    def _feature_email_whole(self):
+        '''
+        Yield emails -- use whole email.
+
+        '''
+        for email in self._get_re_token_and_rm(regexps.emails_re):
+            out = '###feature###email:' + ''.join(list(email))
+            yield out
+
+    def _feature_email_y(self):
+        '''
+        Yield emails -- use whole email. Add token only if present.
+        '''
+        found = 0
+        for email in self._get_re_token_and_rm(regexps.emails_re):
+            found = 1
+            break
+        if found:
+            out = '###feature###email:YES'
+        yield out
+
+    def _feature_email_y_n(self):
+        '''
+        Yield emails -- use whole email. Add yes token if present and no it not.
+        '''
+        found = 0
+        for email in self._get_re_token_and_rm(regexps.emails_re):
+            found = 1
+            break
+        if found:
+            out = '###feature###email:YES'
+        else:
+            out = '###feature###email:NO'
+        yield out
+
+    def _feature_emoticon(self):
+        '''
+        Yield emoticon tokens.
+        '''
+        for emoticon in self._get_re_token_and_rm(regexps.emoticons_re):
+            out = '###feature###emoticon:' + ''.join(list(emoticon))
+            yield out
+
+    def _feature_tag(self):
+        '''
+        Yield tag tokens.
+        '''
+        for tag in self._get_re_token(regexps.tags_re):
+            out = '###feature###tag:' + ''.join(list(tag))
+            yield out
+
+    def _feature_sentence_count(self):
+        '''
+        Yield sentence count.
+        '''
+        count = self._get_sentence_count_token()
+        out = '###feature###sentence_count=' + count
+        yield out
+
+    def get_token(self):
+        '''
+        This method yields all possible tokens - uses all features 
+        The most complex tokens should be extracted and then deleted first
+        (eg. URLs, emails, emoticons,....,n-tuples). Found not-word tokens
+        should be removed by the _get function.
+        @param n defines maximaln n-tuple size (pass to _get_ntuple_token)
+        '''
+
+        # yield features
+        for feature_type in self.features_func:
+            for feature in self.features_func[feature_type][0]():
+                print feature
+                yield feature
+
         # yield n-tuples
-        for ntuple in self._get_ntuple_token(n, language):
+        for ntuple in self._get_ntuple_token(self.MAX_TOKEN_SIZE):
             yield ntuple
 
     def get_id(self):

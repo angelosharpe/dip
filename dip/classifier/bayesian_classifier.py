@@ -18,8 +18,6 @@ class Bayesian_Classifier:
                    (lang, relevance, text annotation)
     '''
 
-    # defines word count in dictionary tuples
-    MAX_TOKEN_SIZE = 2
     HR_PROB = 0.99
 
     def __init__(self, dbfile=None, low=0.5, high=0.5):
@@ -39,7 +37,7 @@ class Bayesian_Classifier:
         '''Add each token to word dictionary for futher classification.'''
         language = entry.get_language()
         # for each token add to word dictionary
-        for token in entry.get_token(self.MAX_TOKEN_SIZE, language):
+        for token in entry.get_token():
             self.word_dict.words.setdefault(language, {}).setdefault(
                     token, {'count':0, 'weight':0})['count'] += 1
             if classification:
@@ -72,7 +70,7 @@ class Bayesian_Classifier:
         b = 1.0
         a_feature = 1.0
         b_feature = 1.0
-        for token in input_entry.get_token(self.MAX_TOKEN_SIZE, language):
+        for token in input_entry.get_token():
             if not token in self.word_dict.words[language]:
                     probability = 0.5
             else:
