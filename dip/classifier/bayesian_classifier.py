@@ -1,11 +1,13 @@
 #!/usr/local/bin/python2.5
 
-from src.entry import Entry
-from src.worddictionary import WordDictionary
-from math import sqrt
 import logging
 import pickle
 import sqlite3
+from math import sqrt
+
+from src.worddictionary import WordDictionary
+from src.entry import Entry
+from src.feature import Ntuple
 
 class Bayesian_Classifier:
     '''
@@ -39,11 +41,13 @@ class Bayesian_Classifier:
         # for each token add to word dictionary
         for token in entry.get_token():
             self.word_dict.words.setdefault(language, {}).setdefault(
-                    token, {'count':0, 'weight':0})['count'] += 1
+                    token.get_data(), {'count':0, 'weight':0})['count'] += 1
             if classification:
-                self.word_dict.words[language][token]['weight'] += self.HR_PROB
+                self.word_dict.words[language][token.get_data()]['weight'] += \
+                    self.HR_PROB
             else:
-                self.word_dict.words[language][token]['weight'] += (1 - self.HR_PROB)
+                self.word_dict.words[language][token.get_data()]['weight'] += \
+                    (1 - self.HR_PROB)
 
     def classify(self, text, language):
         '''
@@ -71,13 +75,13 @@ class Bayesian_Classifier:
         a_feature = 1.0
         b_feature = 1.0
         for token in input_entry.get_token():
-            if not token in self.word_dict.words[language]:
+            if not token.get_data() in self.word_dict.words[language]:
                     probability = 0.5
             else:
-                token_stats = self.word_dict.words[language][token]
+                token_stats = self.word_dict.words[language][token.get_data()]
                 probability = token_stats['weight'] / token_stats['count']
             # separate classifiers for tokens and features
-            if isinstance(token, tuple):
+            if isinstance(token, Ntuple):
                 a *= probability
                 b *= 1 - probability
             else:

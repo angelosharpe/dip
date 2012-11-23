@@ -7,6 +7,8 @@ from nltk.stem.snowball import EnglishStemmer
 from urlparse import urlparse
 # import regexps for feature extraction
 import regexps
+# import feature classes
+from feature import *
 
 #DONE:
 #   Features:
@@ -93,16 +95,15 @@ class Entry:
             word_list.append(words)
         return word_list
 
-    def _get_ntuple_token(self, max_n):
+    def _get_ntuple_token(self):
         '''
         This method generates tokens(N-tuples) from word lists
-        @param max_n defines maximal n-tuple size
         '''
         word_list = self._to_words(self.text)
         for sentence in word_list:
-            for n in xrange(1, max_n + 1):
+            for n in xrange(1, self.MAX_TOKEN_SIZE + 1):
                 for i in xrange(len(sentence) - n + 1):
-                    yield tuple(sentence[i:i+n])
+                    yield Ntuple(tuple(sentence[i:i+n]))
 
     def _get_re_token_and_rm(self, token_re):
         '''
@@ -144,7 +145,7 @@ class Entry:
         '''
         for found_url in self._get_re_token_and_rm(regexps.urls_re):
             full_url = ''.join(list(found_url))
-            out = '###feature###url:' + full_url
+            out = Url(full_url)
             yield out
 
     def _feature_url_domain(self):
@@ -158,7 +159,7 @@ class Entry:
             url = urlparse(full_url).netloc
             if not url:
                 url = full_url
-            out = '###feature###url:' + url
+            out = Url(url)
             yield out
 
     def _feature_url_y(self):
@@ -170,7 +171,7 @@ class Entry:
             found = 1
             break
         if found:
-            out = '###feature###url:YES'
+            out = Url('YES')
         yield out
 
     def _feature_url_y_n(self):
@@ -182,9 +183,9 @@ class Entry:
             found = 1
             break
         if found:
-            out = '###feature###url:YES'
+            out = Url('YES')
         else:
-            out = '###feature###url:NO'
+            out = Url('NO')
         yield out
 
     def _feature_email_whole(self):
@@ -193,7 +194,7 @@ class Entry:
 
         '''
         for email in self._get_re_token_and_rm(regexps.emails_re):
-            out = '###feature###email:' + ''.join(list(email))
+            out = Email(''.join(list(email)))
             yield out
 
     def _feature_email_y(self):
@@ -205,7 +206,7 @@ class Entry:
             found = 1
             break
         if found:
-            out = '###feature###email:YES'
+            out = Email('YES')
         yield out
 
     def _feature_email_y_n(self):
@@ -217,9 +218,9 @@ class Entry:
             found = 1
             break
         if found:
-            out = '###feature###email:YES'
+            out = Email('YES')
         else:
-            out = '###feature###email:NO'
+            out = Email('NO')
         yield out
 
     def _feature_emoticon(self):
@@ -227,7 +228,7 @@ class Entry:
         Yield emoticon tokens.
         '''
         for emoticon in self._get_re_token_and_rm(regexps.emoticons_re):
-            out = '###feature###emoticon:' + ''.join(list(emoticon))
+            out = Emoticon(''.join(list(emoticon)))
             yield out
 
     def _feature_tag(self):
@@ -235,7 +236,7 @@ class Entry:
         Yield tag tokens.
         '''
         for tag in self._get_re_token(regexps.tags_re):
-            out = '###feature###tag:' + ''.join(list(tag))
+            out = Tag(''.join(list(tag)))
             yield out
 
     def _feature_sentence_count(self):
@@ -243,7 +244,7 @@ class Entry:
         Yield sentence count.
         '''
         count = self._get_sentence_count_token()
-        out = '###feature###sentence_count=' + count
+        out = SentenceCount(count)
         yield out
 
     def get_token(self):
@@ -262,7 +263,7 @@ class Entry:
                 yield feature
 
         # yield n-tuples
-        for ntuple in self._get_ntuple_token(self.MAX_TOKEN_SIZE):
+        for ntuple in self._get_ntuple_token():
             yield ntuple
 
     def get_id(self):
