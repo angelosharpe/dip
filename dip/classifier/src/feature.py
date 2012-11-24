@@ -27,5 +27,11 @@ class Tag(Feature):
 class SentenceCount(Feature):
     pass
 
+class Time(Feature):
+    pass
+
+class Date(Feature):
+    pass
+
 class Ntuple(Feature):
     pass

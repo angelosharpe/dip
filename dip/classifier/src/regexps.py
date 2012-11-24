@@ -36,6 +36,19 @@ emails_re = re.compile(r'\s([\w_\.-]+)(@)([\w\.-]+)(\.)([a-zA-Z]{2,6})')
 tags_re = re.compile(r'(#\w+)')
 
 
-### Timelike ###
+### time ###
+time_re = re.compile(r'([0-2][0-9])(:)([0-9]{2})(\s*)(am|pm|Am|PM|AM|PM)?')
+
+
+### date ###
+date_re = re.compile(
+    r'(\d{1,2})([./-])(\d{1,2})([./-])(\d{2,4})' +
+    r'|' +
+    r'(\d{1,2})([./\s-])' +
+    r'(jan|Jan|feb|Feb|mar|Mar|apr|Apr|jun|Jun|jul' +
+    r'|Jul|aug|Aug|sep|Sep|oct|Oct|nov|Nov|dec|Dec)' +
+    r'(uary|ruary|ch|il|e|ly|ust|tember|ober|ember)?'
+    r'(\s)(\d{1,4})')
+
 ### All kind of numbers ###
 ### Embeded apostrophe ###

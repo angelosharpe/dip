@@ -61,6 +61,10 @@ class Entry:
                     self._feature_tag],
                 'sentence':[
                     self._feature_sentence_count],
+                'time':[
+                    self._feature_time],
+                'date':[
+                    self._feature_date],
                 }
 
 
@@ -246,6 +250,22 @@ class Entry:
         count = self._get_sentence_count_token()
         out = SentenceCount(count)
         yield out
+
+    def _feature_time(self):
+        '''
+        Yield time tokens.
+        '''
+        for time in self._get_re_token(regexps.time_re):
+            out = Time(''.join(list(time)))
+            yield out
+
+    def _feature_date(self):
+        '''
+        Yield date tokens.
+        '''
+        for date in self._get_re_token(regexps.date_re):
+            out = Date(''.join(list(date)))
+            yield out
 
     def get_token(self):
         '''
