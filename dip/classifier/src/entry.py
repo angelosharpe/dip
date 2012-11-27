@@ -62,7 +62,9 @@ class Entry:
                 'sentence':[
                     self._feature_sentence_count],
                 'time':[
-                    self._feature_time],
+                    self._feature_time,
+                    self._feature_time_24h,
+                    self._feature_time_24h_hours_only],
                 'date':[
                     self._feature_date],
                 }
@@ -257,6 +259,35 @@ class Entry:
         '''
         for time in self._get_re_token(regexps.time_re):
             out = Time(''.join(list(time)))
+            yield out
+
+    def _get_24h_time(self, findall_output):
+        '''
+        This method coverts time from am/pm to 24h format
+        '''
+        hours = int(findall_output[0])
+        minutes = int(findall_output[2])
+        if findall_output[4] is not '':
+            if re.match(r'pm|Pm|PM', findall_output[4]):
+                hours += 12
+        return (hours, minutes)
+
+    def _feature_time_24h(self):
+        '''
+        Yield time tokens in 24h format.
+        '''
+        for time in self._get_re_token(regexps.time_re):
+            formated_time = self._get_24h_time(time)
+            out = Time('{0}:{1}'.format(formated_time[0], formated_time[1]))
+            yield out
+
+    def _feature_time_24h_hours_only(self):
+        '''
+        Yield time tokens in 24h format.
+        '''
+        for time in self._get_re_token(regexps.time_re):
+            formated_time = self._get_24h_time(time)
+            out = Time(formated_time[0])
             yield out
 
     def _feature_date(self):
