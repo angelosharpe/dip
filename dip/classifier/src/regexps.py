@@ -37,7 +37,7 @@ tags_re = re.compile(r'(#\w+)')
 
 
 ### time ###
-time_re = re.compile(r'([0-2][0-9])(:)([0-9]{2})(\s*)(am|pm|Am|PM|AM|PM)?')
+time_re = re.compile(r'([0-2][0-9])(:)([0-9]{2})(\s*)(am|pm|Am|Pm|AM|PM)?')
 
 
 ### date ###
