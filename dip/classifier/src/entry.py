@@ -154,8 +154,7 @@ class Entry:
         '''
         for found_url in self._get_re_token_and_rm(regexps.urls_re):
             full_url = ''.join(list(found_url))
-            out = Url(full_url)
-            yield out
+            yield Url(full_url)
 
     def _feature_url_domain(self):
         '''
@@ -168,8 +167,7 @@ class Entry:
             url = urlparse(full_url).netloc
             if not url:
                 url = full_url
-            out = Url(url)
-            yield out
+            yield Url(url)
 
     def _feature_url_y(self):
         '''
@@ -180,8 +178,7 @@ class Entry:
             found = 1
             break
         if found:
-            out = Url('YES')
-        yield out
+            yield Url('YES')
 
     def _feature_url_y_n(self):
         '''
@@ -192,10 +189,9 @@ class Entry:
             found = 1
             break
         if found:
-            out = Url('YES')
+            yield Url('YES')
         else:
-            out = Url('NO')
-        yield out
+            yield Url('NO')
 
     def _feature_email_whole(self):
         '''
@@ -203,8 +199,7 @@ class Entry:
 
         '''
         for email in self._get_re_token_and_rm(regexps.emails_re):
-            out = Email(''.join(list(email)))
-            yield out
+            yield Email(''.join(list(email)))
 
     def _feature_email_y(self):
         '''
@@ -215,8 +210,7 @@ class Entry:
             found = 1
             break
         if found:
-            out = Email('YES')
-        yield out
+            yield Email('YES')
 
     def _feature_email_y_n(self):
         '''
@@ -227,42 +221,37 @@ class Entry:
             found = 1
             break
         if found:
-            out = Email('YES')
+            yield Email('YES')
         else:
-            out = Email('NO')
-        yield out
+            yield Email('NO')
 
     def _feature_emoticon(self):
         '''
         Yield emoticon tokens.
         '''
         for emoticon in self._get_re_token_and_rm(regexps.emoticons_re):
-            out = Emoticon(''.join(list(emoticon)))
-            yield out
+            yield Emoticon(''.join(list(emoticon)))
 
     def _feature_tag(self):
         '''
         Yield tag tokens.
         '''
         for tag in self._get_re_token(regexps.tags_re):
-            out = Tag(''.join(list(tag)))
-            yield out
+            yield Tag(''.join(list(tag)))
 
     def _feature_sentence_count(self):
         '''
         Yield sentence count.
         '''
         count = self._get_sentence_count_token()
-        out = SentenceCount(count)
-        yield out
+        yield SentenceCount(count)
 
     def _feature_time(self):
         '''
         Yield time tokens.
         '''
         for time in self._get_re_token(regexps.time_re):
-            out = Time(''.join(list(time)))
-            yield out
+            yield Time(''.join(list(time)))
 
     def _get_24h_time(self, findall_output):
         '''
@@ -281,8 +270,7 @@ class Entry:
         '''
         for time in self._get_re_token(regexps.time_re):
             formated_time = self._get_24h_time(time)
-            out = Time('{0}:{1}'.format(formated_time[0], formated_time[1]))
-            yield out
+            yield Time('{0}:{1}'.format(*formated_time))
 
     def _feature_time_24h_hours_only(self):
         '''
@@ -290,8 +278,7 @@ class Entry:
         '''
         for time in self._get_re_token(regexps.time_re):
             formated_time = self._get_24h_time(time)
-            out = Time(formated_time[0])
-            yield out
+            yield Time(formated_time[0])
 
     def _get_formated_date(self, findall_output):
         # dd.mm.yyyy or yy.mm.dd format
@@ -324,8 +311,7 @@ class Entry:
         Yield date tokens found in text
         '''
         for date in self._get_re_token(regexps.date_re):
-            out = Date(''.join(list(date)))
-            yield out
+            yield Date(''.join(list(date)))
 
     def _feature_date_formated_dmy(self):
         '''
@@ -333,8 +319,7 @@ class Entry:
         '''
         for date in self._get_re_token(regexps.date_re):
             formated_date = self._get_formated_date(date)
-            out = Date('{0}-{1}-{2}'.format(*formated_date))
-            yield out
+            yield Date('{0}-{1}-{2}'.format(*formated_date))
 
     def _feature_date_formated_my(self):
         '''
@@ -342,8 +327,7 @@ class Entry:
         '''
         for date in self._get_re_token(regexps.date_re):
             formated_date = self._get_formated_date(date)
-            out = Date('{1}-{2}'.format(*formated_date))
-            yield out
+            yield Date('{1}-{2}'.format(*formated_date))
 
     def _feature_date_formated_y(self):
         '''
@@ -351,8 +335,7 @@ class Entry:
         '''
         for date in self._get_re_token(regexps.date_re):
             formated_date = self._get_formated_date(date)
-            out = Date('{2}'.format(*formated_date))
-            yield out
+            yield Date('{2}'.format(*formated_date))
 
     def get_token(self):
         '''
