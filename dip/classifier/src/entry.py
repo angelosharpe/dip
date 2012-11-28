@@ -66,7 +66,10 @@ class Entry:
                     self._feature_time_24h,
                     self._feature_time_24h_hours_only],
                 'date':[
-                    self._feature_date],
+                    self._feature_date,
+                    self._feature_date_formated_dmy,
+                    self._feature_date_formated_my,
+                    self._feature_date_formated_y],
                 }
 
 
@@ -290,12 +293,65 @@ class Entry:
             out = Time(formated_time[0])
             yield out
 
+    def _get_formated_date(self, findall_output):
+        # dd.mm.yyyy or yy.mm.dd format
+        if findall_output[0] is not u'':
+            # yy.mm.dd
+            if len(findall_output[4]) == 2:
+                year = int('20' + findall_output[0])
+                month = int(findall_output[2])
+                day = int(findall_output[4])
+            else:
+                year = int(findall_output[4])
+                month = int(findall_output[2])
+                day = int(findall_output[0])
+            # fix problem with swapped day/month
+            if month > 12:
+                month, day = day, month
+        # dd month yyyy format
+        else:
+            month_to_num = {
+                'jan':1,  'feb':2,  'mar':3,  'apr':4,  'may':5,  'jun':6,
+                'jul':7,  'aug':8,  'sep':9,  'oct':10, 'nov':11, 'dec':12
+            }
+            day = int(findall_output[5])
+            month = month_to_num[findall_output[7].lower()]
+            year = findall_output[10]
+        return (day, month, year)
+
     def _feature_date(self):
         '''
-        Yield date tokens.
+        Yield date tokens found in text
         '''
         for date in self._get_re_token(regexps.date_re):
             out = Date(''.join(list(date)))
+            yield out
+
+    def _feature_date_formated_dmy(self):
+        '''
+        Yield date tokens converted into united format dd-mm-yyyy
+        '''
+        for date in self._get_re_token(regexps.date_re):
+            formated_date = self._get_formated_date(date)
+            out = Date('{0}-{1}-{2}'.format(*formated_date))
+            yield out
+
+    def _feature_date_formated_my(self):
+        '''
+        Yield date tokens converted into united format mm-yyyy
+        '''
+        for date in self._get_re_token(regexps.date_re):
+            formated_date = self._get_formated_date(date)
+            out = Date('{1}-{2}'.format(*formated_date))
+            yield out
+
+    def _feature_date_formated_y(self):
+        '''
+        Yield date tokens converted into united format yyyy
+        '''
+        for date in self._get_re_token(regexps.date_re):
+            formated_date = self._get_formated_date(date)
+            out = Date('{2}'.format(*formated_date))
             yield out
 
     def get_token(self):
