@@ -19,16 +19,10 @@ from feature import *
 #TODO:
 #   stematization
 #   features:
-#       URL - basename? whole?
-#       email - only presence or whole address?
-#       Count of sentences
 #       message length
 #       number count
 #       count of ilnesses in text (from db)
 #       count of symptoms in text (from db)
-#       is there a date in text?
-#       are there some #tags?
-#       does the message contain email address?
 #       others????
 
 class Entry:
@@ -50,26 +44,33 @@ class Entry:
                     self._feature_url_whole,
                     self._feature_url_domain,
                     self._feature_url_y,
-                    self._feature_url_y_n],
+                    self._feature_url_y_n,
+                    None],
                 'email':[
                     self._feature_email_whole,
                     self._feature_email_y,
-                    self._feature_email_y_n],
+                    self._feature_email_y_n,
+                    None],
                 'emoticon':[
-                    self._feature_emoticon],
+                    self._feature_emoticon,
+                    None],
                 'tag':[
-                    self._feature_tag],
+                    self._feature_tag,
+                    None],
                 'sentence':[
-                    self._feature_sentence_count],
+                    self._feature_sentence_count,
+                    None],
                 'time':[
                     self._feature_time,
                     self._feature_time_24h,
-                    self._feature_time_24h_hours_only],
+                    self._feature_time_24h_hours_only,
+                    None],
                 'date':[
                     self._feature_date,
                     self._feature_date_formated_dmy,
                     self._feature_date_formated_my,
-                    self._feature_date_formated_y],
+                    self._feature_date_formated_y,
+                    None],
                 }
 
 
@@ -347,9 +348,10 @@ class Entry:
         '''
         # yield features
         for feature_type in self.features_func:
-            for feature in self.features_func[feature_type][0]():
-                print feature
-                yield feature
+            if self.features_func[feature_type][0]:
+                for feature in self.features_func[feature_type][0]():
+                    print feature
+                    yield feature
 
         # yield n-tuples
         for ntuple in self._get_ntuple_token():
