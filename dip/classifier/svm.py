@@ -10,7 +10,7 @@ def linear_kernel(x1, x2):
 def polynomial_kernel(x, y, p=3):
     return (1 + np.dot(x, y)) ** p
 
-def gaussian_kernel(x, y, sigma=5.0):
+def RBF_kernel(x, y, sigma=5.0):
     return np.exp(-np.linalg.norm(x-y)**2 / (2 * (sigma ** 2)))
 
 class SVM():
@@ -25,28 +25,28 @@ class SVM():
         else:
             self.C = None
 
-    def train(self, training_set, classes):
+    def train(self, X, Y):
         '''
         Method for training
-        @param training_set 
-        @param classes 
+        @param X 
+        @param Y 
         '''
-        n_samples, n_features = training_set.shape
+        n_samples, n_features = X.shape
 
         # create gram matrix (kernel matrix)
         gram = np.zeros((n_samples, n_samples))
         for i in xrange(n_samples):
             for j in xrange(n_samples):
-                gram[i,j] = self.kernel(training_set[i], training_set[j])
+                gram[i,j] = self.kernel(X[i], X[j])
 
         # quadratic members coefficient vector
-        P = cvxopt.matrix(np.outer(classes, classes) * gram)
+        P = cvxopt.matrix(np.outer(Y, Y) * gram)
         # linear members coefficient vector
         q = cvxopt.matrix(np.ones(n_samples) * -1)
 
         # set constraints
         # equality constraints left side matrix
-        A = cvxopt.matrix(classes, (1, n_samples))
+        A = cvxopt.matrix(Y, (1, n_samples))
         # equality constraints right side matrix
         b = cvxopt.matrix(0.0)
         # left and right side of inequality constraints matrix
@@ -73,23 +73,23 @@ class SVM():
         # store nonzero lagrange multipliers
         self.lm = all_lm[nonzero_mask]
         self.lm_count = len(self.lm)
-        # store training set and classes for nonzero lm
-        self.training_set = training_set[nonzero_mask]
-        self.classes = classes[nonzero_mask]
+        # store training set and Y for nonzero lm
+        self.X = X[nonzero_mask]
+        self.Y = Y[nonzero_mask]
         print "Using {0} SV out of {1} points".format(len(self.lm), n_samples)
 
         # Intercept value
         self.b = 0
         for n in xrange(self.lm_count):
-            self.b += self.classes[n]
-            self.b -= np.sum(self.lm * self.classes * gram[nonzero_i[n], nonzero_mask])
+            self.b += self.Y[n]
+            self.b -= np.sum(self.lm * self.Y * gram[nonzero_i[n], nonzero_mask])
         self.b /= len(self.lm)
 
         # create Weight vector for linear kernel function
         if self.kernel == linear_kernel:
             self.w = np.zeros(n_features)
             for n in range(self.lm_count):
-                self.w += self.lm[n] * self.training_set[n] * self.classes[n]
+                self.w += self.lm[n] * self.X[n] * self.Y[n]
         else:
             self.w = None
 
@@ -100,8 +100,8 @@ class SVM():
             predict = np.zeros(len(test_set))
             for i in xrange(len(test_set)):
                 s = 0
-                for lm, tr, cl in zip(self.lm, self.training_set, self.classes):
-                    s += lm * cl * self.kernel(test_set[i], tr)
+                for lm, x, y in zip(self.lm, self.X, self.Y):
+                    s += lm * y * self.kernel(test_set[i], x)
                 predict[i] = s
             return predict + self.b
 
@@ -196,7 +196,7 @@ if __name__ == "__main__":
     def plot_contour(X1_train, X2_train, clf):
         pl.plot(X1_train[:,0], X1_train[:,1], "ro")
         pl.plot(X2_train[:,0], X2_train[:,1], "bo")
-        pl.scatter(clf.training_set[:,0], clf.training_set[:,1], s=100, c="g")
+        pl.scatter(clf.X[:,0], clf.X[:,1], s=100, c="g")
 
         X1, X2 = np.meshgrid(np.linspace(-6,6,50), np.linspace(-6,6,50))
         X = np.array([[x1, x2] for x1, x2 in zip(np.ravel(X1), np.ravel(X2))])
@@ -227,7 +227,7 @@ if __name__ == "__main__":
         X_train, y_train = split_train(X1, y1, X2, y2)
         X_test, y_test = split_test(X1, y1, X2, y2)
 
-        clf = SVM(gaussian_kernel)
+        clf = SVM(RBF_kernel)
         clf.train(X_train, y_train)
 
         y_predict = clf.predict(X_test)
@@ -241,7 +241,7 @@ if __name__ == "__main__":
         X_train, y_train = split_train(X1, y1, X2, y2)
         X_test, y_test = split_test(X1, y1, X2, y2)
 
-        clf = SVM(kernel=polynomial_kernel, C=0.1)
+        clf = SVM(kernel=linear_kernel, C=0.1)
         clf.train(X_train, y_train)
 
         y_predict = clf.predict(X_test)
@@ -250,4 +250,4 @@ if __name__ == "__main__":
 
         plot_contour(X_train[y_train==1], X_train[y_train==-1], clf)
 
-    test_non_linear()
+    test_soft()
