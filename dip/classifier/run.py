@@ -2,7 +2,7 @@
 
 import sys
 from optparse import OptionParser
-from bayesian_classifier import Bayesian_Classifier
+from src.bayesian_classifier import BayesianClassifier
 
 parser = OptionParser()
 # classifier details
@@ -19,7 +19,7 @@ if not options.db:
     sys.exit(1)
 
 # create bayesian classifier
-bcl = Bayesian_Classifier(dbfile=options.db, low=options.low, high=options.high)
+bcl = BayesianClassifier(dbfile=options.db, low=options.low, high=options.high)
 
 if options.tests:
     bcl.run(count=options.count, n_fold_cv=10)

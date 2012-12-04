@@ -1,15 +1,14 @@
 #!/usr/bin/env python
 
 import logging
-import pickle
 import sqlite3
 from math import sqrt
 
-from src.worddictionary import WordDictionary
-from src.entry import Entry
-from src.feature import Ntuple
+from bayes.worddictionary import WordDictionary
+from common.entry import Entry
+from common.feature import Ntuple
 
-class Bayesian_Classifier:
+class BayesianClassifier:
     '''
     Class using for classification of tweets. Use classify()
     method for classification, train() method for training of
