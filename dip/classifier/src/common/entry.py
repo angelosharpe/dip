@@ -31,7 +31,7 @@ class Entry:
     # defines word count in dictionary tuples
     MAX_TOKEN_SIZE = 2
 
-    def __init__(self, id, guid, entry, language):
+    def __init__(self, entry, language, id=None, guid=None, label=None):
         self._logger = logging.getLogger()
         # entry id in dabatase
         self.id = id
@@ -39,6 +39,7 @@ class Entry:
         self.classified = None
         self.text = entry
         self.language = language
+        self.label = label
         self.features_func = {
                 'url':[
                     self._feature_url_whole,
@@ -153,7 +154,7 @@ class Entry:
         '''
         Yield URLs -- use whole url.
         '''
-        for found_url in self._get_re_token_and_rm(regexps.urls_re):
+        for found_url in self._get_re_token(regexps.urls_re):
             full_url = ''.join(list(found_url))
             yield Url(full_url)
 
@@ -161,7 +162,7 @@ class Entry:
         '''
         Yield URLs -- use only domain names.
         '''
-        for found_url in self._get_re_token_and_rm(regexps.urls_re):
+        for found_url in self._get_re_token(regexps.urls_re):
             full_url = ''.join(list(found_url))
             if re.match(r'^w', full_url):
                 full_url = 'http://' + full_url
@@ -175,7 +176,7 @@ class Entry:
         Yield emails -- is url present? Add token only if present.
         '''
         found = 0
-        for found_url in self._get_re_token_and_rm(regexps.urls_re):
+        for found_url in self._get_re_token(regexps.urls_re):
             found = 1
             break
         if found:
@@ -186,7 +187,7 @@ class Entry:
         Yield emails -- is url present? Add yes token if present and no it not.
         '''
         found = 0
-        for found_url in self._get_re_token_and_rm(regexps.urls_re):
+        for found_url in self._get_re_token(regexps.urls_re):
             found = 1
             break
         if found:
@@ -199,7 +200,7 @@ class Entry:
         Yield emails -- use whole email.
 
         '''
-        for email in self._get_re_token_and_rm(regexps.emails_re):
+        for email in self._get_re_token(regexps.emails_re):
             yield Email(''.join(list(email)))
 
     def _feature_email_y(self):
@@ -207,7 +208,7 @@ class Entry:
         Yield emails -- use whole email. Add token only if present.
         '''
         found = 0
-        for email in self._get_re_token_and_rm(regexps.emails_re):
+        for email in self._get_re_token(regexps.emails_re):
             found = 1
             break
         if found:
@@ -218,7 +219,7 @@ class Entry:
         Yield emails -- use whole email. Add yes token if present and no it not.
         '''
         found = 0
-        for email in self._get_re_token_and_rm(regexps.emails_re):
+        for email in self._get_re_token(regexps.emails_re):
             found = 1
             break
         if found:
@@ -230,7 +231,7 @@ class Entry:
         '''
         Yield emoticon tokens.
         '''
-        for emoticon in self._get_re_token_and_rm(regexps.emoticons_re):
+        for emoticon in self._get_re_token(regexps.emoticons_re):
             yield Emoticon(''.join(list(emoticon)))
 
     def _feature_tag(self):
@@ -350,7 +351,7 @@ class Entry:
         for feature_type in self.features_func:
             if self.features_func[feature_type][0]:
                 for feature in self.features_func[feature_type][0]():
-                    print feature
+                    #print feature
                     yield feature
 
         # yield n-tuples
