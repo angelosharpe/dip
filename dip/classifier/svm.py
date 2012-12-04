@@ -18,8 +18,9 @@ class SVM():
     SVM class
     '''
 
-    def __init__(self, kernel=linear_kernel, C=None):
+    def __init__(self, kernel=linear_kernel, kernel_param=None, C=None):
         self.kernel = kernel
+        self.kernel_param = kernel_param
         if C:
             self.C = float(C)
         else:
@@ -35,9 +36,14 @@ class SVM():
 
         # create gram matrix (kernel matrix)
         gram = np.zeros((n_samples, n_samples))
-        for i in xrange(n_samples):
-            for j in xrange(n_samples):
-                gram[i,j] = self.kernel(X[i], X[j])
+        if self.kernel_param:
+            for i in xrange(n_samples):
+                for j in xrange(n_samples):
+                    gram[i,j] = self.kernel(X[i], X[j], self.kernel_param)
+        else:
+            for i in xrange(n_samples):
+                for j in xrange(n_samples):
+                    gram[i,j] = self.kernel(X[i], X[j])
 
         # quadratic members coefficient vector
         P = cvxopt.matrix(np.outer(Y, Y) * gram)
@@ -101,7 +107,10 @@ class SVM():
             for i in xrange(len(test_set)):
                 s = 0
                 for lm, x, y in zip(self.lm, self.X, self.Y):
-                    s += lm * y * self.kernel(test_set[i], x)
+                    if self.kernel_param:
+                        s += lm * y * self.kernel(test_set[i], x, self.kernel_param)
+                    else:
+                        s += lm * y * self.kernel(test_set[i], x)
                 predict[i] = s
             return predict + self.b
 
@@ -227,7 +236,7 @@ if __name__ == "__main__":
         X_train, y_train = split_train(X1, y1, X2, y2)
         X_test, y_test = split_test(X1, y1, X2, y2)
 
-        clf = SVM(RBF_kernel)
+        clf = SVM(kernel=RBF_kernel, kernel_param=5)
         clf.train(X_train, y_train)
 
         y_predict = clf.predict(X_test)
@@ -250,4 +259,4 @@ if __name__ == "__main__":
 
         plot_contour(X_train[y_train==1], X_train[y_train==-1], clf)
 
-    test_soft()
+    test_non_linear()
