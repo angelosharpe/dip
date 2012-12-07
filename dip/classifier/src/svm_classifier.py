@@ -25,6 +25,12 @@ class SVM():
             self.C = float(C)
         else:
             self.C = None
+        # learned svm params
+        self.lm = None
+        self.lm_count = 0
+        self.all_lm_count = 0
+        self.b = None
+        self.w = None
 
     def train(self, X, Y):
         '''
@@ -72,6 +78,7 @@ class SVM():
 
         # get lagrange multipliers
         all_lm = np.ravel(solution['x'])
+        self.all_lm_count = len(all_lm)
 
         # support vector have only non-zero lagrange multipliers
         nonzero_mask = all_lm > 1e-5
@@ -79,9 +86,14 @@ class SVM():
         # store nonzero lagrange multipliers
         self.lm = all_lm[nonzero_mask]
         self.lm_count = len(self.lm)
+        if self.lm_count == 0:
+            print '0 support vectors found - no solution!!!'
+            self.model_exists = False
+            return
         # store training set and Y for nonzero lm
         self.X = X[nonzero_mask]
         self.Y = Y[nonzero_mask]
+        self.model_exists = True
         print "Using {0} SV out of {1} points".format(len(self.lm), n_samples)
 
         # Intercept value
