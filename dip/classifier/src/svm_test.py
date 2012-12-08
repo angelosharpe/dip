@@ -5,7 +5,8 @@ import sqlite3
 import logging
 
 from common.entry import Entry
-from svm_classifier import SVM, RBF_kernel
+from svm_classifier import *
+from svm.kernels import *
 
 class SVMTest():
     '''
@@ -20,7 +21,7 @@ class SVMTest():
         # dbfile with labeled data
         self.dbfile = dbfile
         # classifier
-        self.svm = SVM(kernel=RBF_kernel, C=10)
+        #self.svm = SVM(kernel=RBF_kernel, C=10)
 
     def _get_data_from_db(self, count=100):
         '''
@@ -57,7 +58,7 @@ class SVMTest():
 
         return entries
 
-    def _generate_X_Y(self, entries):
+    def _generate_X1_X2(self, entries):
         '''
         Method generates X and Y matrices for svm classifier
         @param entries list of input entries
@@ -100,25 +101,24 @@ class SVMTest():
             for index in irelevant_mapping[i][0]:
                 x2[index] += 1
 
-        # generate Y matrices
-        self._logger.info('Generating Y matrices...')
-        Y1 = np.ones(relevant_mapping_count)
-        Y2 = np.ones(irelevant_mapping_count)
-        self._logger.info('Generating Y1 matrix...')
-        for i,y1 in enumerate(Y1):
-            Y1[i] *= relevant_mapping[i][1]
-        self._logger.info('Generating Y2 matrix...')
-        for i,y2 in enumerate(Y2):
-            Y2[i] *= irelevant_mapping[i][1]
+        return (X1, X2)
 
-        return (X1, Y1, X2, Y2)
+    def _split_X1_X2(self, X1, X2, n_fold_cv, i):
+        '''
+        Splits X1 and X2 to training and testing set, generates Y1 and Y2
+        vectors
+        @param X1 relevant vectors
+        @param X2 irelevant vectors
+        @paran n_fold_cv n-fold cross-validation configuration
+        @param i iteration in n-fold cross-validation
+        '''
+        # number of X1 and X2 vectors
+        count_1 = X1.shape[0]
+        count_2 = X2.shape[0]
 
-    def _split_X_Y(self, X1, Y1, X2, Y2, n_fold_cv, i):
-        '''
-        Splits X and y into training and testing set
-        '''
-        count_1 = len(Y1)
-        count_2 = len(Y2)
+        # generate Y1 and Y2
+        Y1 = np.ones(count_1)
+        Y2 = -np.ones(count_2)
 
         # create test set
         X_test = X1[i*(count_1/n_fold_cv):(i+1)*(count_1/n_fold_cv)]
@@ -137,17 +137,41 @@ class SVMTest():
 
         return (X_train, Y_train, X_test, Y_test)
 
-    def run(self, count=100, n_fold_cv=10):
-        X1, Y1, X2, Y2 = self._generate_X_Y(self._get_data_from_db(count=count))
-        X_train, Y_train, X_test, Y_test = self._split_X_Y(X1, Y1, X2, Y2, n_fold_cv, 0)
+    def _regenerate_X1_X2(self, count):
+        '''
+        Method regenerates X1 and X2 values from database file
+        '''
+        X1, X2 = self._generate_X1_X2(self._get_data_from_db(count=count))
+        X1_output = open('../models/svm/X1_X2/X1.npy', 'wb')
+        X2_output = open('../models/svm/X1_X2/X2.npy', 'wb')
+        np.save(X1_output, X1)
+        np.save(X2_output, X2)
+        return (X1, X2)
 
+    def _load_X1_X2(self):
+        '''
+        Method uses previously generated file from ../models/svm/X1_X2 directory
+        '''
+        X1 = np.load('../models/svm/X1_X2/X1.npy')
+        X2 = np.load('../models/svm/X1_X2/X2.npy')
+        return (X1, X2)
+
+    def run(self, count=200, n_fold_cv=10):
+        #self._logger.info('Generating necessary data...')
+        #X1, X2 = self._regenerate_X1_X2(count)
+        self._logger.info('Loading necessary data...')
+        X1, X2 = self._load_X1_X2()
+        X_train, Y_train, X_test, Y_test = self._split_X1_X2(X1, X2, n_fold_cv, 0)
+
+        kernel = LinearKernel(4)
+        C = 3
+        self.svm = SVM(kernel=kernel, C=C)
         self._logger.info('Training SVM...')
         self.svm.train(X_train, Y_train)
-
-        Y_predict = self.svm.predict(X_test)
-        correct = np.sum(Y_predict == Y_test)
-        print "%d out of %d predictions correct" % (correct, len(Y_predict))
-
+        if self.svm.model_exists:
+            Y_predict = self.svm.predict(X_test)
+            correct = np.sum(Y_predict == Y_test)
+            print '{0} out of {1} predictions correct'.format(correct, len(Y_predict))
 
 t = SVMTest('/home/tmarek/all/projects/dip/dip/data/articles/annotated.db')
 t.run()

@@ -4,23 +4,15 @@ import numpy as np
 import cvxopt
 import cvxopt.solvers
 
-def linear_kernel(x1, x2):
-    return np.dot(x1, x2)
-
-def polynomial_kernel(x, y, p=3):
-    return (1 + np.dot(x, y)) ** p
-
-def RBF_kernel(x, y, sigma=5.0):
-    return np.exp(-np.linalg.norm(x-y)**2 / (2 * (sigma ** 2)))
+from svm.kernels import *
 
 class SVM():
     '''
     SVM class
     '''
 
-    def __init__(self, kernel=linear_kernel, kernel_param=None, C=None):
+    def __init__(self, kernel, C=None):
         self.kernel = kernel
-        self.kernel_param = kernel_param
         if C:
             self.C = float(C)
         else:
@@ -42,14 +34,9 @@ class SVM():
 
         # create gram matrix (kernel matrix)
         gram = np.zeros((n_samples, n_samples))
-        if self.kernel_param:
-            for i in xrange(n_samples):
-                for j in xrange(n_samples):
-                    gram[i,j] = self.kernel(X[i], X[j], self.kernel_param)
-        else:
-            for i in xrange(n_samples):
-                for j in xrange(n_samples):
-                    gram[i,j] = self.kernel(X[i], X[j])
+        for i in xrange(n_samples):
+            for j in xrange(n_samples):
+                gram[i,j] = self.kernel(X[i], X[j])
 
         # quadratic members coefficient vector
         P = cvxopt.matrix(np.outer(Y, Y) * gram)
@@ -81,7 +68,7 @@ class SVM():
         self.all_lm_count = len(all_lm)
 
         # support vector have only non-zero lagrange multipliers
-        nonzero_mask = all_lm > 1e-5
+        nonzero_mask = all_lm > 0
         nonzero_i = np.arange(len(all_lm))[nonzero_mask]
         # store nonzero lagrange multipliers
         self.lm = all_lm[nonzero_mask]
@@ -104,7 +91,7 @@ class SVM():
         self.b /= len(self.lm)
 
         # create Weight vector for linear kernel function
-        if self.kernel == linear_kernel:
+        if isinstance(self.kernel, LinearKernel):
             self.w = np.zeros(n_features)
             for n in range(self.lm_count):
                 self.w += self.lm[n] * self.X[n] * self.Y[n]
@@ -119,9 +106,6 @@ class SVM():
             for i in xrange(len(X)):
                 s = 0
                 for lm, x, y in zip(self.lm, self.X, self.Y):
-                    if self.kernel_param:
-                        s += lm * y * self.kernel(X[i], x, self.kernel_param)
-                    else:
-                        s += lm * y * self.kernel(X[i], x)
+                    s += lm * y * self.kernel(X[i], x)
                 predict[i] = s
             return np.sign(predict + self.b)
