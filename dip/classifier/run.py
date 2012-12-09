@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 
 import sys
-from optparse import OptionParser
+'''from optparse import OptionParser
 from src.bayesian_test import BayesianTest
 
 parser = OptionParser()
@@ -23,3 +23,8 @@ bt = BayesianTest(dbfile=options.db, low=options.low, high=options.high)
 
 if options.tests:
     bt.run(count=options.count, n_fold_cv=10)
+'''
+
+from src.svm.svm_test import *
+t = SVMTest()
+t.run()

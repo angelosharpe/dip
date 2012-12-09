@@ -4,7 +4,7 @@ import numpy as np
 import cvxopt
 import cvxopt.solvers
 
-from svm.kernels import *
+from src.kernels import *
 
 class SVM():
     '''
