@@ -5,6 +5,8 @@ import numpy as np
 class Kernel():
     def __init__(self, param=None):
         self.param = param
+    def change_param(self, new_param):
+        self.param = new_param
 
 
 class LinearKernel(Kernel):

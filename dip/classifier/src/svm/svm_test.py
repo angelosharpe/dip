@@ -6,6 +6,7 @@ import numpy as np
 from svm_classifier import *
 from src.kernels import *
 from src.data import Data
+from src.annealing import Annealing
 
 class SVMTest():
     '''
@@ -13,18 +14,31 @@ class SVMTest():
     @param dbfile source db file containing table docs
                    (lang, relevance, text annotation)
     '''
-    def __init__(self):
+    def __init__(self, silent=False):
         # add and setup logger
         self._logger = logging.getLogger()
-        logging.basicConfig(level=logging.DEBUG)
+        if silent:
+            logging.basicConfig(level=logging.WARNING)
+        else:
+            logging.basicConfig(level=logging.DEBUG)
+
+    def run_annealing(self):
+        kernel = RBFKernel()
+        a = Annealing(kernel=kernel)
+        print a.run()
+
+    def regenerate_data(self, dbfile, count=1000, n_fold_cv=10):
+        data = Data(dbfile=dbfile, n_fold_cv=n_fold_cv)
+        data.regenerate_X1_X2(count)
 
     def run(self, count=200, n_fold_cv=10):
-        data = Data(dbfile=None)
-        data.load_X1_X2()
+        data = Data(dbfile='/all/projects/dip/dip/data/articles/annotated.db')
+        data.regenerate_X1_X2(count)
+
         X1, Y1, X2, Y2 = data.get(0)
 
-        kernel = LinearKernel(4)
-        C = 3
+        kernel = RBFKernel(30)
+        C = 0.1
         self.svm = SVM(kernel=kernel, C=C)
         self._logger.info('Training SVM...')
         self.svm.train(X1, Y1)

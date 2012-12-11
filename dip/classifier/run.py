@@ -1,7 +1,7 @@
 #!/usr/bin/env python
-
+'''
 import sys
-'''from optparse import OptionParser
+from optparse import OptionParser
 from src.bayesian_test import BayesianTest
 
 parser = OptionParser()
@@ -27,4 +27,5 @@ if options.tests:
 
 from src.svm.svm_test import *
 t = SVMTest()
-t.run()
+t.run_annealing()
+
