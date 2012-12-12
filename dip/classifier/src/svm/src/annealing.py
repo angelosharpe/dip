@@ -17,7 +17,7 @@ class Annealing():
     C_MIN = 0.0001
     C_MAX = 35000
 
-    def __init__(self, kernel=None, init_temp=sys.maxint, D=2, iter_limit=1000):
+    def __init__(self, kernel=None, init_temp=sys.maxint, iter_limit=1000):
         random.seed()
         self.iter_limit = iter_limit
 
@@ -33,23 +33,34 @@ class Annealing():
         self.data.load_X1_X2()
 
         self.temp = float(init_temp)
-        self.D = D
-        self.chi2 = chi2.ppf(0.99, D)
-        self.denom = (1.0/(0.9**(D/2.0)))-1
 
-        self.state, self.energy = self._init_state()
+        self.state, self.energy = self._init_state(2)
         self.best_energy = self.energy
         self.best_state = self.state
 
-    def _init_state(self):
+    def _init_state(self, matrix_size=5):
         '''
         Generates random initial state
         @return tuple representing best initial state -- (param, C)
         '''
-        state = (random.uniform(self.P_MIN, self.P_MAX),
-                random.uniform(self.C_MIN, self.C_MAX))
-        energy = self._get_energy(state)
-        return (state, energy)
+        best_state = ()
+        best_energy = None
+
+        X1, Y1, X2, Y2 = self.data.get(0)
+
+        step_C = (self.C_MAX - self.C_MIN) / float(matrix_size - 1)
+        step_P = (self.P_MAX - self.P_MIN) / float(matrix_size - 1)
+        for i in xrange(matrix_size):
+            for j in xrange(matrix_size):
+                state = ((step_P * j) + self.P_MIN, (step_C * i) + self.C_MIN)
+                energy = self._get_energy(state)
+                print 'state:{0}, energy:{1}'.format(state, energy)
+                if energy < best_energy or not best_energy:
+                    best_energy = energy
+                    best_state = state
+                    print 'best_state:{0}, best_energy:{1}'.format(best_state, 
+                        best_energy)
+        return (best_state, best_energy)
 
     def _generate_neighbor(self):
         '''
@@ -116,10 +127,17 @@ class Annealing():
         '''
         # priority is to mimimize error rate, then to minimize number of SV
         difference = neighbor_energy - self.energy
-        if difference < 0:
+        if difference <= 0:
             return 1.0
         else:
             return math.e**(-difference/self.temp)
+
+    def _get_temperature(self, iteration):
+        '''
+        Returns temperature according to the state of annealing process.
+        @param iteration current iteration
+        '''
+        return  (1 - (float(iteration) / self.iter_limit)) * self.iter_limit
 
     def run(self):
         '''
@@ -128,6 +146,7 @@ class Annealing():
         iteration = 0
         while self.iter_limit > iteration:
             iteration += 1
+            self.temp = self._get_temperature(iteration)
             print '==current temperature is {0}, iteration:{1}=='.format(
                     self.temp, iteration)
             print 'best state: {}, best_energy: {}'.format(self.best_state, self.best_energy)
@@ -144,9 +163,6 @@ class Annealing():
                 self.state = neighbor
                 self.energy = neighbor_energy
                 if self.energy < self.best_energy:
-                    energy_temp = self.energy + (
-                            (self.best_energy-self.energy) / self.denom)
-                    self.temp = 2.0 * (energy_temp-self.energy) / self.chi2
                     self.best_state = self.state
                     self.best_energy = self.energy
                     print 'best_state={0}, best_energy={1}'.format(self.state,
