@@ -24,11 +24,11 @@ class SVMTest():
 
     def run_annealing(self):
         kernel = RBFKernel()
-        a = Annealing(kernel=kernel)
+        a = Annealing(kernel=kernel, n_fold_cv=5)
         print a.run()
 
-    def regenerate_data(self, dbfile, count=1000, n_fold_cv=10):
-        data = Data(dbfile=dbfile, n_fold_cv=n_fold_cv)
+    def regenerate_data(self, dbfile, count=1000):
+        data = Data(dbfile=dbfile)
         data.regenerate_X1_X2(count)
 
     def run(self, count=200, n_fold_cv=10):
