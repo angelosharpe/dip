@@ -11,12 +11,18 @@ class SVM():
     SVM class
     '''
 
-    def __init__(self, kernel, C=None):
+    def __init__(self, kernel, C=None, silent=False, qp_maxiter=200):
         self.kernel = kernel
         if C:
             self.C = float(C)
         else:
             self.C = None
+
+        # qp config
+        if silent:
+            cvxopt.solvers.options['show_progress'] = False
+        cvxopt.solvers.options['maxiters'] = qp_maxiter
+
         # learned svm params
         self.lm = None
         self.lm_count = 0
@@ -81,7 +87,6 @@ class SVM():
         self.X = X[nonzero_mask]
         self.Y = Y[nonzero_mask]
         self.model_exists = True
-        print "Using {0} SV out of {1} points".format(len(self.lm), n_samples)
 
         # Intercept value
         self.b = 0
