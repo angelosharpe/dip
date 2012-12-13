@@ -97,10 +97,39 @@ class Annealing():
         mult = random.uniform(0, min(x_mult, y_mult))
         return (self.state[0] + (mult * v[0]), self.state[1] + (mult * v[1]))
 
+    def _thread_get_energy(self, state, i):
+        '''
+        This method calculate energy of given state in i-th step of n-fold
+        cross-validation
+        @param state tuple containing gamma and C
+        @param i i-th step of n-fold cross-validation
+        '''
+        print 'n-fold c-v: iteration {0} of {1}'.format(i + 1, self.n_fold_cv)
+        # get data (only for iteration 0 of 10fcv)
+        X1, Y1, X2, Y2 = self.data.get(i)
+        self.svm.train(X1, Y1)
+        if self.svm.model_exists:
+            Y_predict = self.svm.predict(X2)
+            correct = np.sum(Y_predict == Y2)
+            print ' {0} out of {1} predictions correct'.format(correct,
+                    len(Y_predict))
+            print ' {0} SV out of {1} vectors used'.format(
+                    self.svm.lm_count, self.svm.all_lm_count)
+            # energy is calculated as percentage of incorrectly classified vectors and
+            # percentage of used SV ^ 0.5  -- trying to minimize vectors
+            incorrect_energy = 1 - (float(correct)/len(Y_predict))
+            sv_energy = (float(self.svm.lm_count)/self.svm.all_lm_count)**0.5
+            energy = (incorrect_energy + sv_energy)
+            print ' current energy = {0}'.format(energy)
+            return energy / self.n_fold_cv
+        else:
+            return sys.maxint
+
     def _get_energy(self, state):
         '''
         This method generates calculates energy of some state of svm classifier.
         If n-fold cross validation is enabled, energy is calclated using it.
+        @param state tuple containing gamma and C
         @return tuple of energies, first one has higher priority than second one
         '''
         # average of all n-fold cross-validation steps
@@ -112,26 +141,8 @@ class Annealing():
 
         print 'calculating energy for state {0}'.format(state)
         for i in xrange(self.n_fold_cv):
-            print 'n-fold c-v: iteration {0} of {1}'.format(i + 1, self.n_fold_cv)
-            # get data (only for iteration 0 of 10fcv)
-            X1, Y1, X2, Y2 = self.data.get(i)
-            self.svm.train(X1, Y1)
-            if self.svm.model_exists:
-                Y_predict = self.svm.predict(X2)
-                correct = np.sum(Y_predict == Y2)
-                print ' {0} out of {1} predictions correct'.format(correct,
-                        len(Y_predict))
-                print ' {0} SV out of {1} vectors used'.format(
-                        self.svm.lm_count, self.svm.all_lm_count)
-                # energy is calculated as percentage of incorrectly classified vectors and
-                # percentage of used SV ^ 0.5  -- trying to minimize vectors
-                incorrect_energy = 1 - (float(correct)/len(Y_predict))
-                sv_energy = (float(self.svm.lm_count)/self.svm.all_lm_count)**0.5
-                energy = (incorrect_energy + sv_energy)
-                print ' current energy = {0}'.format(energy)
-                avg_energy += energy / self.n_fold_cv
-            else:
-                return sys.maxint
+            #TODO: need to paralize this
+            avg_energy += self._thread_get_energy(state, i)
         print 'average energy = {0}'.format(avg_energy)
         return avg_energy
 
