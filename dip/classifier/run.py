@@ -2,7 +2,7 @@
 '''
 import sys
 from optparse import OptionParser
-from src.bayesian_test import BayesianTest
+from src.bayes.bayesian_test import BayesianTest
 
 parser = OptionParser()
 # classifier details
@@ -35,4 +35,3 @@ if __name__ == '__main__':
 
     t = SVMTest()
     t.run_annealing()
-

@@ -4,7 +4,7 @@ import sqlite3
 from math import sqrt
 
 from bayesian_classifier import BayesianClassifier
-from common.entry import Entry
+from ..common.entry import Entry
 
 class BayesianTest:
     '''

@@ -2,9 +2,9 @@
 
 import logging
 
-from bayes.worddictionary import WordDictionary
-from common.entry import Entry
-from common.feature import Ntuple
+from src.worddictionary import WordDictionary
+from ..common.entry import Entry
+from ..common.feature import Ntuple
 
 class BayesianClassifier:
     '''
