@@ -4,7 +4,6 @@ import numpy as np
 import random
 import math
 import sys
-import multiprocessing
 import logging
 
 from data import Data
@@ -66,7 +65,6 @@ class Annealing():
             for j in xrange(matrix_size):
                 state = ((step_P * j) + self.P_MIN, (step_C * i) + self.C_MIN)
                 energy = self._get_energy(state)
-                self._logger.info('state:{0}, energy:{1}'.format(state, energy))
                 if energy < best_energy or not best_energy:
                     best_energy = energy
                     best_state = state
@@ -140,15 +138,12 @@ class Annealing():
         @param state tuple containing gamma and C
         @return tuple of energies, first one has higher priority than second one
         '''
-        # average of all n-fold cross-validation steps
-        avg_energy = 0
-
         # apply state
         self.kernel.change_param(state[0])
         self.svm = SVM(kernel=self.kernel, C=state[1], silent=True)
 
         self._logger.info('calculating energy for state {0}'.format(state))
-        sum_energy = sum(map(
+        avg_energy = sum(map(
             lambda x: self._thread_get_energy(state, x), xrange(self.n_fold_cv)))
         self._logger.debug('average energy = {0}'.format(avg_energy))
         return avg_energy
