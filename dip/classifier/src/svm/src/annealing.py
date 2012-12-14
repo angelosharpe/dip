@@ -4,7 +4,8 @@ import numpy as np
 import random
 import math
 import sys
-from scipy.stats import chi2
+import multiprocessing
+import logging
 
 from data import Data
 from ..svm_classifier import SVM
@@ -17,11 +18,16 @@ class Annealing():
     C_MIN = 0.0001
     C_MAX = 35000
 
-    def __init__(self, kernel=None, init_temp=sys.maxint, iter_limit=1000, n_fold_cv=None):
+    def __init__(self, kernel=None, init_temp=sys.maxint, iter_limit=1000,
+                 n_fold_cv=None):
+        # add and setup logger
+        self._logger = logging.getLogger()
+        self._logger.setLevel(logging.DEBUG)
+
         random.seed()
         self.iter_limit = iter_limit
 
-        # svm
+        # svm krenel init
         if not kernel:
             self.kernel = LinearKernel()
         else:
@@ -53,18 +59,19 @@ class Annealing():
 
         X1, Y1, X2, Y2 = self.data.get(0)
 
+        self._logger.info('generating inital feasible point...')
         step_C = (self.C_MAX - self.C_MIN) / float(matrix_size - 1)
         step_P = (self.P_MAX - self.P_MIN) / float(matrix_size - 1)
         for i in xrange(matrix_size):
             for j in xrange(matrix_size):
                 state = ((step_P * j) + self.P_MIN, (step_C * i) + self.C_MIN)
                 energy = self._get_energy(state)
-                print 'state:{0}, energy:{1}'.format(state, energy)
+                self._logger.info('state:{0}, energy:{1}'.format(state, energy))
                 if energy < best_energy or not best_energy:
                     best_energy = energy
                     best_state = state
-                    print 'best_state:{0}, best_energy:{1}'.format(best_state, 
-                        best_energy)
+                    self._logger.info('best_state:{0}, best_energy:{1}'
+                        .format(best_state, best_energy))
         return (best_state, best_energy)
 
     def _generate_neighbor(self):
@@ -104,23 +111,24 @@ class Annealing():
         @param state tuple containing gamma and C
         @param i i-th step of n-fold cross-validation
         '''
-        print 'n-fold c-v: iteration {0} of {1}'.format(i + 1, self.n_fold_cv)
+        self._logger.info('n-fold c-v: iteration {0} of {1}'
+                .format(i + 1, self.n_fold_cv))
         # get data (only for iteration 0 of 10fcv)
         X1, Y1, X2, Y2 = self.data.get(i)
         self.svm.train(X1, Y1)
         if self.svm.model_exists:
             Y_predict = self.svm.predict(X2)
             correct = np.sum(Y_predict == Y2)
-            print ' {0} out of {1} predictions correct'.format(correct,
-                    len(Y_predict))
-            print ' {0} SV out of {1} vectors used'.format(
-                    self.svm.lm_count, self.svm.all_lm_count)
+            self._logger.debug('{0} out of {1} predictions correct'
+                    .format(correct, len(Y_predict)))
+            self._logger.debug('{0} SV out of {1} vectors used'
+                    .format(self.svm.lm_count, self.svm.all_lm_count))
             # energy is calculated as percentage of incorrectly classified vectors and
             # percentage of used SV ^ 0.5  -- trying to minimize vectors
             incorrect_energy = 1 - (float(correct)/len(Y_predict))
             sv_energy = (float(self.svm.lm_count)/self.svm.all_lm_count)**0.5
             energy = (incorrect_energy + sv_energy)
-            print ' current energy = {0}'.format(energy)
+            self._logger.debug('current energy = {0}'.format(energy))
             return energy / self.n_fold_cv
         else:
             return sys.maxint
@@ -139,11 +147,10 @@ class Annealing():
         self.kernel.change_param(state[0])
         self.svm = SVM(kernel=self.kernel, C=state[1], silent=True)
 
-        print 'calculating energy for state {0}'.format(state)
-        for i in xrange(self.n_fold_cv):
-            #TODO: need to paralize this
-            avg_energy += self._thread_get_energy(state, i)
-        print 'average energy = {0}'.format(avg_energy)
+        self._logger.info('calculating energy for state {0}'.format(state))
+        sum_energy = sum(map(
+            lambda x: self._thread_get_energy(state, x), xrange(self.n_fold_cv)))
+        self._logger.debug('average energy = {0}'.format(avg_energy))
         return avg_energy
 
     def _jump_probability(self, neighbor_energy):
@@ -176,29 +183,30 @@ class Annealing():
         while self.iter_limit > iteration:
             iteration += 1
             self.temp = self._get_temperature(iteration)
-            print '==current temperature is {0}, iteration:{1}=='.format(
-                    self.temp, iteration)
-            print 'best state: {}, best_energy: {}'.format(self.best_state, self.best_energy)
-            print 'current state is:', self.state
-            print 'current energy is:', self.energy
+            self._logger.info('==current temperature is {0}, iteration:{1}=='
+                    .format(self.temp, iteration))
+            self._logger.info('best state: {}, best_energy: {}'
+                    .format(self.best_state, self.best_energy))
+            self._logger.info('current state is:{0}'.format(self.state))
+            self._logger.info('current energy is:{0}'.format(self.energy))
             neighbor = self._generate_neighbor()
             if neighbor == self.state:
-                print 'neighbor is same as previous state, skipping...'
+                self._logger.info('neighbor is same as previous state, skipping...')
                 continue
-            print 'new neighbor:', neighbor
+            self._logger.info('new neighbor: {0}'.format(neighbor))
             neighbor_energy = self._get_energy(neighbor)
-            print 'neighbor energy:', neighbor_energy
+            self._logger.info('neighbor energy: {0}'.format(neighbor_energy))
             prob = self._jump_probability(neighbor_energy)
             r = random.random()
-            print 'if {0} > {1} then use new'.format(prob, r)
+            self._logger.debug('if {0} > {1} then use new'.format(prob, r))
             if prob > r:
                 self.state = neighbor
                 self.energy = neighbor_energy
                 if self.energy < self.best_energy:
                     self.best_state = self.state
                     self.best_energy = self.energy
-                    print 'best_state={0}, best_energy={1}'.format(self.state,
-                            self.energy)
+                    self._logger.info('best_state={0}, best_energy={1}'
+                            .format(self.state, self.energy))
                 # if energies are the same, try to find states with minimal C and gamma
                 if self.energy == self.best_energy:
                     best_energy = (self.best_state[0]-self.P_MIN)/(self.P_MAX-self.P_MIN) + \
@@ -208,6 +216,6 @@ class Annealing():
                     if new_energy < best_energy:
                         self.best_state = self.state
                         self.best_energy = self.energy
-                        print 'best_state={0}, best_energy={1}'.format(self.state,
-                                self.energy)
+                        self._logger.info('best_state={0}, best_energy={1}'
+                                .format(self.state, self.energy))
         return self.best_state, self.best_energy

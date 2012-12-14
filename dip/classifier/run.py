@@ -26,6 +26,13 @@ if options.tests:
 '''
 
 from src.svm.svm_test import *
-t = SVMTest()
-t.run_annealing()
+
+if __name__ == '__main__':
+    logging.basicConfig(
+            format='%(levelname)s:%(message)s',
+            level=logging.DEBUG
+        )
+
+    t = SVMTest()
+    t.run_annealing()
 
