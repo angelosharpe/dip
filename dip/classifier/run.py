@@ -24,7 +24,6 @@ bt = BayesianTest(dbfile=options.db, low=options.low, high=options.high)
 if options.tests:
     bt.run(count=options.count, n_fold_cv=10)
 '''
-
 from src.svm.svm_test import *
 
 if __name__ == '__main__':
@@ -34,4 +33,7 @@ if __name__ == '__main__':
         )
 
     t = SVMTest()
-    t.run_annealing()
+
+    #t.regenerate_data(dbfile='/all/projects/dip/dip/data/articles/annotated.db', count=1000)
+
+    t.run_annealing(n_fold_cv=5)

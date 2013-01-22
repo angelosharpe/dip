@@ -11,8 +11,6 @@ from src.annealing import Annealing
 class SVMTest():
     '''
     Class for testing svm classifier.
-    @param dbfile source db file containing table docs
-                   (lang, relevance, text annotation)
     '''
     def __init__(self, silent=False):
         # add and setup logger
@@ -22,9 +20,9 @@ class SVMTest():
         else:
             logging.basicConfig(level=logging.DEBUG)
 
-    def run_annealing(self):
+    def run_annealing(self, n_fold_cv=5):
         kernel = RBFKernel()
-        a = Annealing(kernel=kernel, n_fold_cv=5)
+        a = Annealing(kernel=kernel, n_fold_cv=n_fold_cv)
         print a.run()
 
     def regenerate_data(self, dbfile, count=1000):
