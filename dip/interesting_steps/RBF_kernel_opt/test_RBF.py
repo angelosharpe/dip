@@ -2,9 +2,15 @@
 
 import timeit
 import numpy
+import random
 
-vector = (1.2, 2.3, 3.4)
-numpyvector = numpy.matrix([vector])
+elements = 10000
+numpyvector = numpy.ones(elements)
+for n in xrange(elements):
+    if random.random() > 0.5:
+        numpyvector[n] = 0
+
+print numpyvector
 
 def testit(what):
     print("testing {}:".format(what))
@@ -13,7 +19,7 @@ def testit(what):
         '''
 import numpy
 import math
-from __main__ import vector, numpyvector'''))
+from __main__ import  numpyvector'''))
 
 print()
 print('numpyvector =', repr(numpyvector))
