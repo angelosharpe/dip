@@ -1,0 +1,588 @@
+%=========================================================================
+% (c) Michal Bidlo, Bohuslav Køena, 2008
+
+\chapter{Úvod}
+Klasifikace dokumentù podle tématu je jednou z úloh oboru zpracovávání pøirozeného jazyka (Natural Language Processing - NLP).
+Zpracování pøirozeného jazyka je oborem aplikace výpoèetních modelù pro øe¹ení úkolù, které se urèitým zpùsobem vztahují k textu libovolného pøirozeného jazyka.
+Historie zpracovávání pøirozeného jazyka zaèíná v padesátých letech 20. století, kdy Alan Turing ve svém èlánku \uv{Computing Machinery and Intelligence} \cite{turing_50} poprvé publikoval takzvaný \uv{Turingùv test}.
+Od té doby doznal obor zpracovávání pøirozeného jazyka velkých zmìn a v souèasné dobì se v nìm nejvìt¹í mìrou pou¾ívají statistické metody a metody strojového uèení (machine learning).
+
+Významnou úlohou øe¹enou ve zpracovávání pøirozeného jazyka je klasifikace textu.
+Tato úloha spadá do vý¹e zmínìné skupiny statistických metod a metod strojového uèení.
+Metody klasifikace textu lze pou¾ít pro velké mno¾ství úloh, které se týkají zpracovávání pøirozeného jazyka, a to pøedev¹ím díky jejich flexibilitì a ji¾ velmi dobøe zpracované teorii.
+
+V této práci se nejprve budeme zabývat obecnými pøístupy pou¾ívanými pro øe¹ení úloh zpracovávání pøirozeného jazyka.
+Poté se podrobnìji podíváme na problematiku naivního Bayesovského klasifikátoru, jeho mo¾ných variací, vylep¹ení atd., a to jak na teoretické základy této metody, tak na aplikaci této metody v praxi.
+Budou zde prezentovány výsledky dosa¾ené pomocí jednotlivých úprav Bayesovského klasifikátoru a ty budou na závìr porovnány.
+
+\section{Zadání práce a motivace} \label{UVOD-MOTIVACE}
+Zadáním této práce bylo seznámit se s problematikou klasifikace dokumentù dle tématu a zvolit si dvì metody, kterými se budu podrobnìji zabývat.
+Následnì tyto dvì metody analyzovat a implementovat program, který pomocí tìchto metod bude klasifikovat vstupní dokumenty do urèitých tøíd.
+Pro svùj program anotuji velkou sadu dokumentù, které budu následnì pou¾ívat pro trénování a testování mnou vytvoøeného programu.
+Na tìchto datech následnì porovnám dvì zvolené metody klasifikace pomocí standardních metrik pro hodnocení klasifikátorù.
+
+Toto téma diplomové práce jsem si zvolil, jeliko¾ ji¾ témìø rok pracuji na projektu M-eco\footnote{http://www.meco-project.eu/} ve skupinì NLP na VUT FIT, kde se zabývám klasifikací tweetù\footnote{krátkých zpráv o maximální délce 140 znakù, je¾ u¾ivatelé sociální sítì Twitter(http://twitter.com/) pí¹í na své profily}.
+Chtìl bych této práce vyu¾ít k tomu, abych prohloubil své znalosti o problematice klasifikace dokumentù a abych následnì vylep¹il klasifikátor, který je v souèasné dobì v provozu a pomocí nìj¾ jsou filtrovány tweety pøidávané do databáze.  
+
+
+Pro podrobnìj¹í prostudování jsem si zvolil jednu probabilistickou a jednu neprobabilistickou klasifikaèní metodu.
+Jako první, probabilistickou metodu, která je v souèasné dobì ji¾ implementována a která je v této práci podrobnì popsána, jsem si zvolil \textit{Bayesovský klasifikátor}, vyu¾ívající ke klasifikaci textu Bayesova teorému.
+Bayesovský klasifikátor, nebo také Bayesovský filtr je velmi èasto pou¾íván e-mailovými klienty pro zji¹»ování, zda je e-mailová zprává nevy¾ádanou po¹tou, nebo ne.
+Druhou zvolenou metodou, která v¹ak je¹tì nebyla implementována a kterou zatím studuji, je metoda \textit{SVM}(support vector machines).
+
+
+\chapter{Zpracování pøirozené øeèi}
+V této kapitole se budeme struènì zabývat historií (\ref{NLP-H}) oboru zpracovávání pøirozeného jazyka, poté si pøiblí¾íme hlavní úkoly, které se v oboru zpracovávání pøirozeného jazyka øe¹í (\ref{NLP-HU}) a nakonec se podrobnìji podíváme na klasifikaèní úlohy(\ref{NLP-KU}), které jsou hlavním tématem této práce.
+
+\section{Historie} \label{NLP-H}
+Obor zpracovávání pøirozeného jazyka je se vyvíjí soubì¾nì s historií vývoje výpoèetní techniky.
+Po roce 1945, kdy spoleèensko politická situace ve svìtì umo¾nila zmìnu hlavních dosavadních smìrù výzkumu v oblasti výpoèetní techniky od pùvodnì pøevá¾nì vojenského vyu¾ití (napø. kryptografie, kryptoanalýza, atd.) k dal¹ím vìdním oborùm.
+Díky tomu se zaèal rozvíjet také obor zpracovávání pøirozeného jazyka.
+
+Jak ji¾ bylo zmínìno v úvodu, jedním z prvních významných mílníkù v historii zpracovávání pøirozeného jazyka byl èlánek Alana Turinga s názvem \uv{Computing Machinery and Intelligence} \cite{turing_50}, v nìm¾ Turing publikoval takzvaný \textit{Turingùv test} jako¾to kritérium inteligence.
+Aby poèítaèový program pro¹el \textit{Turingovým testem}, nesmí nestranný soudce poznat z obsahu konverzace mezi programem a èlovìkem (konverzace probíhá v reálném èase), která strana je která.
+
+Vìdci zabývající se zpracováváním pøirozeného jazyka logicky hledali pomoc v lingvistice.
+V roce 1957  publikoval americký lingvista Noam Chomsky èlánek \uv{Syntactic structures}, který znamenal zcela nový pohled na lingvistiku.
+Formuloval v nìm teorii takzvané \textit{Transformaèní gramatiky}.
+V ní¾ tvrdil, ¾e ka¾dá vìta libovolného jazyka má dvì úrovnì reprezentace
+\begin{itemize}
+ \item \textit{hloubkovou} -- reprezentující sémantické vztahy ve vìtì, kterou lze pøevést na povrchovou úroveò
+ \item \textit{povrchovou} -- reprezentující fonémickou formu vìty
+\end{itemize}
+Hluboké úrovnì v¹ech jazykù podle Chomského vykazují znaènou podobnost, která se vytrácí v úrovních povrchových.
+Témìø v¹echny výzkumy v oboru zpracovávání pøirozeného jazyka byly po roce 1957 silnì ovlivnìny touto publikací.
+
+Jednou z prvních øe¹ených úloh v oboru zpracovávání pøirozené øeèi bylo vytvoøení automatických pøekladaèù, tedy programù, které bez lidského pèispìní doká¾ou pøelo¾it vstupní text z jednoho pøirozeného jazyka do druhého.
+Uspokojivé øe¹ení tohoto úkolu v¹ak v té dobì nebylo nalezeno a ani v roce 1966 je¹tì výzkumníci nebyli nikterak blízko k vyvinutí takového softwaru.
+V roce 1966 proto vydal americký vládní výbor \uv{The Automatic Language Processing Advisory Committee} (ALPAC) zprávu shrnující dosavadní výsledky výzkumu a konstatující, ¾e \uv{Nebyl vyvinut ¾ádný strojový pøekladaè obecných vìdeckých textù a ¾ádný takový pøekladaè nebude vyvinut ani v blízké budoucnosti}.
+Takto formulovaný závìr zprávy zapøíèinil výrazné ¹krty v rozpoètech vìdeckých týmù, zabývajících se výzkumem zpracovávání pøirozeného jazyka a pøekladaèù.
+
+V 60. letech byl americkým matematikem nìmeckého pùvodu Josephem Weizenbaumem vytvoøen program \uv{ELIZA}, co¾ byl jednoduchý robot, urèený pro konverzaci s èlovìkem (chatbot).
+Konverzace s tímto robotem se zakládala na opakování výrokù, které u¾ivatel zadal a na kladení velmi jednoduchých otázek, zalo¾ených na klíèových slovech, nalezených v pøedchozí konverzaci.
+Program se v diskusi choval jako psychoterapeut, reagující v¾dy bezprostøednì na pøedchozí výrok èlovìka, tedy \uv{pacienta}.
+Bìhem sedmdesátých let bylo vyvinuto mnoho dal¹ích programù pro konverzaci s u¾ivatelem podobných programu \textit{ELIZA}, napøíklad \textit{PARRY} nebo \textit{Jabberwacky}.
+
+Do 80. let 20. století pou¾ívala drtivá vìt¹ina systémù pro zpracovávání pøirozeného jazyka velmi slo¾itá ruènì zadávaná pravidla.
+V 80. letech v¹ak byly poprvé pøedstaveny metody strojového uèení, které díky stále rostoucímu výkonu výpoèetní techniky umo¾òovaly generovat tato pravidla automaticky a dosahovat tak pøi zpracovávání pøirozeného jazyka stále lep¹ích výsledkù.
+S nástupem strojového uèení se odvìtví zpracovávání pøirozeného jazyka zaèalo zamìøovat na statistické metody, je¾ k øe¹ení problémù pøistupovaly jinak ne¾ metody dosavadní.
+Jejich hlavním principem byla práce s pravdìpodobnostními modely a váhami jednotlivých rozhodnutí.
+Tímto zpùsobem bylo mo¾né efektivnìji øe¹it vìt¹inu NLP úkolù.
+Vzhledem k tomu ¾e obor zpracovávání pøirozeného jazyka pracuje s daty vytvoøenými èlovìkem, je¾ mohou obsahovat rùzné chyby, pracují statistické metody o znaènì spolehlivìji ne¾ døívìj¹í ruènì psaná pravidla.
+
+V souèasné dobì je výzkum zpracovávání pøirozeného jazyka orientován pøedev¹ím na vytvoøení autonomních a semiautonomních uèících agoritmù, tedy algoritmù, schopných uèit se z dat, která pøedtím nebyla ruènì anotována, a nebo z kombinace anotovaných a neanotovaných dat.
+%%%%%%%%%
+%%%%%%%%
+%%%%%%%%
+%%%%%%%%%%
+
+\section{Hlavní úkoly øe¹ené v NLP} \label{NLP-HU}
+Obor zpracovávání pøirozeného jazyka je velmi rozsáhlý a existuje v nìm mimo klasifikace textu velké mno¾ství dal¹ích úloh k øe¹ení.
+V následující èásti této práce se podíváme na hlavní úkoly, kterými se oblast NLP zabývá.
+
+\subsection{Automatická sumarizace}
+Úkolem automatické sumariace je redukovat vstupní text nebo sadu textù do nìkolika slov, nebo krátkého odstavce, popisujícího sémantický obsah vstupního textu.
+Základním principem automatické sumarizace je zpracovávání slov, frází a vìt ze vstupního souboru, respektive vstupních souborù.
+Z vý¹e zmínìných dat program pro automatickou sumarizaci vygeneruje vnitøní sémantický popis tìchto dat.
+Ze sémantického popisu potom mù¾e vygenerovat buï sadu vhodných slov, popisujících daný soubor, nebo je mo¾né pou¾ít metody pro generování pøirozeného jazyka a vytvoøit tak vìtný popis vstupního textu.
+
+\subsection{Generování pøirozeného jazyka} \label{NLP-HU-generovani}
+Generování pøirozeného jazyka má vytvoøit výstup v pøirozeném jazyce z interní reprezentace v poèítaèi.
+De facto je generátor pøirozeného jazyka pøekladaè, pøekládající data z jednoho jazyka do druhého (z vnitøní reprezentace poèítaèe do pøirozeného jazyka).
+Tato úloha je opakem úlohy porozumìní pøirozenému jazyku (\ref{NLP-HU-porozumeni}).
+
+\subsection{Porozumìní pøirozenému jazyku} \label{NLP-HU-porozumeni}
+Programy pro porozumìní pøirozenému jazyku mají pøevést vstupní text do podoby zpracovatelné poèítaèem, tedy porozumìt textu a vygenerovat vnitøní reprezentaci onìch vstupních dat.
+Proces porozumìní pøirozenému jazyku je sice opakem úlohy generování pøirozeného jazyka (\ref{NLP-HU-generovani}), ale je znaènì slo¾itìj¹í, a to nejen kvùli rozmanitosti vstupního jazyka a tudí¾ mo¾nosti výskytu neznámých slov, ale také kvùli nutnosti zvolení vhodných syntaktických a sémantických schémat aplikovaných ve vstupním textu.
+
+\subsection{Odpovídání na otázky}
+V oblasti odpovídání na otázky se programátoøi pokou¹ejí vytvoøit program, který by dokázal korektnì odpovìdìt na u¾ivatelem zadanou vstupní otázku formulovanou v pøirozeném jazyce.
+V roce 2011 vytvoøila spoleènost IBM poèítaè s názvem \textit{Watson} specializovaný na odpovídání na otázky, který následnì vyhrál americkou vìdomostní soutì¾ \textit{Jeopardy!}, kdy¾ porazil dva nejlep¹í hráèe této soutì¾e v její historii.
+
+\subsection{Odstraòování víceznaènosti slov v textu}
+Odstraòování víceznaènosti slov v textu je významnou úlohou napomáhající správnému porozumìní textu.
+Víceznaèná slova jsou v textu identifikována a poté je vyhledáván jejich správný význam v kontextu vstupního textu.
+Po zji¹tìní významu slova je slovo nahrazeno nevýceznaèným synonymem.
+Tato úloha je velmi dùle¾itá napøíklad pro zlep¹ování kvality a pøesnosti internetových vyhledávaèù.
+Velmi zajímavé øe¹ení tohoto problému publikovala Rada Mihalcea v \uv{Using Wikipedia for Automatic Word Sense Disambiguation} \cite{wp_word_sense}, která øe¹ila identifikaci víceznaèných slov za pomoci textového obsahu internetové encyklopedie \textit{Wikipedia}\footnote{http://wikipedia.org/}.
+
+\subsection{Strojový pøeklad}
+Posledním úkolem oboru zpracovávání pøirozeného jazyka, kterým se zde budeme zabývat, je strojový pøeklad.
+Jak bylo vý¹e zmínìno v kapitole o historii zpracovávání pøirozeného jazyka, je strojový pøeklad jednou ze zásadních úloh, kterými se obor zpracovávání pøirozeného jazyka zabývá.
+Z øady rozmanitých pøístupù k øe¹ení strojového pøekladu zmíníme nejstar¹í metodu, zalo¾enou na sadì pravidel, pomocí nich¾ je pøeklad uskuteèòován a také statistické pøekladaèe, jako napøíklad \textit{Google translator}, vyu¾ívající pro pøeklad statistických modelù.
+
+
+\subsection{Klasifikaèní úlohy} \label{NLP-KU}
+Nyní se podíváme na následující tøi klasifikaèní úlohy:
+\begin{itemize}
+ \item Anonymizace \ref{NLP-KU-anonym}
+ \item Klasifikace tématu \ref{NLP-KU-klas_tem}
+ \item Filtrování spamu \ref{NLP-KU-spam_filt}
+\end{itemize}
+
+\subsubsection{Anonymizace}\label{NLP-KU-anonym}
+Klasifikaèní úloha anonymizace není pøi zpracovávání pøirozeného jazyka pøíli¹ èasto øe¹ená.
+Jejím cílem je odstranìní citlivých referencí (napøíklad osobních informací -- rodného èísla, e-mailové adresy, atd.) z tìla daného textu, co¾ umo¾òuje následnì anonymizovaný text vyu¾ít napøíklad pro výzkumné úèely.
+Anonymizace na rozdíl od spam filteringu vy¾aduje daleko jemnìj¹í pøístup ke klasifikaci, jeliko¾ pracuje nikoliv s celým dokumentem, ale pouze s jeho èástmi, nìkdy dokonce jen nìkolika slovy, nebo vìtami.
+Pro anonymizaci jsou nejèastìji pou¾ívány tyto 3 postupy: 
+\begin{itemize}
+ \item Odstranìní -- odstranìní v¹ech citlivých informací z dokumentu a jejich nahrazení výplní
+ \item Pseudoanonymizace -- nahrazení v¹ech citlivých informací náhodnými hodnotami stejného typu
+ \item Kategorizace -- nahrazení v¹ech citlivých informací kategorií do které spadají.
+\end{itemize}
+Zpùsoby u¾ití anonymizace viz obr. \ref{NLP-KU-anonym-img}.
+\begin{figure}[h]
+    \begin{center}
+      \includegraphics[width=15cm,keepaspectratio]{fig/anonymization}
+      \caption{Zpùsoby pou¾ití anonymizace.} 
+      \label{NLP-KU-anonym-img}
+    \end{center}
+\end{figure}
+
+\subsubsection{Klasifikace tématu}\label{NLP-KU-klas_tem}
+Klasifikace tématu je úloha pøiøazování názvù témat ke vstupním textovým dokumentùm.
+Typicky daný vstupní text pokrývá vìt¹í mno¹ství témat.
+Metody pro klasifikaci tématu mohou být zalo¾eny napøíklad na skrytých Markovových modelech.
+Výstupem klasifikátoru tématu pro vstupní text bývá velmi èasto kromì seznamu tøíd témat, kterých se zøejme vstupní text týká, také seznam pravdìpodobností definující míru nále¾itosti do jednotlivých tìchto tøíd.
+
+\subsubsection{Filtrování spamu}\label{NLP-KU-spam_filt}
+Zájem o klasifikaèní problém filtrování spamu v posledních letech velmi výraznì vzrostl, a to pøedev¹ím kvùli mno¾ství nevy¾ádané po¹ty (spamu), kterou u¾ivatelé dostávají do svých e-mailových schránek.
+Jsou dvì mo¾nosti jak úloha filtrování spamu mù¾e fungovat.
+Buï jsou zprávy filtrovány na základì obsahu (a» u¾ textového, nebo jiného) nebo na základì metainformací v hlavièce zprávy.
+Metody zabývající se filtrováním na základì obsahu e-mailu velmi èasto vyu¾ívají toho, ¾e vìt¹ina zpráv obsahuje nìjakou textovou informaci.
+Podle ní potom klasifikují, zda je zpráva nevy¾ádanou po¹tou.
+Klasifikátory urèující, zda je zpráva spam nebo ne mají pro klasifikaci e-mailù velmi èasto asymetrické ohodnocení pøi klasifikaci.
+Chybné oznaèení vy¾ádané po¹ty jako spamu, vedoucí k následnému odstranìní zprávy, je toti¾ vìt¹í problém, ne¾ oznaèení spamu jako vy¾ádané po¹ty.
+
+V tomto èlánku se budeme zabývat právì pøedev¹ím metodami filtrování spamu, a to nejen pro pou¾ítí pøi jeho odfiltrovávání z e-mailové po¹ty, ale také pro oznaèování relevantních textových vstupù vzhledem k danému tématu.
+
+\chapter{Klasifikace dokumentù}
+Jedním z úkolù této práce je získat pøehled o klasifikaci textových dokumentù, seznámit se s metodami klasifikace a aplikovat je na vytvoøenou datovou sadu.
+\section{Definice klasifikace} \label{CLASS-DEF}
+
+\begin{definition}
+ Klasifikace je èinnost, která rozdìluje objekty do tøíd (kategorií) podle jejich spoleèných vlastností.
+\end{definition}
+
+Tøída v kontextu zpracovávání pøirozeného jazyka je mno¾ina objektù, vyznaèujících se urèitou spoleènou vlastností nebo vlastnostmi, která/é danou tøídu popisuje/í.
+Klasifikace je potom èinnost, která pøiøøzuje objekty do daných tøíd.
+Nadále se budeme zabývat zejména klasifikací textu.
+
+Obecnì mìjme tedy prostor objektù $X$ a mno¾inu tøíd $Y$.
+Operaci klasifikace potom odpovídá funkci $f$:
+
+\begin{equation}
+f: X \rightarrow Y
+\end{equation}
+
+Klasifikaèní funkce $f$ tedy pøiøadí jeden objekt z mno¾iny objektù právì do jedné tøídy.
+Mù¾e ov¹em nastat situace, kdy jeden objekt odpovídá kritériím pro zaøazení do více tøíd.
+Napøíklad budeme klasifikovat textovou zprávu, je¾ mù¾e z hlediska obsahu zapadnout do více tøíd, napøíklad do tøídy osobních zku¹eností (pisatel pí¹e o vlastní zku¹enosti) a do tøídy relevantní k tématu zdraví (\textit{'Bolí mì hlava.}).
+V tomto pøípadì musíme modifikovat klasifikaèní funkci $f$ následovnì:
+
+\begin{equation}
+f: X \rightarrow 2^Y
+\end{equation}
+
+kde $2^Y$ oznaèuje potenèní mno¾inu v¹ech tøíd.
+Tato forma klasifikace se také oznaèuje jako \textit{multi-label klasifikace}.
+V \textit{multi-label} klasifikaci se ke ka¾dé tøídì mù¾e pøiøadit reálné èíslo $p \in <0,1>$, které definuje míru nale¾itosti klasifikovaného objektu do pøiøazených tøíd.
+Tomuto se také øíká \textit{soft klasifikace}.
+Naproti tomu, kdy¾ je pøi klasifikaci pøiøazen objekt do tøídy \uv{napevno} (ano, patøí tam / ne, nepatøí tam), pak tento zpùsob klasifikace nazýváme \textit{hard klasifikace}.
+
+\section{Klasifikaèní pøístupy}
+Existují dva hlavní pøístupy pøi øe¹ení klasifikaèních úloh:
+\begin{itemize}
+ \item Probabilistické
+ \item Neprobabilistické
+\end{itemize}
+
+\subsection{Probabilistické klasifikátory}
+Jedním ze zpùsobù jak vytvoøit funkèní klasifikátor je vyu¾ít teorii pravdìpodobnosti.
+Klasifikátory fungující na bázi pravdìpodobnostních výpoètù urèují pravdìpodobnosti, se kterými daný objekt spadá do nìkteré tøídy.
+Do které tøídy respektive kterých tøíd objekt zapadá, je následnì urèeno pomocí pøedem definovaného prahu (threshold).
+
+Probabilistické metody jsou napøíklad metody zalo¾ené na Bayesovì teorému.
+Bayesùv teorém a jeho pou¾ití pro klasifikaci je podrobnì popsán v kapitole \ref{SF-BAYES}.
+
+\subsection{Neprobabilistické klasifikátory}
+Kromì probabilistických metod exustují také neprobabilistické metody pro klasifikaèní úlohy.
+Neprobabilistické pøístupy se vìt¹inou sna¾í pøímo vymodelovat klasifikaèní funkci a nesna¾í se klasifikaci zjistit za pomocí pravdìpodobnostních výpoètù.
+Asi nejznámìj¹í neprobabilistickou metodou je metoda SVM (support vector machine), která se sna¾í nalézt takovou nadrovinu v prostoru pøíznakù, která bude rozdìlovat trénovací data.
+Ideální nadrovina rozdìluje data z trénovací mno¾iny tak, ¾e body v prostoru le¾í v opaèných poloprostorech a vzdálenosti v¹ech bodù od roviny jsou co nejvìt¹í.
+
+\section{Klasifikace a clustering}\label{CLASS-APPROACHES-CLUSTERING}
+Je¹tì relativnì nedávno byla klasifikace chápána jako podmno¾ina úlohy nazývané clustering.
+Je sice pravda, ¾e klasifikace a clustering k sobì mají velmi blízko, a také mnoho technik pou¾ívaných v klasifikaci je mo¾né pou¾ít i v clusteringu, nicménì rozdíl mezi tìmito dvìma úlohami je v tom, ¾e pøi klasifikaci známe pøedem tøídy, do kterých budeme vstup klasifikovat.
+U clusteringu tomu tak není.
+Clustering dìlí vstupní text podle významných spoleèných pøíznakù ve vstupních datech.
+Z definice klasifikace (viz \ref{CLASS-DEF}) víme, ¾e klasifikaèní úloha je definována klasifikaèní funkcí $f$,  která vstupnímu vzorku $x$ podle jeho pøíznakù pøiøadí oznaèení tøídy $y$, do ní¾ vzorek spadá.
+Klasifikaèní úlohy v NLP se sna¾í tuto funkci $f$ co nejpøesnìjí aproximovat, aby simulovaly její výsledek.
+Naroti tomu clustering nemá podobnou funkci jako klasifikace, která by urèovala, jak má vypadat výsledek.
+Výsledná struktura tøíd clusteringu je vytvoøena za bìhu metody na základì znakù podobnosti vzorkù z mno¾iny vstupù.
+
+\subsection{Strojové uèení}
+Jeliko¾ pro vytvoøení funkèního klasifikátoru je nutné, aby klasifikár byl nauèen pomocí správné testovací mno¾iny, byla problematika strojového uèení s tématem klasifikace velmi úzce spojena.
+Strojové uèení je jedním z podtémat oboru umìlé inteligence, zabývající se vytvoøením algoritmù, umo¾òujících poèítaèovým programùm se uèit.
+Algoritmy strojového uèení se dìlí do následujících tøí kategorií:
+\begin{itemize}
+ \item \textit{Uèení s uèitelem (supervised learning)} -- tento zpùsob uèení je nejjednodu¹¹í. Problematiènost tohoto pøístupu spoèívá v tom, ¾e ve¹kerá data, která se program nauèí, musí být ruènì anotována èlovìkem, z èeho¾ vyplývá jeho velká èasová nároènost.
+ \item \textit{Uèení bez uèitele (unsupervised learning)} -- pøi uèení bez uèitele je uèenému programu pøedána sada trénovacích dat, ve které si uèící se program sám hledá význaèné vlastnosti, na jejich¾ základì poté vytvoøí vlastní klasifikaèní funkci. Jedním z mo¾ných pøístupù k øe¹ení této metody je metoda clustering (viz \ref{CLASS-APPROACHES-CLUSTERING}).
+ \item \textit{Pøístup na pomezí mezi uèení s uèitelem a uèení bez uèitele (semi-supervised learning)} -- poslední metodou strojového uèení, kterou zde zmíníme, je metoda zalo¾ená na uèení pomocí vstupních trénovacích dat, kterých následnì metoda vyu¾ije k automatickému vytvoøení dal¹ích trénovacích dat.
+\end{itemize}
+
+\subsection{Boosting}
+V roce 1988 vyslovil Michael Kearns ve své práci s názvem \textit{Thoughts on hypothesis boosting} otázku, zda lze z mno¾iny slabých klasifikátorù (takových, které mají nízké hodnoty korelace testovacích a výstupních dat) vytvoøit jeden klasifikátor, který by mìl výraznì lep¹í výsledky a ve své práci dokázal, ¾e tomu tak opravdu mù¾e být.
+Od té doby bylo vyvynuto více algoritmù pro boosting klasifikace, nicménì vìt¹ina z nich se zakládá na iterativním uèení mno¾iny slabých klasifikátorù a jejich následném sdru¾ení do jednoho pøesného klasifikátoru.
+Historicky nejvýznam¹j¹ím boostingovým algoritmem je zøejmì algoritmus \textit{AdaBoost}(adaptive boosting), vytvoøený Yoavem Freundem a Robertem Schapirem, který publikovali v práci \textit{A Decision-Theoretic Generalization of on-Line Learning and an Application to Boosting}\cite{boosting}.
+
+\chapter{Filtrování spamu} \label{SF}
+Jak ji¾ bylo zmínìno vý¹e (\ref{NLP-KU-spam_filt}) V tomto èlánku se budeme hloubìji zabývat metodami filtrování spamu.
+Klasifikaèní úloha filtrování spamu se dá pou¾ít nejen na filtrování skuteèného spamu v e-mailu, ale také na libovolnou úlohu, v ní¾ jde o rozdìlování vstupních dat do dvou tøíd.
+V této práci budeme nadále pou¾ívat termín \textit{spam} pro tøídu dat irelevantních k danému tématu, a termín \textit{ham} pro tøídu dat relevantních k danému tématu.
+Klasifikátory pro filtrování spamu je mo¾né nauèit klasifikovat vstupní data do libovolných dvou tøíd podle obsahu vstupu.
+
+\section{Bayesovský klasifikátor} \label{SF-BAYES}
+Bayesovský klasifikátor (naivní Bayesovský klasifikátor) je klasifikátor postavený na zjednodu¹eném Bayesovském teorému.
+Zjednodu¹ení plyne z toho, ¾e výskyt nebo naopak neexistence jednoho tokenu (slova) není závislá na existenci nebo neexistenci jiného tokenu(slova).
+Tudí¾ i kdy¾ tokeny na sobì závisejí, Bayesovský klasifikátor s nimi pracuje jako se zcela nezávislými událostmi.
+Tato vlastnost naivního Bayesovského filtrování je nevýhodou pro klasifikování pøirozenáho jazyka pøedev¹ím proto, ¾e slova se v jazyce vyskytují ve slovních spojeních, je¾ stejnì jako samotná slova napomáhají klasifikaci.
+Aèkoliv tato vlastnost Bayesovský klasifikátor omezuje, jeho vyu¾ití na reálných textech se osvìdèilo a je hojnì pou¾íván.
+V posledních letech ale ji¾ existují jiné a lep¹í metody pro klasifikaci, napøíklad metoda \textit{random forest}, kterou bych se v pozdìj¹ích verzích této práce rád podrobnìji zabýval.
+
+\subsection{Matematický model}
+Bayesovský klasifikátor vyu¾ívá Bayesova teorému, který zní následovnì:
+\begin{theorem}
+  Mìjme dva náhodné jevy $A$ a $B$ s pravdìpodobnostmi $P(A)$ a $P(B)$, pøièem¾ $P(B) > 0$. Potom platí:
+  \begin{equation}
+    P(A|B) = \frac{P(B|A) \cdot P(A)}{P(B)} \label{SF-BAYES-MAT-bayes_theorem}
+  \end{equation}
+\end{theorem}
+\begin{proof}
+  Dle podmínìných pravdìpodobností platí, ¾e pravdìpodobnost dvou událostí $A$ a $B$, $P(A \bigcap B)$ se rovná pravdìpodobnosti $A$ krát pravdìpodobnost $B$ za pøedpokladu, ¾e nastalo $A$, $P(B|A)$.
+  \begin{equation}
+    P(P(A \cap B)) = P(A) \cdot P(B|A)
+  \end{equation}  
+  Dále také platí, ¾e pravdìpodobnost $A$ a $B$ se rovná pravdìpodobnosti $B$ krát pravdìpodobnost $A$ za pøedpokladu ¾e nastalo $B$:
+  \begin{equation}
+    P(P(A \cap B)) = P(B) \cdot P(A|B)
+  \end{equation}
+  Z tìchto dvou vztahù vychází:
+  \begin{equation}
+    P(B) \cdot P(A|B) = P(A) \cdot P(B|A)
+  \end{equation}
+  Upravením této rovnice poté dostáváme:
+  \begin{equation}
+    P(A|B) = \frac{P(A) \cdot P(B|A)}{P(B)}
+  \end{equation}
+  Co¾ je Bayesùv teorém.
+  \hfill \textbf{Q.E.D}.
+\end{proof}
+
+
+Pro klasifikaci textu není vhodné pou¾ít pøímo rovnici z Bayesova teorému, jeliko¾ by bylo tøeba zapamatovat si pro ka¾dý token tøi hodnoty a bylo by nutné provádìt velké mno¾ství výpoètù, nicménì je mo¾né rovnici upravit do tvaru, v nìm¾ si pro ka¾dý token (slovo) vìty je tøeba pamatovat pouze jednu hodnotu pravdìpodobnosti a také není tøeba provádìt tolik výpoètù.
+Upravená rovnice má nasledující tvar:
+
+\begin{equation}
+P = \frac{p_1 p_2 p_3 \ldots p_N}{p_1 p_2 p_3 \ldots p_N + (1 - p_1) (1 - p_2) (1 - p_3) \ldots (1 - p_N)} \label{equation_used} \\
+\end{equation}
+kde $P$ je pravdìpodobnost urèující míru nále¾itostí klasifikované zprávy do tøídy spam a $p_i, i=1 \ldots N$ udává tuto míru pro jednotlivé tokeny $i$
+Výsledné $P$ je potom porovnáno s urèitým prahem, který definuje, zda je oklasifikovaná zpráva spam nebo ham.
+
+
+\subsubsection{Odvození rovnice pro klasifikaci} \label{SF-BAYES-MAT-bayes_theorem-deriv}
+Nyní pøejdìme k odvození rovnice \ref{equation_used} z Bayesova teorému \ref{SF-BAYES-MAT-bayes_theorem}.
+ 
+Mìjme $X$ a $Y$, které znamená, ¾e tokeny $x$ a $y$ jsou pøítomny a $S$ znamenající \uv{je to spam} a $\neg S$ znamenající \uv{je to ham} (není to spam).
+Pro zjednodu¹ení budeme pou¾ívat pøípad se dvìma slovy.
+$$
+ P(S | X \cap Y) = \frac{P(X \cap Y | S) \cdot P(S)}{P(X \cap Y)}
+$$
+Nyní vyu¾ijeme toho, ¾e platí $$P(B) = P(B|A) \cdot P(A) + P(B|\neg A) \cdot P(\neg A)$$. Tudí¾:
+\begin{equation}
+ P(S | X \cap Y) = \frac{P(X \cap Y | S) \cdot P(S)}{(P(S)*P(X \cap Y | S) + P(\neg S) \cdot P(X \cap Y | \neg S))} \label{SF-BAYES-MAT-bayes_theorem-deriv-eq1}
+\end{equation}
+Nyní aplikujeme onu naivitu, kterou jsme zmiòovali vý¹e \ref{SF-BAYES}.
+To znamená, ¾e budeme pøedpokládat, ¾e pravdìpodobnost $X$ je nezávislá na pravdìpodobnosti $Y$, tak¾e mù¾eme pou¾ít vztah:
+  $$P(A \cap B) = P(A) \cdot P(B)$$
+Z toho vyplývá ¾e rovnici \ref{SF-BAYES-MAT-bayes_theorem-deriv-eq1} mù¾eme upravit do tvaru
+\begin{equation}
+  P(S | X \cap Y) = \frac{P(X|S) \cdot P(Y|S) \cdot P(S)}{P(S) \cdot P(X|S) \cdot P(Y|S) + P(\neg S) \cdot P(X| \neg S) \cdot P(Y| \neg S)} \label{SF-BAYES-MAT-bayes_theorem-deriv-eq2}
+\end{equation}
+Vyjdeme opìt z Bayesova teorému, který øíká, ¾e platí:
+$$P(A|B) = \frac{P(B|A) \cdot P(A)}{P(B)}$$
+Toho vyu¾ijeme a dosadíme do rovnice \ref{SF-BAYES-MAT-bayes_theorem-deriv-eq2}, dostaneme tedy:
+\begin{equation}
+  P(S | X \cap Y) = \frac{\frac{P(S|X) \cdot P(X)}{P(S)} \cdot \frac{P(S|Y) \cdot P(Y)}{P(S)} \cdot P(S)}{P(S) \cdot \frac{P(S|X) \cdot P(X)}{P(S)} \cdot \frac{P(S|Y) \cdot P(Y)}{P(S)} + P(\neg S) \cdot \frac{P(\neg S|X) \cdot P(X)}{P(\neg S)} \cdot \frac{P(\neg S|Y) \cdot P(Y)}{P(\neg S)}} \label{SF-BAYES-MAT-bayes_theorem-deriv-eq3}
+\end{equation}
+Z rovnice \ref{SF-BAYES-MAT-bayes_theorem-deriv-eq2} mù¾eme odstranit $P(X)$ a $P(Y)$:
+$$
+  P(S | X \cap Y) = \frac{\frac{P(S|X)}{P(S)} \cdot \frac{P(S|Y)}{P(S)} \cdot P(S)}{P(S) \cdot \frac{P(S|X)}{P(S)} \cdot \frac{P(S|Y)}{P(S)} + P(\neg S) \cdot \frac{P(\neg S|X)}{P(\neg S)} \cdot \frac{P(\neg S|Y)}{P(\neg S)}}
+$$
+Po zjednodu¹ení dostaneme:
+\begin{equation}
+  P(S | X \cap Y) = \frac{\frac{P(S|X) \cdot P(S|Y)}{P(S)}}{\frac{P(S|X) \cdot P(S|Y)}{P(S)} + \frac{P(\neg S|X) \cdot P(\neg S|Y)}{P(\neg S)}} \label{SF-BAYES-MAT-bayes_theorem-deriv-eq4}
+\end{equation}
+Nyní mù¾eme pøistoupit k závìreèné úpravì, která ov¹em pøedpokládá, ¾e zprávy v uèící mno¾inì jsou rovnomìrnì rozlo¾eny, tzn. ¾e zhruba 50\% nauèených zpráv jsou spam a zhruba 50\% je ham.
+Potom  platí, ¾e $P(S) \approx P(\neg S)$ a tak dostaneme z rovnice \ref{SF-BAYES-MAT-bayes_theorem-deriv-eq4} rovnici následující
+\begin{equation}
+  P(S | X \cap Y) = \frac{P(S|X) \cdot P(S|Y)}{P(S|X) \cdot P(S|Y) + P(\neg S|X) \cdot P(\neg S|Y)} 
+\end{equation}
+kde $P(\neg A) = 1 - P(A)$ tudí¾ $P(\neg A|B)$ mù¾eme pøepsat na $1-P(A|B)$.
+Z toho získáme rovnici \ref{SF-BAYES-MAT-bayes_theorem-deriv-eq5} ekvivalentní s rovnicí \ref{equation_used}.
+\begin{equation}
+  P(S | X \cap Y) = \frac{P(S|X) \cdot P(S|Y)}{P(S|X) \cdot P(S|Y) + (1 - P(S|X)) \cdot (1- P(S|Y))} \label{SF-BAYES-MAT-bayes_theorem-deriv-eq5}
+\end{equation}
+Jestli¾e není uèící mno¾ina vyvá¾ená (stejnì spamu a hamu), je vhodné pro klasifikaci pou¾ít rovnici \ref{SF-BAYES-MAT-bayes_theorem-deriv-eq4}, proto¾e pøi pou¾ití rovnice \ref{SF-BAYES-MAT-bayes_theorem-deriv-eq5} mù¾e docházet ke zkreslení klasifikace.
+
+\subsection{Princip Bayesovského klasifikátoru} \label{SF-BAYES-PRINCIP}
+Bayesovský klasifikátor si do databáze pøi uèení ukládá pravdìpodobnost zda jsou jednotlivé tokeny (nejèastìji slova) ze vstupních vìt spam, tzn. ukládá si hodnotu  $P(S|X)$.
+Po nauèení dostateènì velkého objemu trénovacích dat potom vyu¾ívá tyto pravdìpodobnosti pro výpoèet, zda je klasifikovaný vstupní text spam, nebo ham.
+
+Klasifikace tedy probíhá tak, ¾e vstupní text $X$ se rozdìlí na tokeny $X_i$.
+Klasifikátor se podívá do databáze a zjistí pravdìpodobnosti $P(S|X_i)$ vyjad¾ující míru pravdìpodobnosti, ¾e jednotlivé tokeny nále¾í do tøídy spamu.
+Jestli¾e klasifkátor pøi klasifikaci textu narazí na token, který dosud není v jeho databázi, pak je mu pøiøazena hodnota 0.5 (tzn. klasifikátor neumí urèit s jakou pravdìpodobností je tento token spam èi ham).
+Pravdìpodobnost $P(X)$ ¾e vstupní text je spam je potom vypoèten pomocí dosazení $P(S|X_i)$ do rovnice \ref{SF-BAYES-MAT-bayes_theorem-deriv-eq5}.
+
+\subsection{pøíklad klasifikace}
+Uveïme si nyní jednoduchý pøíklad klasifikace textu:
+mìjme vstupní vìtu \textit{'Aaaa, my stomach hurts.'}.
+Tuto vìtu si klasifikátor rozdìlí podle zadaného pravidla na seznam tokenù (nejèastìji slov).
+$$['Aaaa', 'my', 'stomach', 'hurts']$$
+V databázi klasifikátoru máme napøíklad:
+$$\{'my':0.6, 'stomach':0.2, 'hurts':0.2\}$$
+V¹imnìme si, ¾e v databázi tokenù klasifikátoru se nevyskytuje slovo \texttt{'Aaaa'}.
+To znamená, ¾e klasifikátor se pøi svém uèení s tímto slovem doposud nesetkal, a tak mu pøiøadí pravdìpodobnost 0.5.
+Jeho databáze tokenù pro klasifikaci vstupní vìty \textit{'Aaaa, my stomach hurts.'} bude tedy vypadat následovnì:
+$$\{'my':0.6, 'stomach':0.2, 'hurts':0.2, 'Aaaa':0.5\}$$.
+Nyní u¾ má klasifikátor v¹e potøebné k tomu, aby vypoèítal pravdìpodobnost, zda je vstupní text spam èi nikoliv.
+Bude postupovat podle rovnice \ref{equation_used}.
+\begin{align*}
+P &= \frac{p_1 p_2 p_3 \ldots p_N}{p_1 p_2 p_3 \ldots p_N + (1 - p_1) (1 - p_2) (1 - p_3) \ldots (1 - p_N)} \\
+P &= \frac{0.2 \cdot 0.6 \cdot 0.2 \cdot 0.5}{0.2 \cdot 0.6 \cdot 0.2 \cdot 0.5 + (1 - 0.2) \cdot (1 - 0.6) \cdot (1 - 0.2) \cdot (1 - 0.5)} \\
+P &= 0.0857
+\end{align*}
+Dle tohoto výpoètu se tedy pravdìpodobnost, ¾e vìta \textit{'Aaaa, my stomach hurts.'} je spam rovná 0.0857.
+Co¾ znamená, ¾e vìta je rozhodnì ham.
+
+\chapter{Vlastní implementace}
+V této kapitole se budeme zabývat implementací jednotlivých algoritmù z kapitoly \ref{SF} a nástroji pou¾itými k jejich implementaci.
+
+\section{Obecné}
+\subsection{NLTK} \label{IMP-OBEC-NLTK}
+NLTK neboli Natural Language ToolKit je balík knihoven pro skriptovací jazyk pyhton 2.7 urèený pro symbolické a statistické zpracovávání pøirozené øeèi.
+NLTK obsahuje velké mno¾ství rùzných nástrojù, ale také ukázkových dat, které velmi zjednodu¹ují práci pøi zpracovávání pøirozeného jazyka.
+
+V této práci je z tohoto balíku pou¾ívána pouze jedna funkce, a to rozdìlovaè vìt podle jazyka.
+To znamená, ¾e tato funkce najde ve vìtì interpunkèní znaménka daného nastaveného jazyka a vstupní text rozdìlí na vìty.
+S rozdìlenými vìtami se dále pracuje (viz tokenizace \ref{IMP-BAYES-TOKEN}).
+
+\section{Bayesovský klasifikátor}
+Bayesovský klasifikátor je implementován jako modul ve skriptovacím jazyce Python verze 2.7.
+Pro výpoèet klasifikace je pou¾ita rovnice \ref{equation_used}. 
+\subsection{Ukládání dat}
+Klasifikátor pou¾ívá pro ukládání dat pøedev¹ím tedy databáze pravdìpodobností jednotlivých tokenù, na které klasifikátor pøi svém uèení narazil, serializaci.
+To je proces, pøi nìm¾ je datová struktura, nebo objekt pøeveden na proud dat, jen¾ se dá jednodu¹e ulo¾it a zpìtnì pøevést zpìt na danou strukturu èi objekt.
+V klasifikátoru je pou¾ita knihovní funkce pythonu s názvem \textit{pickle}, umo¾òující provést serializaci libovolné datové struktury pythonu a zpìt.
+
+\subsection{Tokenizace} \label{IMP-BAYES-TOKEN}
+Jak ji¾ bylo zmínìno v pøedchozím textu, tokenizace je rozdìlení vstupního textu do vhodných tokenù (nejèastìji slov).
+Tyto tokeny si klasifikátor ukládá pøi uèení do své databáze a upravuje jim postupnì v prùbìhu uèení pravdìpodobnost s jakou nále¾í do tøídy spamu.
+Pøed tokenizací je celý vstupní text upraven tak, ¾e jsou vynechány ve¹keré nealfanumerické znaky.
+Toto v¹ak bude ve finální verzi odstranìno a bude vytvoøen seznam znakù takzvaných \uv{features} a funkce, která bude s tìmito znaky (emotikony, tøi teèky, atd.) pracovat a pøidìlovat jim nìjakou pravìpodobnost nále¾itosti ke spamu, která bude následnì pracovávána.
+
+\subsubsection{Klasický pøístup k tokenizaci}
+Klasická tokenizace u Bayesovského klasifikátoru dìlí vstupní vìtu pouze na slova.
+To znamená:
+
+Mìjme vstupní zprávu \textit{'Damned headache. I have to sleep.'}
+takováto zpráva se rozdìlí na slova, tzn. vznikne následující seznam tokenù:
+$['Damned', 'headache', 'I', 'have', 'to', 'sleep']$
+S tìmito tokeny potom klasifikátor pracuje klasickým zpùsobem, jak bylo vysvìtleno vý¹e (\ref{SF-BAYES-PRINCIP}).
+
+\subsubsection{Alternativní pøístup k tokenizaci}
+Jak bylo øe¹eno, implementovaný Bayesovský klasifikátor je oznaèován jako naivní proto, ¾e nebere v potaz závislosti jednotlivých tokenù na sobì (co¾ vychází z odvození rovnice \ref{equation_used} pou¾ívané pro klasifikaci viz. \ref{SF-BAYES-MAT-bayes_theorem-deriv}).
+Proto jsem se sna¾il tuto nevýhodu kompenzovat tím, ¾e jsem vytvoøil alternativní pøístup k tokenizaci.
+Ten na rozdíl od klasické tokenizace nevytváøí tokeny pouze z jednotlivých slov, ale také z $N$ slov za sebou jdoucích, èím¾ bere v potaz jejich kontext ve vìtì.
+Nevýhodou tohoto pøístupu je, ¾e pro velké uèící mno¾iny výraznì roste velikost slovníku klasifikátoru.
+Uka¾me si alternativní pøístup k tokenizaci na pøikladu:
+
+Mìjme napøíklad opìt zprávu \textit{'Damned headache. I have to sleep.'}.
+Prvním krokem pøi zpracování zprávy je její rozdìlení na vìty, proto¾e kontext za sebou jdoucích slova funguje v¾dy v rámci jedné vìty.
+Pro rozdìlení vstupního textu na jednotlivé vìty je s úspìchem pou¾ita knihovna NLTK (viz. \ref{IMP-OBEC-NLTK}).
+Vstupní text je nyní v tomto tvaru
+$$['Damned\ headache.', 'I\ have\ to\ sleep]$$\\
+Na rozdíl od klasického pøístupu, který vytváøí tokeny pouze z jednotlivých slov, vytváøíme tokeny z libovolných za sebou jdoucích $N$-tic o maximální délce $N$.
+Hodnota $N$ je nastavena na optimální hodnotu urèenou experimentálnì za pomocí testù tak, aby stále je¹tì vylep¹ovala výslednou pøesnost klasifikátoru a pøitom aby velikost slovníku nepøesáhla pøijatelnou mez.
+Tokeny pro vstupní text a $N = 3$ budou tedy vypadat následovnì pro první vìtu:
+$$['Damned', 'headache', ('Damned', 'headache')]$$
+a pro druhou vìtu:
+$$['I', 'have', 'to', 'sleep', ['I', 'have'], ['have', 'to'], ['to', 'sleep'], ['I', 'have', 'to'], ['have', 'to', 'sleep']]$$
+S tìmito tokeny pak klasifikátor pracuje stejnì jako s klasickými.
+
+\chapter{Testy}
+\section{Data}\label{TEST-DATA}
+Jedním z úkolù vyplývajících ze zadání této práce bylo vytvoøit datovou sadu pro uèení a testování vytvoøených klasifikátorù.
+Zdrojem tìchto dat byla databáze tweetù projektu M-eco\footnote{http://www.meco-project.eu/}, ve kterém participuje výzkumná skupina NLP pracující pøi Fakultì informaèních technologii VUT v Brnì.
+
+Byly vytvoøeny dvì datové sady, jedna pro anglický jazyk a druhá pro nìmecký.
+Celkovì bylo anotováno 4500 tweetù pro anglický jazyk a 3000 tweetù pro nìmecký.
+Tyto datové sady potom byly rozdìleny na dvì èásti, z nich¾ jedna byla pou¾ita pro trénování klasifikátoru a druhá pro testování.
+Aby klasifikátor fungoval správnì, mìlo by rozlo¾ení relevantních a nerelevantních tweetù v trénovací mno¾inì být zhruba 50/50.
+Tento pomìr vycházi z odvození klasifikaèní rovnice (viz \ref{SF-BAYES-MAT-bayes_theorem-deriv}).
+Pro anglický jazyk jsou tweety v trénovací mno¾inì zhruba takto rozlo¾eny, nicménì pro nìmecký jazyk jsou tweety rozlo¾eny nerovnomìrnì (asi 80\% relevantních a 20\% nerelevantních).
+Mno¾ina nìmeckých trénovacích dat se v¹ak bude je¹tì roz¹iøovat a tento pomìr bude vyrovnán.
+
+
+\section{Úloha implementovaného klasifikátoru}
+Jak bylo ji¾ zmínìno v úvodu práce (\ref{UVOD-MOTIVACE}), jedním z mých cílù je v této práci vytvoøit klasifikátor pro klasifikaci tweetù v projektu M-eco.
+Implementovaný klasifikátor je nauèen na rozdìlení vstupních tweetù do dvou tøíd -- \textbf{zabývající se osobními zku¹enostmi pisatelù s nemocemi (ale také zku¹enostmi z pisatelova okolí)}, nebo \textbf{nezabývající se tìmito zku¹enostmi}.
+Tedy napøíklad tweet \textit{'I have a huge headache'} nebo \textit{'My dad feels sick'} jsou relevantní, naproti tomu \textit{'Canadians should expect to see more severe cases of swine flu.'} je irelevantní. 
+
+\section{Testovací metriky} \label{TEST-METRIKY}
+Aby bylo mo¾né nìjakým zpùsobem porovnat rùzné výsledky klasifikátoru a také posléze klasifikátory mezi sebou, je tøeba zavést vhodné metriky popisující vlastnosti klasifikátoru.
+V této èásti práce budou tyto pou¾ité metriky vysvìtleny.
+\subsection{Korelace}
+Korelace je statistické metoda, která definuje vzájemný vztah mezi velièinami $X$ a $Y$.
+Míru korelace urèuje koeficient korelace nabývající hodnot $<-1, 1>$.
+Jestli¾e korelaèní koeficient nabývá hodnotu -1, pak to znaèí, ¾e velièiny $X$ a $Y$ jsou na sobì zcela nezávislé.
+Naopak nabývá-li korelaèní koeficient hodnoty 1, pak jsou na sobì velièiny pøímo závislé.
+
+Korelaèní koeficient se vypoèítá jako 
+$$
+  K(X,Y) = \frac{E(XY) - E(X)E(Y)}{\sqrt{E(X^2 - E(X)^2)} \sqrt{(E(Y^2) - E(Y)^2)}}
+$$
+kde $X$ jsou klasifikátorem automaticky spoèítané pravdìpodobnosti a $X$ jsou pravdìpodobnosti zadané u¾ivatelem pøi anotaci ($0.01 = spam$ a $0.99 = ham$).
+
+Pøi testování klasifikátoru se poèítá korelace mezi u¾ivatelem zadanou hodnotou vstupního textu (pøi anotaci testovací mno¾iny) a výsledkem klasifikátoru.
+Èím více se tedy korelaèní koeficient blí¾í hodnotì 1, tím lep¹í výsledek klasifikátoru pøedstavuje.
+
+\subsection{Výsledek klasifikace}\label{TEST-VYS_KLAS}
+Abychom byli schopni pøesnì zjistit jak klasifikátor testovací mno¾inu oklasifikoval, rozdìlíme oklasifikovaná data do ètyø skupin.
+\begin{itemize}
+ \item \textit{True positive} -- poèet tweetù, které byly klasifikátorem správnì zaøazeny do relevantní tøídy.
+ \item \textit{True negative} -- poèet tweetù, které byly klasifikátorem správnì zaøazeny do nerelevantní tøídy.
+ \item \textit{False positive} -- poèet tweetù, které byly klasifikátorem ¹patnì zaøazeny do relevantní tøídy.
+ \item \textit{False negative} -- poèet tweetù, které byly klasifikátorem ¹patnì zaøazeny do nerelevantní tøídy.
+\end{itemize}
+Tyto hodnoty jsou tedy výsledkem porovnání pøedpokládaného výstupu klasifikátoru s reálným výstupem implementovaného klasifikátoru.
+Je zøejmé, ¾e èím ménì záznamù se nachází ve False negative a False positive, tím lépe klasifikátor funguje.
+
+\subsection{Precision, Recall, Accuracy, F--measure}
+Dal¹ími metrikami, pomocí nich¾ budeme moci porovnávat výsledky klasifikátorù, jsou funkce Precision(pøesnost), Recall(odezva), Accuracy(pøesnost\footnote{'Accuracy' a 'Precision' se do èeského jazyka pøekládají stejnì, tzn. jako pøesnost, nicménì jde o jiné metriky pro porovnávání klasifikátorù. Z toho dùvodu budeme metriky nazývat anglickými názvy.}) a F--measure.
+Pro následující metody se pøedpokládá, ¾e jsme schopni vypoèítat hodnoty \textit{True positive}, \textit{True negative}, \textit{False positive} a \textit{False negative} (viz \ref{TEST-VYS_KLAS})
+\subsubsection{Accuracy}
+Nejjednodu¹¹í metrikou pro porovnávání pøesnosti klasifikátorù je metrika Accuracy.
+Lze ji jednodu¹e vypoèítat následovnì:
+$$
+  Accuracy = \frac{true\_positive + true\_negative}{true\_positive + true\_negative + false\_positive + false\_negative}
+$$
+Nevýhodou této metriky v¹ak je, ¾e nebere v potaz poèty záznamù v jednotlivých tídách.
+
+\subsubsection{Precision. Recall}
+$$
+  Precision = \frac{true\_positive}{true\_positive + false\_positive}
+$$
+$$
+  Recall = \frac{true\_positive}{true\_positive + false\_negative}
+$$
+Precision tedy mù¾eme definovat jako pomìr správnì oklasifikovaných relevantních záznamù vùèi v¹em oklasifikovaným relevantním záznamùm.
+Recall je potom pomìr správnì oklasifikovaných relevantních záznamù vùèi skuteènì relevantním záznamùm
+\subsubsection{F--measure}
+$$
+  Fmeasure = 2 \cdot \frac{Precision \cdot Recall}{Precision + Recall}
+$$
+F--measure je jedna z metrik nejèastìji pou¾ívaných pro hodnocení klasifikátorù.
+De facto jde o váhovaný prùmìr Precision a Recall.
+F--measure nabývá hodnot $<0,1>$, kde 0 je nejhor¹í skóre popisující výsledek klasifikátoru a 1 je nejlep¹í.
+
+\section{Testy Bayesovského klasifikátoru}
+Nyní pøistupme k pøedstavení výsledku testù Bayesovského klasifikátoru.
+Hlavním cílem jeho testování bylo nalézt optimální délku tokenù pøi pou¾ití nového zpùsobu tokenizace (viz \ref{IMP-BAYES-TOKEN}).
+Testy jsou provádìny na manuálnì anotovaných datech(viz. \ref{TEST-DATA}.
+Testy provádíme samostatnì pro anglický jazyk na anglických tweetech a pro nìmecký jazyk na nìmeckých tweetech.
+
+\subsection{Angliètina}
+Velikost testovací sady pro anglický jazyk bylo 120 tweetù, z nich¾ 60 bylo relevantních a dal¹ích 60 irelevantních k tématu.
+Pro zji¹tìní ideální délky $N$-tic tokenù jsme aplikovali testy pro postupnì zvìt¹ující se $N$, a to dokud se zlep¹ovala hodnota korelaèního koeficientu (korelace) a F--measure (viz \ref{TEST-METRIKY}).
+Následující tabulka øíká, jak se klasifikátor choval pøi zmìnì nastavení maximální délky za sebou jdoucích $N$-tic slov(tokenù).
+\begin{center}
+\begin{scriptsize}
+\begin{tabular}{| c || c | c | c | c | c | c |}
+  N-length       & 1             & 2              & 3             & 4              & 5              & 6              \\
+  Korelace       & 0.5184        & 0.5409         & 0.5541        & 0.559          & 0.5668         & 0.5668         \\
+  True positive  & 51.0 (42.5\%) & 52.0 (43.33\%) & 54.0 (45.0\%) & 55.0 (45.83\%) & 55.0 (45.83\%) & 55.0 (45.83\%) \\
+  True negative  & 48.0 (40.0\%) & 48.0 (40.0\%)  & 48.0 (40.0\%) & 48.0 (40.0\%)  & 48.0 (40.0\%)  & 48.0 (40.0\%)  \\
+  False positive & 12.0 (10.0\%) & 12.0 (10.0\%)  & 12.0 (10.0\%) & 12.0 (10.0\%)  & 12.0 (10.0\%)  & 12.0 (10.0\%)  \\
+  False negative & 9.0 (7.5\%)   & 8.0 (6.67\%)   & 6.0 (5.0\%)   & 5.0 (4.17\%)   & 5.0 (4.17\%)   & 5.0 (4.17\%)   \\
+  Precision      & 0.8095        & 0.8125         & 0.8182        & 0.8209         & 0.8209         & 0.8209         \\
+  Recall         & 0.85          & 0.8667         & 0.9           & 0.9167         & 0.9167         & 0.9167         \\
+  Accuracy       & 0.825         & 0.8334         & 0.85          & 0.8583         & 0.8583         & 0.8583         \\
+  F-measure      & 0.829         & 0.8387         & 0.8572        & 0.8661         & 0.8661         & 0.8661         \\
+\end{tabular}
+\end{scriptsize}
+\end{center}
+
+\subsection{Nìmecký jazyk}
+Pro nìmecký jazyk jsme spou¹tìli obdobné testy jako pro jazyk anglický, tzn. zji¹»ovali jsme optimální délku $N$-tic pro tokenizaci.
+Testovací mno¾ina pro nìmecký jazyk sestává z 25 relevantních tweetù a 191 irelevantních. 
+\begin{center}
+\begin{scriptsize}
+\begin{tabular}{| c || c | c | c | c | c | c |}
+  N-length       & 1              & 2               & 3               & 4               & 5               & 6               \\
+  Korelace       & 0.2723         & 0.2423          & 0.2433          & 0.2429          & 0.2429          & 0.2429          \\
+  True positive  & 22.0 (10.19\%) & 22.0 (10.19\%)  & 22.0 (10.19\%)  & 22.0 (10.19\%)  & 22.0 (10.19\%)  & 22.0 (10.19\%)  \\
+  True negative  & 103.0 (47.69\%)& 106.0 (49.07\%) & 107.0 (49.54\%) & 107.0 (49.54\%) & 107.0 (49.54\%) & 107.0 (49.54\%) \\
+  False positive & 88.0 (40.74\%) & 85.0 (39.35\%)  & 84.0 (38.89\%)  & 84.0 (38.89\%)  & 84.0 (38.89\%)  & 84.0 (38.89\%)  \\
+  False negative & 3.0 (1.39\%)   & 3.0 (1.39\%)    & 3.0 (1.39\%)    & 3.0 (1.39\%)    & 3.0 (1.39\%)    & 3.0 (1.39\%)    \\
+  Precision      & 0.2            & 0.2056          & 0.2075          & 0.2075          & 0.2075          & 0.2075          \\
+  Recall         & 0.88           & 0.88            & 0.88            & 0.88            & 0.88            & 0.88            \\
+  Accuracy       & 0.5787         & 0.5926          & 0.5972          & 0.5972          & 0.5972          & 0.5972          \\
+  F-measure      & 0.3259         & 0.3333          & 0.3358          & 0.3358          & 0.3358          & 0.3358          \\
+\end{tabular}
+\end{scriptsize}
+\end{center}
+
+\subsection{Shrnutí výsledkù testù}
+Z výsledkù pro jednotlivé jazyky je zøejmé, ¾e pro anglický jazyk klasifikátor pracuje vcelku spolehlivì a s pomìrnì vysokou pøesností (F--measure = 0.8661).
+Pro nìmecký jazyk jsou v¹ak výsledky klasifikace pomìrnì ¹patné (F--measure = 0.3358).
+Nepøesnost klasifikátoru je zøejmì zpùsobena nevyvá¾eností trénovacích dat, ale také tím, ¾e nìmecký jazyk je gramaticky výraznì slo¾itìj¹i, ne¾ jazyk anglický.
+
+Zamìøme se nyní na vylep¹ení klasifikátoru, které pøiná¹í alternativní pøístup k tokenizaci oproti klasickému pøístupu (viz \ref{IMP-BAYES-TOKEN}).
+Podíváme-li se do tabulky výsledkù klasifikátoru, je jasnì vidìt, ¾e pøesnost klasifikátoru roste s rostoucím $N$.
+Tento rùst pøesnosti v¹ak není nekoneèný, a to pøedev¹ím kvùli tomu, ¾e slova která jsou spolu v kontextu, bývají ve vìtì velmi èasto blízko sebe.
+Pokud je $N$ nastaveno na 1, pak je pro tokenizaci pou¾it klasický pøístup.
+
+Pøi testování klasifikátoru na anglických tweetech je z tabulky zøejmé, ¾e hodnota korelace roste a¾ do $N = 5$, tzn. tokeny jsou vytvoøeny a¾ z pìti za sebou jdoucích slov.
+Bylo by tedy vhodné pøi nasazení klasifikátoru nastavit $N$ na hodnotu 5.
+I v tabulce popisující klasifikátor nìmeckých tweetù je vidìt, ¾e pou¾ití nové metody tokenizace je výhodné, aèkoliv v tomto pøípadì jsou výsledky klasifikátoru zlep¹eny jen malou mìrou.
+
+\chapter{Závìr} 
+V této semestrální práci jsem se vìnoval obecným klasifikaèním metodám se zamìøením na klasifikaci textu.
+Uvedl jsem zde také struènì historický vývoj oboru zpracování pøirozeného jazyka a velmi struèný výèet nìkterých jeho základních úloh.
+
+Hlavním tématem v¹ak byla klasifikace textu podle tématu, co¾ bylo také zadáním této práce.
+Jako hlavní metoda pro øe¹ení tohoto problému jsem vybral metodu filtrování spamu nazývanou Bayesovský klasifikátor (Bayesian Classifier).
+Rozebral jsme dopodrobna matematický model této metody a pøedstavil jsem pøíklady jejího u¾ití pøi klasifikaci textových dokumentù a nìkteré mo¾nosti jejího vylep¹ení.
+
+V dal¹í èásti práce jsem implementován Bayesovský klasifikátor pro klasifikaci tweetù z internetové sociální sítì Twitter.
+Klasifikátor mìl tyto tweety rozdìlit do dvou tøíd urèujících relevanci, nebo naopak nerelevanci daných tweetù z hlediska jejich vyu¾ití v epidemiologických systémech.
+Pro tokenizaci vstupního tweetu jsem vytvoøil pøístup sna¾ící se alespoò èásteènì odstranit slabinu Bayesovského klasifikátoru zpùsobující, ¾e klasifikátor nebere v potaz kontext slov ve vìtì, ale pouze samostatná slova.
+Tato vlastnost klasifikátoru vychází z odvození rovnice, pou¾ité pro klasifikaci, z Bayesova teorému.
+Pomocí testù jsem nakonec dokázal, ¾e implementovaný pøístup vylep¹ení klasické tokenizace pomáhá zlep¹it výsledky Bayesovského klasifikátoru.
+
+V této práci bych rád pokraèoval a roz¹íøil ji na diplomovou práci.
+V té bych chtìl na doposud implementovaný Bayesovský klasifikátor pou¾ívající alternativní metodu tokenizace pou¾ít metodu boosting pro dal¹í zlep¹ení pøesnosti klasifikace.
+Druhým klasifikátorem, který bych pro svou diplomovou práci chtìl implementovat, je neprobabilistický klasifikátor SVM (Support vector machine).
+Tyto dva implementované klasifikátory zamý¹lím porovnat podle zavedených metrik a lep¹í klasifikátor vyu¾ít rovnì¾ ve své dal¹í práci pøi klasifikaci tweetù pro projekt M-eco.
+
+\nocite{automatic_sumarization}
+\nocite{anonymisation}
+\nocite{nlg}
+\nocite{clustering}
+\nocite{Manning}
+\nocite{SRM}
+\nocite{boosting_bayesian}
+\nocite{Malik2007thesis}
+
+%=========================================================================

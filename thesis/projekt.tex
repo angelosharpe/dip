@@ -1,0 +1,128 @@
+%============================================================================
+% tento soubor pouzijte jako zaklad
+% (c) 2008 Michal Bidlo
+% E-mail: bidlom AT fit vutbr cz
+%============================================================================
+% kodovaní: iso-8859-2 (zmena prikazem iconv, recode nebo cstocs)
+%----------------------------------------------------------------------------
+% zpracování: make, make pdf, make desky, make clean
+% p?ipomínky posílejte na e-mail: bidlom AT fit.vutbr.cz
+% vim: set syntax=tex encoding=latin2:
+%============================================================================
+\documentclass[cover]{fitthesis} % odevzdani do wisu - odkazy, na ktere se da klikat
+%\documentclass[cover,print]{fitthesis} % pro tisk - na odkazy se neda klikat
+%\documentclass[english,print]{fitthesis} % pro tisk - na odkazy se neda klikat
+%      \documentclass[english]{fitthesis}
+% * Je-li prace psana v anglickem jazyce, je zapotrebi u tridy pouzit 
+%   parametr english nasledovne:
+%      \documentclass[english]{fitthesis}
+% * Neprejete-li si vysazet na prvni strane dokumentu desky, zruste 
+%   parametr cover
+
+% zde zvolime kodovani, ve kterem je napsan text prace
+% "latin2" pro iso8859-2 nebo "cp1250" pro windows-1250, "utf8" pro "utf-8"
+%\usepackage{ucs}
+\usepackage[latin2]{inputenc}
+\usepackage[T1, IL2]{fontenc}
+\usepackage{url}
+\DeclareUrlCommand\url{\def\UrlLeft{<}\def\UrlRight{>} \urlstyle{tt}}
+
+%zde muzeme vlozit vlastni balicky
+
+\newenvironment{definition}[1][Definice]{\begin{trivlist}
+\item[\hskip \labelsep {\bfseries #1}]}{\end{trivlist}}
+\newenvironment{theorem}[1][Vìta]{\begin{trivlist}
+\item[\hskip \labelsep {\bfseries #1}]}{\end{trivlist}}
+\newenvironment{proof}[1][Dùkaz]{\begin{trivlist}
+\item[\hskip \labelsep {\bfseries #1}]}{\end{trivlist}}
+
+% =======================================================================
+% balíèek "hyperref" vytváøí klikací odkazy v pdf, pokud tedy pou¾ijeme pdflatex
+% problém je, ¾e balíèek hyperref musí být uveden jako poslední, tak¾e nemù¾e
+% být v ¹ablonì
+\ifWis
+\ifx\pdfoutput\undefined % nejedeme pod pdflatexem
+\else
+  \usepackage{color}
+  \usepackage[unicode,colorlinks,hyperindex,plainpages=false,pdftex]{hyperref}
+  \definecolor{links}{rgb}{0.4,0.5,0}
+  \definecolor{anchors}{rgb}{1,0,0}
+  \def\AnchorColor{anchors}
+  \def\LinkColor{links}
+  \def\pdfBorderAttrs{/Border [0 0 0] }  % bez okrajù kolem odkazù
+  \pdfcompresslevel=9
+\fi
+\fi
+
+%Informace o praci/projektu
+%---------------------------------------------------------------------------
+\projectinfo{
+  %Prace
+  project=SP,            %typ prace BP/SP/DP/DR
+  year=2011,             %rok
+  date=\today,           %datum odevzdani
+  %Nazev prace
+  title.cs={Klasifikace dokumentù podle tématu},  %nazev prace v cestine
+  title.en={Document Classification}, %nazev prace v anglictine
+  %Autor
+  author={Tomá¹ Marek},   %jmeno prijmeni autora
+  author.title.p=Bc., %titul pred jmenem (nepovinne)
+  %author.title.a=PhD, %titul za jmenem (nepovinne)
+  %Ustav
+  department=UPGM, % doplnte prislusnou zkratku: UPSY/UIFS/UITS/UPGM
+  %Skolitel
+  supervisor= Lubomír Otrusina, %jmeno prijmeni skolitele
+  supervisor.title.p=Ing.,   %titul pred jmenem (nepovinne)
+  %supervisor.title.a={Ph.D.},    %titul za jmenem (nepovinne)
+  %Klicova slova, abstrakty, prohlaseni a podekovani je mozne definovat 
+  %bud pomoci nasledujicich parametru nebo pomoci vyhrazenych maker (viz dale)
+  %===========================================================================
+  %Klicova slova
+  keywords.cs={klasifikace, naivní bayesovský filter, bayesovský filter, bayesovský theorém, aktivní uèení, klasifikace pøirozeného jazyka, strojové uèení, zpracování pøirozeného jazyka, boosting}, %klicova slova v ceskem jazyce
+  keywords.en={classification, naive bayesian filter, bayesian filter, bayesian theorem, active learning, classification of natural language, machine learning, natural language processing, boosting}, %klicova slova v anglickem jazyce
+  %Abstract
+  abstract.cs={Tato práce se zabývá problematikou klasifikace textových dokumentù, a to pøedev¹ím metodami filtrování spamu.
+  Hlavním cílem této práce je rozebrat libovolný algoritmus pro klasifikaci dokumentù a implementovat jej.
+  Byl zvolen algoritmus bayesovského klasifikátoru, který byl podrobnì analyzován a popsán.
+  V této práci je navr¾eno vylep¹ení základního algoritmu bayesovského klasifikátoru, které pøi následném testování vykázalo lep¹í výsledky klasifikace ne¾ pøi pou¾ití základního bayesovského klasifikátoru.}, % abstrakt v ceskem jazyce
+  abstract.en={This thesis deals with a document classification, especialy with spam filtering methods.
+  Main goal of this thesis is to analyze arbitrary document classification algorithm and to create an implementation of this algorithm.
+  The bayesian classifier was selected which was analyzed and implemented.
+  This thesis offers an improvement of this basic bayesian classifier, which was succesfuly tested and provided better results than basic implementation.}, % abstrakt v anglickem jazyce
+  %Prohlaseni
+  declaration={Prohla¹uji, ¾e jsem tento semestrální projekt vypracoval samostatnì pod vedením pana Ing. Lubomíra Otrusiny},
+  %Podekovani (nepovinne)
+  acknowledgment={V prvé øadì bych chtìl podìkovat panu Ing. Lubomíru Otrusinovi za vedení práce a podnìtné pøipomínky a návrhy a dále své rodinì za podporu a pomoc, kterou mi poskytli.} % nepovinne
+}
+
+\begin{document}
+  % Vysazeni titulnich stran
+  % ----------------------------------------------
+  \maketitle
+  % Obsah
+  % ----------------------------------------------
+  \tableofcontents
+  
+  % Seznam obrazku a tabulek (pokud prace obsahuje velke mnozstvi obrazku, tak se to hodi)
+  % \listoffigures
+  % \listoftables 
+
+  % Text prace
+  % ----------------------------------------------
+  \input{obsah} % viz. obsah.tex
+
+  % Pouzita literatura
+  % ----------------------------------------------
+\ifczech
+  \bibliographystyle{czechiso}
+\else 
+  \bibliographystyle{plain}
+%  \bibliographystyle{alpha}
+\fi
+  \begin{flushleft}
+  \bibliography{literatura} % viz. literatura.bib
+  \end{flushleft}
+  \appendix
+  
+  \input{prilohy} % viz. prilohy.tex
+\end{document}
