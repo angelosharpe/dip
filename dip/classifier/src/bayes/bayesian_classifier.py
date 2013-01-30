@@ -32,11 +32,11 @@ class BayesianClassifier:
         else:
             self.word_dict = WordDictionary()
 
-    def train(self, entry, classification):
+    def train(self, entry, classification, features):
         '''Add each token to word dictionary for futher classification.'''
         language = entry.get_language()
         # for each token add to word dictionary
-        for token in entry.get_token():
+        for token in entry.get_token(features):
             self.word_dict.words.setdefault(language, {}).setdefault(
                     token.get_data(), {'count':0, 'weight':0})['count'] += 1
             if classification:
@@ -46,7 +46,7 @@ class BayesianClassifier:
                 self.word_dict.words[language][token.get_data()]['weight'] += \
                     (1 - self.HR_PROB)
 
-    def classify(self, text, language):
+    def classify(self, text, language, features):
         '''
         Given input text and language, method calculates probability of text
         being relevant to topic. Classifier consists of two separate ones.
@@ -71,7 +71,7 @@ class BayesianClassifier:
         b = 1.0
         a_feature = 1.0
         b_feature = 1.0
-        for token in input_entry.get_token():
+        for token in input_entry.get_token(features):
             if not token.get_data() in self.word_dict.words[language]:
                     probability = 0.5
             else:

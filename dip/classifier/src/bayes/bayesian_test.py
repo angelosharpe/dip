@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 
 import sqlite3
+import itertools
 from math import sqrt
 
 from bayesian_classifier import BayesianClassifier
@@ -129,92 +130,106 @@ class BayesianTest:
         used_relevant = relevant[:count]
         used_irelevant = irelevant[:count]
 
-        # dictionary containing n-fold-cross-validation results
-        results = []
+        # find which features to use
+        tmp_entry = Entry(id=None, guid=None, entry=None, language=None)
+        best_corelation = 0
+        best_feat = None
 
-        # start n-fold-cross-validation
-        for i in xrange(n_fold_cv):
-            self.bcl._logger.info('Iteration: {0}'.format(i))
+        for feat_sel in [dict(zip(tmp_entry.features_func_count, x)) for x in itertools.product(*tmp_entry.features_func_count.itervalues())]:
+            self.bcl._logger.info('Trying features:{0}'.format(feat_sel))
 
-            # clear dictionary from previous iterations
-            self.bcl.word_dict.wipe()
+            # dictionary containing n-fold-cross-validation results
+            results = []
 
-            # create test and train sets
-            self.bcl._logger.info('Creating dataset...')
-            to_test_relevant = \
-                    used_relevant[i*(count/n_fold_cv):(i+1)*(count/n_fold_cv)]
-            to_test_irelevant = \
-                    used_irelevant[i*(count/n_fold_cv):(i+1)*(count/n_fold_cv)]
-            to_train_relevant = used_relevant[:i*(count/n_fold_cv)]
-            to_train_relevant.extend(used_relevant[(i+1)*(count/n_fold_cv):])
-            to_train_irelevant = used_irelevant[:i*(count/n_fold_cv)]
-            to_train_irelevant.extend(used_irelevant[(i+1)*(count/n_fold_cv):])
+            # start n-fold-cross-validation
+            for i in xrange(n_fold_cv):
+                self.bcl._logger.info('Iteration: {0}'.format(i))
 
-            # train
-            self.bcl._logger.info('Training starts...')
-            for db_entry in to_train_relevant:
-                entry =  Entry(id=None, guid=None, entry=db_entry[1], language=db_entry[0])
-                self.bcl.train(entry, True)
-            for db_entry in to_train_irelevant:
-                entry = Entry(id=None, guid=None, entry=db_entry[1], language=db_entry[0])
-                self.bcl.train(entry, False)
-            self.bcl._logger.info('Trained {0} relevant and {1} irelevant entries'.format(
-                len(to_train_relevant), len(to_train_irelevant)))
+                # clear dictionary from previous iterations
+                self.bcl.word_dict.wipe()
 
-            # run tests
-            self.bcl._logger.info('Testing starts...')
+                # create test and train sets
+                self.bcl._logger.info('Creating dataset...')
+                to_test_relevant = \
+                        used_relevant[i*(count/n_fold_cv):(i+1)*(count/n_fold_cv)]
+                to_test_irelevant = \
+                        used_irelevant[i*(count/n_fold_cv):(i+1)*(count/n_fold_cv)]
+                to_train_relevant = used_relevant[:i*(count/n_fold_cv)]
+                to_train_relevant.extend(used_relevant[(i+1)*(count/n_fold_cv):])
+                to_train_irelevant = used_irelevant[:i*(count/n_fold_cv)]
+                to_train_irelevant.extend(used_irelevant[(i+1)*(count/n_fold_cv):])
+
+                # train
+                self.bcl._logger.info('Training starts...')
+                for db_entry in to_train_relevant:
+                    entry =  Entry(id=None, guid=None, entry=db_entry[1], language=db_entry[0])
+                    self.bcl.train(entry, True, feat_sel)
+                for db_entry in to_train_irelevant:
+                    entry = Entry(id=None, guid=None, entry=db_entry[1], language=db_entry[0])
+                    self.bcl.train(entry, False, feat_sel)
+                self.bcl._logger.info('Trained {0} relevant and {1} irelevant entries'.format(
+                    len(to_train_relevant), len(to_train_irelevant)))
+
+                # run tests
+                self.bcl._logger.info('Testing starts...')
+                clas_res = {}
+                clas_res['true_positive'] = 0
+                clas_res['true_negative'] = 0
+                clas_res['false_positive'] = 0
+                clas_res['false_negative'] = 0
+                clas_res['unknown'] = 0
+                corelation_test_res = []
+                for db_entry in to_test_relevant:
+                    result = self.bcl.classify(db_entry[1], db_entry[0], feat_sel)
+                    corelation_test_res.append((result, self.bcl.HR_PROB))
+                    if result >= self._high:
+                        clas_res['true_positive'] += 1
+                    elif result > self._low:
+                        clas_res['unknown'] += 1
+                    elif result <= self._low:
+                        clas_res['false_negative'] += 1
+                for db_entry in to_test_irelevant:
+                    result = self.bcl.classify(db_entry[1], db_entry[0], feat_sel)
+                    corelation_test_res.append((result, 1.0 - self.bcl.HR_PROB))
+                    if result <= self._low:
+                        clas_res['true_negative'] += 1
+                    elif result < self._high:
+                        clas_res['unknown'] += 1
+                    elif result >= self._high:
+                        clas_res['false_positive'] += 1
+                self.bcl._logger.info('Tested {0} relevant and {1} irelevant entries'.format(
+                    len(to_test_relevant), len(to_test_irelevant)))
+
+                # calculate corelation
+                clas_res['corelation'] = self._test_corelation(corelation_test_res)
+
+                #add results to final results
+                results.append(clas_res)
+
+            # calculate overall results
+            self.bcl._logger.info('Overall results:')
             clas_res = {}
-            clas_res['true_positive'] = 0
-            clas_res['true_negative'] = 0
-            clas_res['false_positive'] = 0
-            clas_res['false_negative'] = 0
-            clas_res['unknown'] = 0
-            corelation_test_res = []
-            for db_entry in to_test_relevant:
-                result = self.bcl.classify(db_entry[1], db_entry[0])
-                corelation_test_res.append((result, self.bcl.HR_PROB))
-                if result >= self._high:
-                    clas_res['true_positive'] += 1
-                elif result > self._low:
-                    clas_res['unknown'] += 1
-                elif result <= self._low:
-                    clas_res['false_negative'] += 1
-            for db_entry in to_test_irelevant:
-                result = self.bcl.classify(db_entry[1], db_entry[0])
-                corelation_test_res.append((result, 1.0 - self.bcl.HR_PROB))
-                if result <= self._low:
-                    clas_res['true_negative'] += 1
-                elif result < self._high:
-                    clas_res['unknown'] += 1
-                elif result >= self._high:
-                    clas_res['false_positive'] += 1
-            self.bcl._logger.info('Tested {0} relevant and {1} irelevant entries'.format(
-                len(to_test_relevant), len(to_test_irelevant)))
-
-            # calculate corelation
-            clas_res['corelation'] = self._test_corelation(corelation_test_res)
-
-            #add results to final results
-            results.append(clas_res)
-
-            # calculating iteration results
-            self.bcl._logger.info('Results:')
+            clas_res['true_positive'] = 0.0
+            clas_res['true_negative'] = 0.0
+            clas_res['false_positive'] = 0.0
+            clas_res['false_negative'] = 0.0
+            clas_res['unknown'] = 0.0
+            clas_res['corelation'] = 0.0
+            for res in results:
+                clas_res['true_positive'] += res['true_positive'] / float(n_fold_cv)
+                clas_res['true_negative'] += res['true_negative'] / float(n_fold_cv)
+                clas_res['false_positive'] += res['false_positive'] / float(n_fold_cv)
+                clas_res['false_negative'] += res['false_negative'] / float(n_fold_cv)
+                clas_res['unknown'] += res['unknown'] / float(n_fold_cv)
+                clas_res['corelation'] += res['corelation'] / float(n_fold_cv)
             self._calculate_results(clas_res)
 
-        # calculate overall results
-        self.bcl._logger.info('Overall results:')
-        clas_res = {}
-        clas_res['true_positive'] = 0.0
-        clas_res['true_negative'] = 0.0
-        clas_res['false_positive'] = 0.0
-        clas_res['false_negative'] = 0.0
-        clas_res['unknown'] = 0.0
-        clas_res['corelation'] = 0.0
-        for res in results:
-            clas_res['true_positive'] += res['true_positive'] / float(n_fold_cv)
-            clas_res['true_negative'] += res['true_negative'] / float(n_fold_cv)
-            clas_res['false_positive'] += res['false_positive'] / float(n_fold_cv)
-            clas_res['false_negative'] += res['false_negative'] / float(n_fold_cv)
-            clas_res['unknown'] += res['unknown'] / float(n_fold_cv)
-            clas_res['corelation'] += res['corelation'] / float(n_fold_cv)
-        self._calculate_results(clas_res)
+            # store best features
+            if clas_res['corelation'] > best_corelation:
+                best_corelation = clas_res['corelation']
+                best_feat = feat_sel
+                best_res = clas_res
+                self.bcl._logger.info('Best feat is {0} with corellation = {1}'.format(
+                    best_feat, best_corelation))
+        self._calculate_results(best_res)
+

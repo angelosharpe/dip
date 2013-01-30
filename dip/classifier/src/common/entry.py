@@ -10,21 +10,6 @@ import regexps
 # import feature classes
 from feature import *
 
-#DONE:
-#   Features:
-#       Emoticons
-#       n-tuples
-#       URL
-#       email
-#TODO:
-#   stematization
-#   features:
-#       message length
-#       number count
-#       count of ilnesses in text (from db)
-#       count of symptoms in text (from db)
-#       others????
-
 class Entry:
     # lemmatizer class member
     stmr = EnglishStemmer()
@@ -73,7 +58,8 @@ class Entry:
                     self._feature_date_formated_y,
                     None],
                 }
-
+        self.features_func_count = dict([(x,list(xrange(len(self.features_func[x]))))
+            for x in self.features_func])
 
     def _to_sentences(self, entry):
         ''''
@@ -339,20 +325,30 @@ class Entry:
             formated_date = self._get_formated_date(date)
             yield Date('{2}'.format(*formated_date))
 
-    def get_token(self):
+    def get_token(self, features):
         '''
-        This method yields all possible tokens - uses all features 
-        The most complex tokens should be extracted and then deleted first
-        (eg. URLs, emails, emoticons,....,n-tuples). Found not-word tokens
-        should be removed by the _get function.
-        @param n defines maximaln n-tuple size (pass to _get_ntuple_token)
+        This method yields selected tokens - features and n-tuples.
+        @param features dictionary containing chosen features and it's types
         '''
         # yield features
-        for feature_type in self.features_func:
-            if self.features_func[feature_type][0]:
-                for feature in self.features_func[feature_type][0]():
-                    #print feature
-                    yield feature
+        for feature in features:
+            if self.features_func[feature][features[feature]]:
+                for f in self.features_func[feature][features[feature]]():
+                    yield f
+
+        # yield n-tuples
+        for ntuple in self._get_ntuple_token():
+            yield ntuple
+
+    def get_token_all(self):
+        '''
+        This method yields all possible tokens - features and n-tuples.
+        '''
+        for feature in self.features_func_count:
+            for i in self.features_func_count[feature]:
+                if self.features_func[feature][i]:
+                    for f in self.features_func[feature][i]():
+                        yield f
 
         # yield n-tuples
         for ntuple in self._get_ntuple_token():

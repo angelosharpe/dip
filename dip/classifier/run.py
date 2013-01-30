@@ -35,5 +35,7 @@ if __name__ == '__main__':
     t = SVMTest()
 
     #t.regenerate_data(dbfile='/all/projects/dip/dip/data/articles/annotated.db', count=1000)
+    #t.run_annealing(n_fold_cv=5)
 
-    t.run_annealing(n_fold_cv=5)
+    t.run()
+

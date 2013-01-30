@@ -67,7 +67,7 @@ class Data():
         # generate all possible token list
         self._logger.info('Generating all possible token list...')
         for entry in entries:
-            for token in entry.get_token():
+            for token in entry.get_token_all():
                 token_list.append(token.get_data_str())
         token_list = list(set(token_list))
 
@@ -75,7 +75,7 @@ class Data():
         self._logger.info('Generating token mapping...')
         for entry in entries:
             to_tokens_mapping = []
-            for token in entry.get_token():
+            for token in entry.get_token_all():
                 to_tokens_mapping.append(token_list.index(token.get_data_str()))
             if entry.label==1:
                 relevant_mapping.append((to_tokens_mapping, entry.label))
