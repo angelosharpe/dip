@@ -49,7 +49,7 @@ class Annealing():
     C_MAX = 35000
 
     def __init__(self, kernel=None, init_temp=sys.maxint, iter_limit=1000,
-                 n_fold_cv=None):
+                 n_fold_cv=None, max_token_size=1):
         # add and setup logger
         self._logger = logging.getLogger()
         self._logger.setLevel(logging.DEBUG)
@@ -74,7 +74,8 @@ class Annealing():
             self.data = Data(dbfile=None)
         else:
             self.n_fold_cv = n_fold_cv
-            self.data = Data(dbfile=None, n_fold_cv=n_fold_cv)
+            self.data = Data(dbfile=None, n_fold_cv=n_fold_cv,
+                    max_token_size=max_token_size)
         self.data.load_X1_X2()
 
         self.temp = float(init_temp)

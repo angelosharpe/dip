@@ -13,10 +13,8 @@ from feature import *
 class Entry:
     # lemmatizer class member
     stmr = EnglishStemmer()
-    # defines word count in dictionary tuples
-    MAX_TOKEN_SIZE = 2
 
-    def __init__(self, entry, language, id=None, guid=None, label=None):
+    def __init__(self, entry, language, id=None, guid=None, label=None, max_token_size=2):
         self._logger = logging.getLogger()
         # entry id in dabatase
         self.id = id
@@ -25,6 +23,7 @@ class Entry:
         self.text = entry
         self.language = language
         self.label = label
+        self.MAX_TOKEN_SIZE=max_token_size
         self.features_func = {
                 'url':[
                     self._feature_url_whole,

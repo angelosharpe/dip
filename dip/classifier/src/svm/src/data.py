@@ -11,15 +11,17 @@ class Data():
     @param dbfile source db file containing table docs
                    (lang, relevance, text annotation)
     '''
-    def __init__(self, dbfile=None, n_fold_cv=10):
+    def __init__(self, dbfile=None, n_fold_cv=10, max_token_size=1):
         # add and setup logger
         self._logger = logging.getLogger()
         logging.basicConfig(level=logging.DEBUG)
         # dbfile with labeled data
         self.dbfile = dbfile
         self.n_fold_cv = n_fold_cv
+        self.max_token_size=max_token_size
         # load data
-        self.load_X1_X2()
+        if not dbfile:
+            self.load_X1_X2()
 
     def _get_data_from_db(self, count=1000):
         '''
@@ -50,9 +52,9 @@ class Data():
         self._logger.info('Generating entries...')
         entries = []
         for data in relevant:
-            entries.append(Entry(entry=data[1], language=data[0], label=1))
+            entries.append(Entry(entry=data[1], language=data[0], label=1, max_token_size=self.max_token_size))
         for data in irelevant:
-            entries.append(Entry(entry=data[1], language=data[0], label=-1))
+            entries.append(Entry(entry=data[1], language=data[0], label=-1, max_token_size=self.max_token_size))
         return entries
 
     def _generate_X1_X2(self, entries):
