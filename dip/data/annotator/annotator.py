@@ -15,7 +15,7 @@ num2txt = {'-1':'?', '0':'n', '1':'y'}
 
 def get_entry(cur):
     """yield entries from db"""
-    cur.execute('select distinct lang, relevance, text, annotation from docs where (annotation is null)')
+    cur.execute("select distinct lang, relevance, text, annotation from docs where (annotation is null) and (lang is 'en')")
     relevant = cur.fetchall()
     for entry in relevant:
         yield entry
