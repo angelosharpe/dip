@@ -49,6 +49,7 @@ class SVMTest():
                 correct = np.sum(Y_predict == Y2)
                 correct_sum += correct
                 test_len = len(Y_predict)
+                print 'using {0} of {1} support vectors'.format(self.svm.lm_count, self.svm.all_lm_count)
                 print '{0} out of {1} predictions correct'.format(correct, len(Y_predict))
 
         print 'result is: {0} of {1} predictions correct, accuracy={2}'.format(
