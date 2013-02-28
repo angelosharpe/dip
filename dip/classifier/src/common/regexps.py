@@ -33,7 +33,7 @@ emails_re = re.compile(r'\s([\w_\.-]+)(@)([\w\.-]+)(\.)([a-zA-Z]{2,6})')
 
 
 ### tweet tags ###
-tags_re = re.compile(r'(#\w+)')
+tags_re = re.compile(r'(#\w+)|(@\w+)')
 
 
 ### time ###
