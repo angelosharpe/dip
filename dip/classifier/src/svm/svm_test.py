@@ -30,8 +30,8 @@ class SVMTest():
         data.regenerate_X1_X2(count)
         return data
 
-    def run(self, n_fold_cv=10):
-        data = Data(dbfile=None, n_fold_cv=n_fold_cv)
+    def run(self, n_fold_cv=10, max_token_size=1):
+        data = Data(dbfile=None, n_fold_cv=n_fold_cv, max_token_size=max_token_size)
 
         kernel = RBFKernel(30)
         C = 0.1
