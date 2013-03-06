@@ -23,7 +23,7 @@ def svm_annealing(args):
     # twitter results: ((6.38946460577526, 33388.56022386515), 1.07)
     # article results:
     t = SVMTest()
-    t.run_annealing(args.n_fold_cv)
+    t.run_annealing(n_fold_cv=args.n_fold_cv, kernel=args.kernel)
 
 def svm_test(args):
     '''
@@ -32,7 +32,8 @@ def svm_test(args):
     before using this!
     '''
     t = SVMTest()
-    t.run(c=args.c, gamma=args.gamma, n_fold_cv=args.n_fold_cv)
+    t.run(c=args.c, param=args.param, n_fold_cv=args.n_fold_cv,
+            kernel=args.kernel)
 
 def svm_classify(args):
     '''
@@ -73,6 +74,8 @@ def parse_args():
     parser_svm_annealing = subparsers_svm.add_parser('annealing')
     parser_svm_annealing.add_argument('--n_fold_cv', '-n', type=int, default=5,
             help='Defines number of used fold cross-validations')
+    parser_svm_annealing.add_argument('--kernel', '-k', type=str, default='RBF',
+            choices=['RBF', 'linear', 'polynomial'], help='select used kernel')
     parser_svm_annealing.set_defaults(func=svm_annealing)
 
     # SVM - separate classification
@@ -81,7 +84,7 @@ def parse_args():
             help='Path to trained SVM model')
     parser_svm_classify.add_argument('--text', '-t', type=str, required=True,
             help='Input text')
-    parser_svm_classify.add_argument('--gamma', '-g', type=float, required=True,
+    parser_svm_classify.add_argument('--param', '-p', type=float, required=True,
             help='SVM classifier parameter gamma')
     parser_svm_classify.add_argument('--c', '-c', type=float, required=True,
             help='SVM classifier parameter C')
@@ -89,12 +92,14 @@ def parse_args():
 
     # SVM - run tests
     parser_svm_test = subparsers_svm.add_parser('test')
-    parser_svm_test.add_argument('--gamma', '-g', type=float, required=True,
+    parser_svm_test.add_argument('--param', '-p', type=float, required=True,
             help='SVM classifier parameter gamma')
     parser_svm_test.add_argument('--c', '-c', type=float, required=True,
             help='SVM classifier parameter C')
     parser_svm_test.add_argument('--n_fold_cv', '-n', type=int, default=5,
             help='Defines number of used fold cross-validations')
+    parser_svm_test.add_argument('--kernel', '-k', type=str, default='RBF',
+            choices=['RBF', 'linear', 'polynomial'], help='select used kernel')
     parser_svm_test.set_defaults(func=svm_test)
 
 
