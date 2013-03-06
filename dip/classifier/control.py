@@ -51,6 +51,14 @@ def bayes_test(args):
     bt = BayesianTest(dbfile=args.db_file, low=args.low, high=args.high)
     bt.run(count=args.count, n_fold_cv=args.n_fold_cv)
 
+def bayes_features(args):
+    '''
+    Function starts strats process of finding most suitable feature combination
+    for selected dataset
+    '''
+    bt = BayesianTest(dbfile=args.db_file, low=args.low, high=args.high)
+    bt.get_best_features(count=args.count, n_fold_cv=args.n_fold_cv)
+
 
 def parse_args():
     '''
@@ -121,6 +129,19 @@ def parse_args():
             help='Defines number of used fold cross-validations')
     parser_bayes_test.set_defaults(func=bayes_test)
 
+    # BAYES - run select features
+    parser_bayes_test = subparsers_bayes.add_parser('features')
+    parser_bayes_test.add_argument('--low', '-a', type=float, default=0.4,
+            help='Low threshold for classifier')
+    parser_bayes_test.add_argument('--high', '-b', type=float, default=0.6,
+            help='High threshold for classifier')
+    parser_bayes_test.add_argument('--count', '-c', type=int, default=5000,
+            help='Count of precessed entries from DB')
+    parser_bayes_test.add_argument('--db_file', '-d', type=str, required=True,
+            help='Specify input database file for running tests')
+    parser_bayes_test.add_argument('--n_fold_cv', '-n', type=int, default=5,
+            help='Defines number of used fold cross-validations')
+    parser_bayes_test.set_defaults(func=bayes_features)
     # run argparse
     args = parser.parse_args()
     try:
