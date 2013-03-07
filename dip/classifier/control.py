@@ -111,30 +111,38 @@ def parse_args():
     '''
     Function for parsing commandline arguments
     '''
-    parser = argparse.ArgumentParser()
+    parser = argparse.ArgumentParser(description='''This project compares two
+            commonly used classifiers - SVM and Bayesian classifier''')
     subparsers = parser.add_subparsers()
 
     # SVM
-    parser_svm = subparsers.add_parser('svm')
+    parser_svm = subparsers.add_parser('svm',
+            help='Operations with SVM classifier')
     subparsers_svm = parser_svm.add_subparsers()
 
     # SVM - data manipulation
-    parser_svm_data = subparsers_svm.add_parser('data')
-    parser_svm_data.add_argument('--db_file', '-d', type=str, required=True)
-    parser_svm_data.add_argument('--count', '-c', default=9999, type=int)
-    parser_svm_data.add_argument('--max_token_size','-t', default=1, type=int)
+    parser_svm_data = subparsers_svm.add_parser('data',
+            help='Regenerate data')
+    parser_svm_data.add_argument('--db_file', '-d', type=str, required=True,
+            help='Database file with anotated data')
+    parser_svm_data.add_argument('--count', '-c', default=9999, type=int,
+            help='Number of processed entries')
+    parser_svm_data.add_argument('--max_token_size','-t', default=1, type=int,
+            help='Size of word n-tuples')
     parser_svm_data.set_defaults(func=svm_data)
 
     # SVM - anneailng process
-    parser_svm_annealing = subparsers_svm.add_parser('annealing')
+    parser_svm_annealing = subparsers_svm.add_parser('annealing',
+            help='Run simulated annealing to find optimal SVM parameters')
     parser_svm_annealing.add_argument('--n_fold_cv', '-n', type=int, default=5,
-            help='Defines number of used fold cross-validations')
+            help='Define number of used fold cross-validations')
     parser_svm_annealing.add_argument('--kernel', '-k', type=str, default='RBF',
             choices=['RBF', 'linear', 'polynomial'], help='select used kernel')
     parser_svm_annealing.set_defaults(func=svm_annealing)
 
     # SVM - separate classification
-    parser_svm_classify = subparsers_svm.add_parser('classify')
+    parser_svm_classify = subparsers_svm.add_parser('classify',
+            help='Classify text with given SVM classification model')
     parser_svm_classify.add_argument('--model', '-m', type=str, required=True,
             help='Path to pickled SVM model')
     parser_svm_classify.add_argument('--text', '-t', type=str, required=True,
@@ -142,7 +150,8 @@ def parse_args():
     parser_svm_classify.set_defaults(func=svm_classify)
 
     # SVM - train svm model from annotated db file and store it to file
-    parser_svm_model = subparsers_svm.add_parser('model')
+    parser_svm_model = subparsers_svm.add_parser('model',
+            help='train SVM model from annotated db file and store it to file')
     parser_svm_model.add_argument('--model', '-m', type=str, required=True,
             help='Path to pickled SVM model')
     parser_svm_model.add_argument('--db_file', '-d', type=str, required=True,
@@ -158,7 +167,8 @@ def parse_args():
     parser_svm_model.set_defaults(func=svm_create_model)
 
     # SVM - run tests
-    parser_svm_test = subparsers_svm.add_parser('test')
+    parser_svm_test = subparsers_svm.add_parser('test',
+            help='Run tests with given parameters')
     parser_svm_test.add_argument('--param', '-p', type=float, required=True,
             help='SVM classifier parameter gamma')
     parser_svm_test.add_argument('--c', '-c', type=float, required=True,
@@ -171,11 +181,13 @@ def parse_args():
 
 
     # BAYES
-    parser_bayes = subparsers.add_parser('bayes')
+    parser_bayes = subparsers.add_parser('bayes',
+            help='Operations with bayesian classifier')
     subparsers_bayes = parser_bayes.add_subparsers()
 
     # BAYES - run tests
-    parser_bayes_test = subparsers_bayes.add_parser('test')
+    parser_bayes_test = subparsers_bayes.add_parser('test',
+            help='Run tests with given parameters')
     parser_bayes_test.add_argument('--low', '-a', type=float, default=0.4,
             help='Low threshold for classifier')
     parser_bayes_test.add_argument('--high', '-b', type=float, default=0.6,
@@ -193,7 +205,8 @@ def parse_args():
     parser_bayes_test.set_defaults(func=bayes_test)
 
     # BAYES - run select features
-    parser_bayes_test = subparsers_bayes.add_parser('features')
+    parser_bayes_test = subparsers_bayes.add_parser('features',
+            help='Run process of finding ideal feature combinations')
     parser_bayes_test.add_argument('--low', '-a', type=float, default=0.4,
             help='Low threshold for classifier')
     parser_bayes_test.add_argument('--high', '-b', type=float, default=0.6,
