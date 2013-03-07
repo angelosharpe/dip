@@ -2,9 +2,15 @@
 # This is controll script for entire diploma thesis.
 
 import argparse
+import numpy as np
 
 from src.svm.svm_test import *
+from src.svm.svm_classifier import *
+from src.svm.src.data import *
+from src.svm.src.kernels import *
+
 from src.bayes.bayesian_test import BayesianTest
+
 from src.common.entry import Entry
 
 # SVM
@@ -36,12 +42,42 @@ def svm_test(args):
     t.run(c=args.c, param=args.param, n_fold_cv=args.n_fold_cv,
             kernel=args.kernel)
 
+def svm_create_model(args):
+    '''
+    Create SVM classifier model for separate classification
+    '''
+    # load data
+    data = Data(dbfile=args.db_file, max_token_size=args.max_token_size)
+    data.regenerate_X1_X2(99999)
+    X, Y = data.get()
+
+    # init kernel
+    k = str2kernel[args.kernel](param=args.param)
+
+    # crete classifier
+    svm = SVM(kernel=k, C=args.c)
+    svm.train(X, Y)
+    # store model
+    svm.store_model(args.model, data.get_token_list())
+
 def svm_classify(args):
     '''
     Manually classify given text with some SVM model
     '''
-    # TODO:
-    pass
+    # load model and create classifier
+    svm = SVM(kernel=None, C=None)
+    token_list = svm.load_model(args.model)
+
+    # convert text to vector X
+    entry = Entry(id=None, guid=None, entry=args.text, language=None,
+                    max_token_size=1)
+    X = np.zeros((1,len(token_list)))
+    for token in entry.get_token_all():
+        if token.get_data_str() in token_list:
+            X[0][token_list.index(token.get_data_str())] = 1
+
+    # classify text
+    print int(svm.predict(X)[0])
 
 # BAYES
 def bayes_test(args):
@@ -99,15 +135,27 @@ def parse_args():
 
     # SVM - separate classification
     parser_svm_classify = subparsers_svm.add_parser('classify')
-    parser_svm_classify.add_argument('--data', '-d', type=str, required=True,
-            help='Path to trained SVM model')
+    parser_svm_classify.add_argument('--model', '-m', type=str, required=True,
+            help='Path to pickled SVM model')
     parser_svm_classify.add_argument('--text', '-t', type=str, required=True,
             help='Input text')
-    parser_svm_classify.add_argument('--param', '-p', type=float, required=True,
-            help='SVM classifier parameter gamma')
-    parser_svm_classify.add_argument('--c', '-c', type=float, required=True,
-            help='SVM classifier parameter C')
     parser_svm_classify.set_defaults(func=svm_classify)
+
+    # SVM - train svm model from annotated db file and store it to file
+    parser_svm_model = subparsers_svm.add_parser('model')
+    parser_svm_model.add_argument('--model', '-m', type=str, required=True,
+            help='Path to pickled SVM model')
+    parser_svm_model.add_argument('--db_file', '-d', type=str, required=True,
+            help='Annotated data file')
+    parser_svm_model.add_argument('--max_token_size','-t', default=1, type=int,
+            help='Size of word n-tuples')
+    parser_svm_model.add_argument('--param', '-p', type=float, required=True,
+            help='SVM kernel parameter')
+    parser_svm_model.add_argument('--c', '-c', type=float, required=True,
+            help='SVM classifier parameter C')
+    parser_svm_model.add_argument('--kernel', '-k', type=str, default='RBF',
+            choices=['RBF', 'linear', 'polynomial'], help='select used kernel')
+    parser_svm_model.set_defaults(func=svm_create_model)
 
     # SVM - run tests
     parser_svm_test = subparsers_svm.add_parser('test')

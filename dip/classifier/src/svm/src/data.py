@@ -22,6 +22,7 @@ class Data():
         # load data
         if not dbfile:
             self.load_X1_X2()
+        self.token_list = []
 
     def _get_data_from_db(self, count=1000):
         '''
@@ -62,7 +63,7 @@ class Data():
         Method generates X and Y matrices for svm classifier
         @param entries list of input entries
         '''
-        token_list = [] # all encountered tokens
+        self.token_list = [] # all encountered tokens
         relevant_mapping = [] # mapping of articles into tokens
         irelevant_mapping = []
 
@@ -70,15 +71,15 @@ class Data():
         self._logger.info('Generating all possible token list...')
         for entry in entries:
             for token in entry.get_token_all():
-                token_list.append(token.get_data_str())
-        token_list = list(set(token_list))
+                self.token_list.append(token.get_data_str())
+        self.token_list = list(set(self.token_list))
 
         # create mapping
         self._logger.info('Generating token mapping...')
         for entry in entries:
             to_tokens_mapping = []
             for token in entry.get_token_all():
-                to_tokens_mapping.append(token_list.index(token.get_data_str()))
+                to_tokens_mapping.append(self.token_list.index(token.get_data_str()))
             if entry.label==1:
                 relevant_mapping.append((to_tokens_mapping, entry.label))
             else:
@@ -88,7 +89,7 @@ class Data():
         self._logger.info('Generating X matrices...')
         relevant_mapping_count = len(relevant_mapping)
         irelevant_mapping_count = len(irelevant_mapping)
-        dimensions = len(token_list)
+        dimensions = len(self.token_list)
         X1 = np.zeros((relevant_mapping_count, dimensions))
         X2 = np.zeros((irelevant_mapping_count, dimensions))
         self._logger.info('Generating X1 matrix...')
@@ -104,7 +105,7 @@ class Data():
     def _split_X1_X2(self, X1, X2, i):
         '''
         Splits X1 and X2 to training and testing set, generates Y1 and Y2
-        vectors
+        vectors.
         @param X1 relevant vectors
         @param X2 irelevant vectors
         @param i iteration in n-fold cross-validation
@@ -135,6 +136,27 @@ class Data():
         Y_train = np.hstack((Y_train, Y2[(i+1)*(count_2/self.n_fold_cv):]))
         return (X_train, Y_train, X_test, Y_test)
 
+    def _split_X1_X2(self, X1, X2):
+        '''
+        Converts X1 and X2 into one big training set
+        @param X1 relevant vectors
+        @param X2 irelevant vectors
+        @return tuple X_train, Y_train
+        '''
+        # number of X1 and X2 vectors
+        count_1 = X1.shape[0]
+        count_2 = X2.shape[0]
+
+        # generate Y1 and Y2
+        Y1 = np.ones(count_1)
+        Y2 = -np.ones(count_2)
+
+        # create training set
+        X_train = np.vstack((X1, X2))
+        Y_train = np.hstack((Y1, Y2))
+
+        return (X_train, Y_train)
+
     def regenerate_X1_X2(self, count):
         '''
         Method regenerates X1 and X2 values from database file.
@@ -153,5 +175,23 @@ class Data():
         self.X2 = np.load('models/svm/X1_X2/X2.npy')
 
     def get(self, i=0):
+        '''
+        Get training and testing set for n-fold cross-validation
+        @param i iteration in n-fold cross-validation
+        @return tuple X_train, Y_train, X_test, Y_test
+        '''
         return self._split_X1_X2(self.X1, self.X2, i)
 
+    def get(self):
+        '''
+        Get training set of all currently loaded data
+        @return tuple X_train, Y_train
+        '''
+        return self._split_X1_X2(self.X1, self.X2)
+
+    def get_token_list(self):
+        '''
+        Get token mapping list
+        @return token mapping list
+        '''
+        return self.token_list

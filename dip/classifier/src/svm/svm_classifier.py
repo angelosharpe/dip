@@ -3,6 +3,7 @@
 import numpy as np
 import cvxopt
 import cvxopt.solvers
+import cPickle as pickle
 
 from src.kernels import *
 
@@ -33,8 +34,8 @@ class SVM():
     def train(self, X, Y):
         '''
         Method for training
-        @param X 
-        @param Y 
+        @param X training set
+        @param Y testing set
         '''
         n_samples, n_features = X.shape
 
@@ -114,3 +115,45 @@ class SVM():
                     s += lm * y * self.kernel(X[i], x)
                 predict[i] = s
             return np.sign(predict + self.b)
+
+    def store_model(self, path, token_list):
+        '''
+        Store classification model into some file for future classification.
+        @param path path to file, where the model will be stored
+        @param token_list list of token mapping for future classification
+        '''
+        model = {}
+        model['lm'] = self.lm
+        model['lm_count'] = self.lm_count
+        model['all_lm_count'] =  self.all_lm_count
+        model['C'] = self.C
+        model['w'] = self.w
+        model['b'] = self.b
+        model['X'] = self.X
+        model['Y'] = self.Y
+        model['lm'] = self.lm
+        model['kernel'] = self.kernel
+        model['token_list'] = token_list
+
+        # store model
+        pickle.dump(model, open(path, 'wb'))
+
+    def load_model(self, path):
+        '''
+        Load classification model from file.
+        @param path path to model file
+        @return list of token mapping for future classification
+        '''
+        model = pickle.load(open(path, 'rb'))
+        self.lm = model['lm']
+        self.lm_count = model['lm_count']
+        self.all_lm_count = model['all_lm_count']
+        self.C = model['C']
+        self.w = model['w']
+        self.b = model['b']
+        self.X = model['X']
+        self.Y = model['Y']
+        self.lm = model['lm']
+        self.kernel = model['kernel']
+
+        return model['token_list']
