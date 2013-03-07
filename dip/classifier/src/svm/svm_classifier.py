@@ -9,10 +9,13 @@ from src.kernels import *
 
 class SVM():
     '''
-    SVM class
+    Implementation of support vector machine classifier. It allows to train,
+    classify and store/load scm classification models.
     '''
 
     def __init__(self, kernel, C=None, silent=False, qp_maxiter=200):
+        # init logger
+        self._logger = logging.getLogger()
         self.kernel = kernel
         if C:
             self.C = float(C)
@@ -33,7 +36,7 @@ class SVM():
 
     def train(self, X, Y):
         '''
-        Method for training
+        Method for training svm classifier
         @param X training set
         @param Y testing set
         '''
@@ -81,7 +84,7 @@ class SVM():
         self.lm = all_lm[nonzero_mask]
         self.lm_count = len(self.lm)
         if self.lm_count == 0:
-            print '0 support vectors found - no solution!!!'
+            self.logger.error('0 support vectors found - no solution!!!')
             self.model_exists = False
             return
         # store training set and Y for nonzero lm
@@ -105,6 +108,12 @@ class SVM():
             self.w = None
 
     def predict(self, X):
+        '''
+        Fucntion tries to predict input entries according to previous training.
+        @param X tokens mapped into numpy array
+        @return numpy array containing 1 and -1 for relevant and irelevante
+                entries
+        '''
         if self.w is not None:
             return np.sign(np.dot(X, self.w) + self.b)
         else:
@@ -122,6 +131,7 @@ class SVM():
         @param path path to file, where the model will be stored
         @param token_list list of token mapping for future classification
         '''
+        self._logger.info('Storing SVM model data')
         model = {}
         model['lm'] = self.lm
         model['lm_count'] = self.lm_count
@@ -144,6 +154,7 @@ class SVM():
         @param path path to model file
         @return list of token mapping for future classification
         '''
+        self._logger.info('Loading SVM model data')
         model = pickle.load(open(path, 'rb'))
         self.lm = model['lm']
         self.lm_count = model['lm_count']
