@@ -5,6 +5,7 @@ import argparse
 
 from src.svm.svm_test import *
 from src.bayes.bayesian_test import BayesianTest
+from src.common.entry import Entry
 
 # SVM
 def svm_data(args):
@@ -48,14 +49,24 @@ def bayes_test(args):
     Function starts test of bayesian classifier with given dataset and classifier
     parameters.
     '''
+    features = eval(args.feats)
+    if isinstance(features,dict):
+        e = Entry(id=None, guid=None, entry=None, language=None)
+        if not e.check_feats(features):
+            return
+
     bt = BayesianTest(dbfile=args.db_file, low=args.low, high=args.high)
-    bt.run(count=args.count, n_fold_cv=args.n_fold_cv)
+    bt.run(features=features, count=args.count, n_fold_cv=args.n_fold_cv)
 
 def bayes_features(args):
     '''
     Function starts strats process of finding most suitable feature combination
     for selected dataset
     '''
+    # twitter results: {'emoticon':1, 'sentence':1, 'url':4, 'tag':1, 'time':0,
+    #                   'date':0, 'email':0}
+    # process features
+    # run
     bt = BayesianTest(dbfile=args.db_file, low=args.low, high=args.high)
     bt.get_best_features(count=args.count, n_fold_cv=args.n_fold_cv)
 
@@ -127,6 +138,10 @@ def parse_args():
             help='Specify input database file for running tests')
     parser_bayes_test.add_argument('--n_fold_cv', '-n', type=int, default=5,
             help='Defines number of used fold cross-validations')
+    parser_bayes_test.add_argument('--feats', '-f', type=str,
+            default="{'emoticon':1, 'sentence':1, 'url':4, 'tag':1, 'time':0, \
+                'date':0, 'email':0}",
+            help='python array of possible features (see src/common/entry.py)')
     parser_bayes_test.set_defaults(func=bayes_test)
 
     # BAYES - run select features
@@ -147,7 +162,7 @@ def parse_args():
     try:
         args.func(args)
     except argparse.ArgumentTypeError, ex:
-        ssm_parser.parser.error(ex)
+        print ex
 
 
 

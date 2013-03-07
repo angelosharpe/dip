@@ -60,6 +60,37 @@ class Entry:
         self.features_func_count = dict([(x,list(xrange(len(self.features_func[x]))))
             for x in self.features_func])
 
+    def check_feats(self, feats):
+        '''
+        Method checks whether input features selection dictionary is acceptable 
+        by Entry class.
+        @param feats input features
+        @return boolean value True if feature dict contains all features in
+                correct format
+        '''
+        # check number of features
+        if len(feats) != len(self.features_func_count):
+            message = 'Not all needed features were specified, please specify: '
+            for feature in self.features_func_count:
+                message += feature + ' '
+            self._logger.error(message)
+            return False
+        # for every possible feature
+        for feat in feats:
+            # check if is correct
+            if not feat in self.features_func_count:
+                self._logger.error('Unknown feature "{0}"!!!'.format(feat))
+                return False
+            # check option number of this feature
+            else:
+                if feats[feat] >= len(self.features_func_count[feat]):
+                    self._logger.error(
+                        'Wrong feature type id ({0}) in feature "{1}". Max is {2}!!!'
+                        .format(feats[feat], feat,
+                            len(self.features_func_count[feat]) - 1))
+                    return False
+        return True
+
     def _to_sentences(self, entry):
         ''''
         This method splits string into sentences according to language of

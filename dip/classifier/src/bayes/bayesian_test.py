@@ -258,7 +258,7 @@ class BayesianTest:
             best_feat, best_corelation))
 
 
-    def run(self, features, count=100, n_fold_cv=10, used_features):
+    def run(self, features, count=100, n_fold_cv=10):
         '''
         method trains and tests entries from input databse
         @param count count of processed entries (count*relevant,count*irelevant)
@@ -292,7 +292,7 @@ class BayesianTest:
 
         # calculate n_fold_cv
         results = self._cross_validation(used_relevant, used_irelevant,
-                n_fold_cv, used_features)
+                n_fold_cv, count, features)
 
         # calculate overall results
         self.bcl._logger.info('Overall results:')
