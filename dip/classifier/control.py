@@ -3,6 +3,7 @@
 
 import argparse
 import numpy as np
+import pp
 
 from src.svm.svm_test import *
 from src.svm.svm_classifier import *
@@ -106,6 +107,35 @@ def bayes_features(args):
     bt = BayesianTest(dbfile=args.db_file, low=args.low, high=args.high)
     bt.get_best_features(count=args.count, n_fold_cv=args.n_fold_cv)
 
+# COMMON
+# TODO!!!
+def _thread_svm():
+    # load data
+    # run simulated annealing
+    # run test with optimal parameters
+    # return results
+    pass
+
+def _thread_bayes():
+    # load data
+    # run feature selection
+    # run test with best features
+    # return results
+    pass
+
+def common_run(args):
+    '''
+    Run comparison of SVM and bayesian classifiers
+    '''
+    # setup job server
+    job_server = pp.Server()
+    job_server.set_ncpus()
+    # create jobs
+    jobs = []
+    jobs.append(job_server.submit(_thread_svm, ()))
+    jobs.append(job_server.submit(_thread_bayes, ()))
+    results = [job() for job in jobs]
+
 
 def parse_args():
     '''
@@ -193,7 +223,7 @@ def parse_args():
     parser_bayes_test.add_argument('--high', '-b', type=float, default=0.6,
             help='High threshold for classifier')
     parser_bayes_test.add_argument('--count', '-c', type=int, default=5000,
-            help='Count of precessed entries from DB')
+            help='Count of processed entries from DB')
     parser_bayes_test.add_argument('--db_file', '-d', type=str, required=True,
             help='Specify input database file for running tests')
     parser_bayes_test.add_argument('--n_fold_cv', '-n', type=int, default=5,
@@ -212,12 +242,34 @@ def parse_args():
     parser_bayes_test.add_argument('--high', '-b', type=float, default=0.6,
             help='High threshold for classifier')
     parser_bayes_test.add_argument('--count', '-c', type=int, default=5000,
-            help='Count of precessed entries from DB')
+            help='Count of processed entries from DB')
     parser_bayes_test.add_argument('--db_file', '-d', type=str, required=True,
             help='Specify input database file for running tests')
     parser_bayes_test.add_argument('--n_fold_cv', '-n', type=int, default=5,
             help='Defines number of used fold cross-validations')
     parser_bayes_test.set_defaults(func=bayes_features)
+
+    # COMMON - compare svm and bayesian classifiers
+    parser_common = subparsers.add_parser('common',
+            help='''Compare SVM and bayesian classifiers (this may take very
+                long)''')
+    parser_common.add_argument('--db_file', '-d', type=str, required=True,
+            help='Specify input database file for running tests')
+    parser_common.add_argument('--n_fold_cv', '-n', type=int, default=5,
+            help='Defines number of used fold cross-validations')
+    parser_common.add_argument('--count', '-c', type=int, default=5000,
+            help='Count of processed entries from DB')
+    # SVM params
+    parser_common.add_argument('--kernel', '-k', type=str, default='RBF',
+            choices=['RBF', 'linear', 'polynomial'],
+            help='SVM: select used kernel')
+    # Bayes params
+    parser_common.add_argument('--low', '-a', type=float, default=0.4,
+            help='BAYES: Low threshold for classifier')
+    parser_common.add_argument('--high', '-b', type=float, default=0.6,
+            help='BAYES: High threshold for classifier')
+    parser_common.set_defaults(func=common_run)
+
     # run argparse
     args = parser.parse_args()
     try:
