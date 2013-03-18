@@ -365,6 +365,18 @@ P &= 0.0857
 Dle tohoto výpoètu se tedy pravdìpodobnost, ¾e vìta \textit{'Aaaa, my stomach hurts.'} je spam rovná 0.0857.
 Co¾ znamená, ¾e vìta je rozhodnì ham.
 
+\section{SVM klasifikátor} \label{SF-SVM}
+Klasifikaèní metoda pomocí SVM (support vector machines) je spoleènì s vý¹e popsaným bayesovským klasifikátorem klasifikaèní metodou, kterou se zabývá tato práce.
+Tato metoda uèení s uèitelem je v souèasné dobì nejvíce pou¾ívanou metodou v NLP a to pøedev¹ím k úlohám klasifikace a regresní analýzy.
+Základní implementace SVM dostane na sadu vstupù a pro ka¾dý tento vstup vygeneruje výstup (predikce) definující, do které ze dvoutøíd daný vstup nále¾í.
+Tato základní forma SVM je lineární, binární, neprobabilistickou metodou tzn. pro predikci výsledkù nepoèítá pravdìbodobnosti pøíslu¹nosti do daných tøíd.
+Klasifikátor pøi uèení dostane sadu trénovacích dat, která mají definovanou tøídu do které patøí.
+Klasifikaèní algoritmus potom z tìchto dat vytvoøí klasifikaèní model, pomocí kterého potom bude klasifikovat vstupní data.
+Model klasifikátoru SVM je potom reprezentací dùle¾itých bodù z trénovací mno¾iny v prostoru pøíznakù, pomocí kterých lze lineárnì rozdìlit prostor pøíznakù na dvì co nejvzdálenìj¹í oddìlené èásti tak, ¾e na jedné stranì jsou data nále¾ící do první tøídy a na druhé stranì data nále¾ící do tøídy druhé.
+Pøi klasifikaci nových dat jsou data namapována do stejného prostoru jako data trénovací o pomocí vý¹e zmínìného rozdìlení klasifikátor urèí, do které tøídy vstup patøí.
+
+
+
 \chapter{Vlastní implementace}
 V této kapitole se budeme zabývat implementací jednotlivých algoritmù z kapitoly \ref{SF} a nástroji pou¾itými k jejich implementaci.
 
