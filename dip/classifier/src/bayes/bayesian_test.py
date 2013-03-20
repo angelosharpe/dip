@@ -256,6 +256,7 @@ class BayesianTest:
         self._calculate_results(best_res)
         self.bcl._logger.info('Best feat is {0} with corellation = {1}'.format(
             best_feat, best_corelation))
+        return best_feat
 
 
     def run(self, features, count=100, n_fold_cv=10):
@@ -310,4 +311,7 @@ class BayesianTest:
             clas_res['false_negative'] += res['false_negative'] / float(n_fold_cv)
             clas_res['unknown'] += res['unknown'] / float(n_fold_cv)
             clas_res['corelation'] += res['corelation'] / float(n_fold_cv)
+
+        # print and return results
         self._calculate_results(clas_res)
+        return clas_res
