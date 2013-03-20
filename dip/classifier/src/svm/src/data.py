@@ -102,10 +102,11 @@ class Data():
                 x2[index] = 1
         return (X1, X2)
 
-    def _split_X1_X2(self, X1, X2, i):
+    def _split_X1_X2(self, X1, X2, i=None):
         '''
         Splits X1 and X2 to training and testing set, generates Y1 and Y2
         vectors.
+        If i is not specified, all currently loaded data are returned
         @param X1 relevant vectors
         @param X2 irelevant vectors
         @param i iteration in n-fold cross-validation
@@ -118,44 +119,31 @@ class Data():
         Y1 = np.ones(count_1)
         Y2 = -np.ones(count_2)
 
-        # create test set
-        X_test = X1[i*(count_1/self.n_fold_cv):(i+1)*(count_1/self.n_fold_cv)]
-        X_test = np.vstack((X_test, X2[i*(count_2/self.n_fold_cv):(i+1)*(
-            count_1/self.n_fold_cv)]))
-        Y_test = Y1[i*(count_1/self.n_fold_cv):(i+1)*(count_1/self.n_fold_cv)]
-        Y_test = np.hstack((Y_test, Y2[i*(count_2/self.n_fold_cv):(i+1)*(
-            count_1/self.n_fold_cv)]))
-        # create training set
-        X_train = X1[:i*(count_1/self.n_fold_cv)]
-        X_train = np.vstack((X_train, X2[:i*(count_2/self.n_fold_cv)]))
-        X_train = np.vstack((X_train, X1[(i+1)*(count_1/self.n_fold_cv):]))
-        X_train = np.vstack((X_train, X2[(i+1)*(count_2/self.n_fold_cv):]))
-        Y_train = Y1[:i*(count_1/self.n_fold_cv)]
-        Y_train = np.hstack((Y_train, Y2[:i*(count_2/self.n_fold_cv)]))
-        Y_train = np.hstack((Y_train, Y1[(i+1)*(count_1/self.n_fold_cv):]))
-        Y_train = np.hstack((Y_train, Y2[(i+1)*(count_2/self.n_fold_cv):]))
-        return (X_train, Y_train, X_test, Y_test)
+        if i is None:
+            # create training set
+            X_train = np.vstack((X1, X2))
+            Y_train = np.hstack((Y1, Y2))
 
-    def _split_X1_X2(self, X1, X2):
-        '''
-        Converts X1 and X2 into one big training set
-        @param X1 relevant vectors
-        @param X2 irelevant vectors
-        @return tuple X_train, Y_train
-        '''
-        # number of X1 and X2 vectors
-        count_1 = X1.shape[0]
-        count_2 = X2.shape[0]
+            return (X_train, Y_train)
+        else:
+            # create test set
+            X_test = X1[i*(count_1/self.n_fold_cv):(i+1)*(count_1/self.n_fold_cv)]
+            X_test = np.vstack((X_test, X2[i*(count_2/self.n_fold_cv):(i+1)*(
+                count_1/self.n_fold_cv)]))
+            Y_test = Y1[i*(count_1/self.n_fold_cv):(i+1)*(count_1/self.n_fold_cv)]
+            Y_test = np.hstack((Y_test, Y2[i*(count_2/self.n_fold_cv):(i+1)*(
+                count_1/self.n_fold_cv)]))
+            # create training set
+            X_train = X1[:i*(count_1/self.n_fold_cv)]
+            X_train = np.vstack((X_train, X2[:i*(count_2/self.n_fold_cv)]))
+            X_train = np.vstack((X_train, X1[(i+1)*(count_1/self.n_fold_cv):]))
+            X_train = np.vstack((X_train, X2[(i+1)*(count_2/self.n_fold_cv):]))
+            Y_train = Y1[:i*(count_1/self.n_fold_cv)]
+            Y_train = np.hstack((Y_train, Y2[:i*(count_2/self.n_fold_cv)]))
+            Y_train = np.hstack((Y_train, Y1[(i+1)*(count_1/self.n_fold_cv):]))
+            Y_train = np.hstack((Y_train, Y2[(i+1)*(count_2/self.n_fold_cv):]))
 
-        # generate Y1 and Y2
-        Y1 = np.ones(count_1)
-        Y2 = -np.ones(count_2)
-
-        # create training set
-        X_train = np.vstack((X1, X2))
-        Y_train = np.hstack((Y1, Y2))
-
-        return (X_train, Y_train)
+            return (X_train, Y_train, X_test, Y_test)
 
     def regenerate_X1_X2(self, count):
         '''
@@ -174,20 +162,17 @@ class Data():
         self.X1 = np.load('models/svm/X1_X2/X1.npy')
         self.X2 = np.load('models/svm/X1_X2/X2.npy')
 
-    def get(self, i=0):
+    def get(self, i=None):
         '''
-        Get training and testing set for n-fold cross-validation
+        Get training and testing set for n-fold cross-validation.
+        If i is not specified, all currently loaded data are returned
         @param i iteration in n-fold cross-validation
         @return tuple X_train, Y_train, X_test, Y_test
         '''
-        return self._split_X1_X2(self.X1, self.X2, i)
-
-    def get(self):
-        '''
-        Get training set of all currently loaded data
-        @return tuple X_train, Y_train
-        '''
-        return self._split_X1_X2(self.X1, self.X2)
+        if i is None:
+            return self._split_X1_X2(self.X1, self.X2)
+        else:
+            return self._split_X1_X2(self.X1, self.X2, i)
 
     def get_token_list(self):
         '''
