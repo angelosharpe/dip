@@ -236,13 +236,7 @@ V roce 1988 vyslovil Michael Kearns ve své práci s názvem \textit{Thoughts on hy
 Od té doby bylo vyvynuto více algoritmù pro boosting klasifikace, nicménì vìt¹ina z nich se zakládá na iterativním uèení mno¾iny slabých klasifikátorù a jejich následném sdru¾ení do jednoho pøesného klasifikátoru.
 Historicky nejvýznam¹j¹ím boostingovým algoritmem je zøejmì algoritmus \textit{AdaBoost}(adaptive boosting), vytvoøený Yoavem Freundem a Robertem Schapirem, který publikovali v práci \textit{A Decision-Theoretic Generalization of on-Line Learning and an Application to Boosting}\cite{boosting}.
 
-\chapter{Filtrování spamu} \label{SF}
-Jak ji¾ bylo zmínìno vý¹e (\ref{NLP-KU-spam_filt}) V tomto èlánku se budeme hloubìji zabývat metodami filtrování spamu.
-Klasifikaèní úloha filtrování spamu se dá pou¾ít nejen na filtrování skuteèného spamu v e-mailu, ale také na libovolnou úlohu, v ní¾ jde o rozdìlování vstupních dat do dvou tøíd.
-V této práci budeme nadále pou¾ívat termín \textit{spam} pro tøídu dat irelevantních k danému tématu, a termín \textit{ham} pro tøídu dat relevantních k danému tématu.
-Klasifikátory pro filtrování spamu je mo¾né nauèit klasifikovat vstupní data do libovolných dvou tøíd podle obsahu vstupu.
-
-\section{Bayesovský klasifikátor} \label{SF-BAYES}
+\chapter{Bayesovský klasifikátor} \label{SF-BAYES}
 Bayesovský klasifikátor (naivní Bayesovský klasifikátor) je klasifikátor postavený na zjednodu¹eném Bayesovském teorému.
 Zjednodu¹ení plyne z toho, ¾e výskyt nebo naopak neexistence jednoho tokenu (slova) není závislá na existenci nebo neexistenci jiného tokenu(slova).
 Tudí¾ i kdy¾ tokeny na sobì závisejí, Bayesovský klasifikátor s nimi pracuje jako se zcela nezávislými událostmi.
@@ -250,7 +244,7 @@ Tato vlastnost naivního Bayesovského filtrování je nevýhodou pro klasifikování p
 Aèkoliv tato vlastnost Bayesovský klasifikátor omezuje, jeho vyu¾ití na reálných textech se osvìdèilo a je hojnì pou¾íván.
 V posledních letech ale ji¾ existují jiné a lep¹í metody pro klasifikaci, napøíklad metoda \textit{random forest}, kterou bych se v pozdìj¹ích verzích této práce rád podrobnìji zabýval.
 
-\subsection{Matematický model}
+\section{Matematický model}
 Bayesovský klasifikátor vyu¾ívá Bayesova teorému, který zní následovnì:
 \begin{theorem}
   Mìjme dva náhodné jevy $A$ a $B$ s pravdìpodobnostmi $P(A)$ a $P(B)$, pøièem¾ $P(B) > 0$. Potom platí:
@@ -290,7 +284,7 @@ kde $P$ je pravdìpodobnost urèující míru nále¾itostí klasifikované zprávy do tøí
 Výsledné $P$ je potom porovnáno s urèitým prahem, který definuje, zda je oklasifikovaná zpráva spam nebo ham.
 
 
-\subsubsection{Odvození rovnice pro klasifikaci} \label{SF-BAYES-MAT-bayes_theorem-deriv}
+\subsection{Odvození rovnice pro klasifikaci} \label{SF-BAYES-MAT-bayes_theorem-deriv}
 Nyní pøejdìme k odvození rovnice \ref{equation_used} z Bayesova teorému \ref{SF-BAYES-MAT-bayes_theorem}.
  
 Mìjme $X$ a $Y$, které znamená, ¾e tokeny $x$ a $y$ jsou pøítomny a $S$ znamenající \uv{je to spam} a $\neg S$ znamenající \uv{je to ham} (není to spam).
@@ -335,16 +329,16 @@ Z toho získáme rovnici \ref{SF-BAYES-MAT-bayes_theorem-deriv-eq5} ekvivalentní s
 \end{equation}
 Jestli¾e není uèící mno¾ina vyvá¾ená (stejnì spamu a hamu), je vhodné pro klasifikaci pou¾ít rovnici \ref{SF-BAYES-MAT-bayes_theorem-deriv-eq4}, proto¾e pøi pou¾ití rovnice \ref{SF-BAYES-MAT-bayes_theorem-deriv-eq5} mù¾e docházet ke zkreslení klasifikace.
 
-\subsection{Princip Bayesovského klasifikátoru} \label{SF-BAYES-PRINCIP}
-Bayesovský klasifikátor si do databáze pøi uèení ukládá pravdìpodobnost zda jsou jednotlivé tokeny (nejèastìji slova) ze vstupních vìt spam, tzn. ukládá si hodnotu  $P(S|X)$.
+\section{Princip Bayesovského klasifikátoru} \label{SF-BAYES-PRINCIP}
+Bayesovský klasifikátor si do databáze pøi uèení ukládá pravdìpodobnost zda jsou jednotlivé tokeny (slova a features) ze vstupních vìt spam, tzn. ukládá si hodnotu  $P(S|X)$.
 Po nauèení dostateènì velkého objemu trénovacích dat potom vyu¾ívá tyto pravdìpodobnosti pro výpoèet, zda je klasifikovaný vstupní text spam, nebo ham.
 
 Klasifikace tedy probíhá tak, ¾e vstupní text $X$ se rozdìlí na tokeny $X_i$.
-Klasifikátor se podívá do databáze a zjistí pravdìpodobnosti $P(S|X_i)$ vyjad¾ující míru pravdìpodobnosti, ¾e jednotlivé tokeny nále¾í do tøídy spamu.
-Jestli¾e klasifkátor pøi klasifikaci textu narazí na token, který dosud není v jeho databázi, pak je mu pøiøazena hodnota 0.5 (tzn. klasifikátor neumí urèit s jakou pravdìpodobností je tento token spam èi ham).
+Klasifikátor se podívá do databáze a zjistí pravdìpodobnosti $P(S|X_i)$ vy¾adující míru pravdìpodobnosti, ¾e jednotlivé tokeny nále¾í do tøídy spamu.
+Jestli¾e klasifikátor pøi klasifikaci textu narazí na token, který dosud není v jeho databázi, pak je mu pøiøazena hodnota 0.5 (tzn. klasifikátor neumí urèit s jakou pravdìpodobností je tento token spam èi ham).
 Pravdìpodobnost $P(X)$ ¾e vstupní text je spam je potom vypoèten pomocí dosazení $P(S|X_i)$ do rovnice \ref{SF-BAYES-MAT-bayes_theorem-deriv-eq5}.
 
-\subsection{pøíklad klasifikace}
+\section{pøíklad klasifikace}
 Uveïme si nyní jednoduchý pøíklad klasifikace textu:
 mìjme vstupní vìtu \textit{'Aaaa, my stomach hurts.'}.
 Tuto vìtu si klasifikátor rozdìlí podle zadaného pravidla na seznam tokenù (nejèastìji slov).
@@ -365,20 +359,442 @@ P &= 0.0857
 Dle tohoto výpoètu se tedy pravdìpodobnost, ¾e vìta \textit{'Aaaa, my stomach hurts.'} je spam rovná 0.0857.
 Co¾ znamená, ¾e vìta je rozhodnì ham.
 
-\section{SVM klasifikátor} \label{SF-SVM}
-Klasifikaèní metoda pomocí SVM (support vector machines) je spoleènì s vý¹e popsaným bayesovským klasifikátorem klasifikaèní metodou, kterou se zabývá tato práce.
-Tato metoda uèení s uèitelem je v souèasné dobì nejvíce pou¾ívanou metodou v NLP a to pøedev¹ím k úlohám klasifikace a regresní analýzy.
-Základní implementace SVM dostane na sadu vstupù a pro ka¾dý tento vstup vygeneruje výstup (predikce) definující, do které ze dvoutøíd daný vstup nále¾í.
-Tato základní forma SVM je lineární, binární, neprobabilistickou metodou tzn. pro predikci výsledkù nepoèítá pravdìbodobnosti pøíslu¹nosti do daných tøíd.
-Klasifikátor pøi uèení dostane sadu trénovacích dat, která mají definovanou tøídu do které patøí.
-Klasifikaèní algoritmus potom z tìchto dat vytvoøí klasifikaèní model, pomocí kterého potom bude klasifikovat vstupní data.
-Model klasifikátoru SVM je potom reprezentací dùle¾itých bodù z trénovací mno¾iny v prostoru pøíznakù, pomocí kterých lze lineárnì rozdìlit prostor pøíznakù na dvì co nejvzdálenìj¹í oddìlené èásti tak, ¾e na jedné stranì jsou data nále¾ící do první tøídy a na druhé stranì data nále¾ící do tøídy druhé.
-Pøi klasifikaci nových dat jsou data namapována do stejného prostoru jako data trénovací o pomocí vý¹e zmínìného rozdìlení klasifikátor urèí, do které tøídy vstup patøí.
+\chapter{SVM klasifikátor} \label{SVM}
+Klasifikaèní metoda pomocí SVM (support vector machines) je spoleènì s vý¹e popsaným Bayesovským klasifikátorem klasifikaèní metodou, kterou se zabývá tato práce.
+Tato metoda uèení s uèitelem je v souèasné dobì nejvíce pou¾ívanou metodou v NLP.
+Mimo NLP má v¹ak také velkou ¹kálu vyu¾ití, a» u¾ pro klasifikaèní úèely, nebo tøeba napøíklad pro úèely regresní analýzy (pro pøedvídání chování finanèních trhù, atd.).
+
+V této práci nebude mo¾né popsat problematiku support vector machines do úplných detailù, nicménì zde budou popsány základy, které jsou potøebné pro pochopení problematiky a pro její pozdìj¹í implementaci.
+Pro podrobnìj¹í popis svm doporuèuji knihu Vladimira N. Vapnika a z roku 1998 s názvem \emph{Statistical Learning Theory} \cite{Vapnik1998} a èlánek \emph{Support-Vector Networks} \cite{Vapnik1995}.
+
+\section{Obecné}
+SVM je klasifikátor dosahující velmi dobrých výsledkù ve velkém mno¾ství odvìtví a aplikací.
+Poprvé byl tento algoritmus pøedstaven v roce 1995 ve èlánku Vladimira N. Vapnika a kolektivu s názvem \emph{Support-Vector Networks} \cite{Vapnik1995}.
+SVM bylo navrhnuto jako klasifikaèní algoritmus.
+Aby bylo SVM schopné klasifikovat, musíme jej nejprve nauèit pomocí urèité sady dat, která je rozdìlena na trénovací a testovací data.
+Ka¾dý jeden záznam v trénovacích a testovacích datech má definovanou jistou hodnotu (label), která urèuje, do které tøídy daný záznam spadá.
+Ka¾dý záznam se skládá z nìkolika pøíznakù (features), pomocí kterých se SVM uèí a následnì klasifikuje.
+Napøíklad klasifikujeme-li pomocí SVM text tyto pøíznaky budou mimo jiné jednotlivá slova, délka textu, emailové adresy, Twitter tagy atd.
+
+Nyní pøejdìme k matematickému popisu problematiky SVM.
+Pøedpokládejme urèitý klasifikaèní problém a jistou datovou sadu ve které je mno¾ství záznamù, které patøí buï do pozitivní, nebo negativní tøídy. 
+Trénovací sada $X$ pro tento problém obsahuje $l$ záznamù.
+Jeden záznam v této sadì je tedy definován jako vektor $x_i \in \mathbb{R}^n$ kde $1 \leq i \leq l$.
+Ka¾dý tento vektor $x_i$ se skládá z mno¾iny pøíznakù $[x_1, x_2,\ldots,x_n] \in x_i$, kde $x_1,\ldots,x_n$ jsou jednotlivé atributy daného záznamu.
+Label $y$ ka¾dého záznamu z dat je definován jako $y \in \{1,-1\}$ v závislosti na tom, do které tøídy daný záznam spadá.
+Trénovací sadu dat lze tedy zapsat jako:
+
+\begin{equation}
+  X = \{(x_i,y_i)\}_{i=1}^{l}
+\end{equation}
+\begin{equation}
+  x \in \mathbb{R}^{n}, x_i = [x_1, x_2, \ldots, x_n], i \in 1, \ldots |X|
+\end{equation}
+\begin{equation}
+  y \in \{1,-1\}
+\end{equation}
+
+Cílem SVM klasifikátoru je najít rozhodovací hranici, která rozdìluje pøíznaky v trénovacích datech tak, aby rozdìlení odpovídalo jednotlivým tøídám a souèasnì se sna¾í o maximalizaci vzdálenosti v¹ech bodù od rozhodovací hranice. 
+Rozhodovací hranice je definována jako \emph{hyperplocha (nadrovina)}, co¾ je prostor s $n$ dimenzemi, který dìlí prostor s $n+1$ dimenzemi do dvou podprostorù.
+Libovolná hyperplocha lze definovat jako \emph{diskriminaèní funkci (discriminant function)}\footnote{diskriminaèní funkce je funkce, která optimálnì dìlí prostor pøíznakù. \cite{Seong-Wook}} v následující formì:
+
+\begin{equation}
+  f(x) = w^T x + b
+\end{equation}
+
+
+$b$ je takzvaný \emph{bias} a $w^T x$  definuje skalární souèin mezi váhovým vektorem $w$ a vektorem pøíznakù $x$.
+Tento skalární souèin je definován jako:
+
+\begin{equation}
+  w^T x = \sum_{j=1}^{n}w_j x_j
+\end{equation}
+
+\begin{figure}[H]
+    \begin{center}
+      \includegraphics[width=10cm,keepaspectratio]{fig/hyperplanes}
+      \caption{Nìkolik hyperploch v prostoru $R^2$ s vektorem $ w^T x$} 
+      \label{SVM-THEORY-HYPERPLANES}
+    \end{center}
+\end{figure}
+
+
+\section{Nelineární SVM a jádra}
+Jeliko¾ je u základního klasifikátoru SVM hyperplocha dìlící prostor pøíznakù lineární, pova¾ujeme tento klasifikátor za lineární.
+Nicménì pøi pou¾ití nelineární dìlící hyperplochy mù¾e klasifikátor dosahovat je¹tì daleko lep¹ích výsledkù.
+Problémem takto nelineárních klasifikátorù ale je zvy¹ování komplexicity výpoètù pøi uèení vìt¹ích poètù pøíznakù (vysoká dimenzionalita dat).
+Pro vyøe¹ení vý¹e zmínìného problému byly klasické lineární SVM klasifikátory roz¹íøeny o podporu takzvaných \emph{jaderných funkcí (kernel functions)} za pomocí nich¾ jsou lineární klasifikátory schopny vytvoøit nelineární dìlící hyperplochy.
+Pro vysvìtlení zpùsobu, jakým se této nelinearity dosáhne pøedpokládejme klasický lineární klasifikátor.
+
+\begin{figure}[H]
+    \begin{center}
+      \includegraphics[width=13cm,keepaspectratio]{fig/XtoFTransformation}
+      \caption{Transformace vstupního prostoru $X$ do prostoru pøíznakù $F$ pomocí mapovací funkce $\varphi(x)$. $f(x)$ je znázornìní diskriminaèní funkce} 
+      \label{SVM-KERNEL-TRANSFORMACE}
+    \end{center}
+\end{figure}
+
+Nyní pøevedeme trénovací sadu $X$, také známou jako \emph{vstupní prostor (input space)} do vysoce dimenzionálního prostoru pøíznakù $F$ za pomocí nelineární mapovací funkce $\varphi : X \rightarrow F$ viz. obrázek \ref{SVM-KERNEL-TRANSFORMACE}.
+Pro prostor pøíznakù tedy budeme mít následující diskriminaèní funkci:
+
+\begin{equation}
+  f(x) = w^T \varphi(x) + b
+\end{equation}
+
+Jeliko¾ je pøi výpoètu diskriminaèní funkce $f(x)$ tøeba vypoèíst mapovací funkci $\varphi(x)$ 
+ tak velmi výraznì roste nároènost jejího výpoètu s poètem dimenzí vstupù.
+Mìjme kupøíkladu následující mapovací funkci:
+
+\begin{equation}
+  \varphi(x) = (x^2_1, \sqrt{2}x_1 x_2, x^2_2)^T
+\end{equation}
+
+Z této mapovací funkce jsme nyní schopni spoèítat diskriminaèní funkci v prostoru pøíznakù:
+
+\begin{equation}
+  f(x) = w_1 x^2_1 + \sqrt{2}w_2 x_1 x_2 + w_1 x^2_2 + b
+\end{equation}
+
+Je zcela zøejmé, ¾e tento zpùsob výpoètu je neúnosný.
+Museli bychom toti¾ pro výpoèet transformovat celý vstupní prostor do prostoru pøíznakù, co¾ by kvadraticky zvý¹ilo èasovou a pamì»ovou nároènost klasifikátoru.
+Tento zpùsob tedy není vhodný.
+Existuje v¹ak øe¹ení, kterým lze spoèítat diskriminaèní funkci $f(x)$ ani¾ bychom museli znát, chápat a poèítat mapovací funkci do prostoru $F$.
+Pro toto øe¹ení je tøeba si vyjádøit váhový vektor $w$ jako lineární kombinaci jednotlivých záznamù z tréninkové sady.
+
+\begin{equation}
+  w = \sum^{n}_{i=1}\alpha_i x_i
+\end{equation}
+
+Z tohoto vychází, ¾e diskriminaèní funkce vstupního prostoru $X$ je:
+
+\begin{equation}
+  f(x) = \sum^{n}_{i=1}\alpha_i x^T_i \cdot x + b
+\end{equation}
+
+a diskriminaèní funkce prostoru pøíznakù $F$ je:
+
+\begin{equation}
+  f(x) = \sum^{n}_{i=1}\alpha_i \varphi(x_i)^T \varphi(x) + b
+\end{equation}
+
+Tyto dvì reprezentace diskriminaèní funkce pro vstupní prostor $X$ a pro prostor pøíznakù vzhledem k promìnné $\alpha_i$ bývá nazývána takzvanou \emph{duální reprezentací (dual representation)}. 
+
+Kartézský souèin $\varphi(x_i)^T \varphi(x)$, kde $x_i, x \in X$ tedy pøedstavuje takzvanou \emph{jadernou funkci (kernel function)}.
+Jaderná funkce je tedy definována jako:
+
+\begin{equation}
+  k(x,z) = \varphi(x_i)^T \varphi(x)
+\end{equation}
+
+Jeliko¾ jadernou funkci lze vypoèítat pouze pomocí pøíznakù ve vstupním prostoru, je mo¾né vypoèítat diskriminaèní funkci ani¾ bychom znali potøebnou mapovací funkci.
+Díky této vlastnosti jaderných funkcí nemusíme transformovat celý vstupní prostor do nového prostoru pøíznakù $F$, ale spoèítáme pouze jadernou funkci pro jednotlivé pøíznaky.
+Tudí¾ nám poèet dimenzí prostoru $F$ neovlivní komplexnost výpoètu.
+Vý¹e zmínìná operace, kdy vyu¾ijeme pouze kartézský souèin bodù v daném prostoru bývá èasto v literatuøe nazývána jako takzvaný \emph{Kernel trick}.
+Pro výpoèet diskriminaèní funkce $f(x) = w^T \varphi(x) + b$ tedy pou¾ijeme jadernou funkci $k(x,z) = \varphi(x)^T \varphi(z)$ a dostaneme $f(x) = k(x,z) + b$.
+
+Nyní si nejprve si znázorníme na pøíkladu nároènost pøi pøevádìní v¹ech souøadnic do prostoru $F$.
+Pøedpokládejme prostor $X \in \mathbb{R}^2$ (tzn. $x = (x_1, x_2)$) dále pak polynomiální mapovací funkci druhého øádu
+
+\begin{equation}
+\varphi(x) = (1, x_1, x_2, x^2_1, x^2_2, x_1 x_2)
+\end{equation}
+
+která pøevede vektor pøíznakù ze vstupního prostoru $X$ do prostoru $F$.
+Abychom nyní pomocí této mapovací funkce vypoèítali jadernou funkci, musíme oba body pøevést do prostoru $F$ a provést skalární souèin v prostoru $F$.
+Tudí¾:
+
+\begin{equation}
+  K(x, z) = \varphi(x)^T \varphi(z)
+\end{equation}
+\begin{equation}
+  K(x, z) = 1 + x_1 z_1 + x_2 z_2 + x^2_1 z^2_1 + x^2_2 z^2_2 + x_1 z_1 x_2 z_2
+\end{equation}
+
+Nyní si pøedstavme, ¾e nemáme dvou dimenzionální prostor, ale velmi vysoce dimenzionální prostor.
+Pøevádìní $x$ a $z$ do prostoru $F$ by bylo velmi výpoèetnì nároèné.
+
+Nyní si na pøíkladu pøedvedeme pou¾ití vý¹e zmínìného kernel tricku, který nám umo¾ní vypoèíst jadernou funkci, ani¾ bychom potøebovali spoèítat transformace do prostoru pøíznakù $F$.
+Pøedpokládejme jadernou funkci:
+
+\begin{equation}
+  K(x, z) = (1 + x^T z)^2
+  \label{SVM-KERNEL-2POLYNOMIAL}
+\end{equation}
+
+kterou roznásobíme a dostaneme:
+
+\begin{equation}
+  K(x, z) = 1 + x^2_1 z^2_1 + x^2_2 z^2_2 + 2 x_1 z_1 + 2 x_2 z_2 + 2 x_1 z_1 x_2 z_2
+\end{equation}
+
+Co¾ je skuteènì skalární souèin definovaný v prostoru pøíznakù s mapovací funkcí 
+
+\begin{equation}
+\varphi(x) = (1, x^2_1, x^2_2, \sqrt{2} x_1, \sqrt{2} x_2, \sqrt{2} x_1 x_2)
+\end{equation}
+
+Tímto jsme dokázali, ¾e opravdu není tøeba pøevádìt celý prostor pøíznakù, ale staèí nám vypoèítat jednoduchou funkci $K(x, z) = (1 + x^T z)^2$ a tím dosáhnout daleko jednodu¹eji ký¾eného výsledku.
+
+\subsection{Jádra}
+\label{SVM-THEORY-KERNELS}
+Jádra, nebo také jaderné funkce, jsou tedy funkce, pomocí nich¾ je klasifikátor SVM  schopen vypoèítat diskriminaèní rovnici pro optimální rozdìlení prostoru pøíznakù.
+V závislosti na tom jaké jádro je pøi trénování klasifikátoru pou¾ito je klasifikátor lineární nebo nelineární a dosahuje rozdílných výsledkù na rùzných datech.
+
+V praxi se pou¾ívá nìkolik rùzných jader, nejvíce RBF (radial basis function), polynomiální jaderná funkce a nìkdy se pou¾ívá i základní lineární jaderná funkce.
+
+\subsubsection{Lineární jaderná funkce}
+Lineární jaderná funkce je nejzákladnìj¹í ze v¹ech jaderných funkcí.
+Poèítá toti¾ skalární souèin z bodù ve vstupním prostoru, tudí¾ je schopna pouze lineární klasifikace.
+Lineární jaderná funkce je definována následovnì:
+
+\begin{equation}
+  K(x, z) =  x^T z
+\end{equation}
+
+\subsubsection{Polynomiální jaderná funkce}
+Rovnice \ref{SVM-KERNEL-2POLYNOMIAL} popisuje tedy polynomiální jadernou funkci druhého øádu, nicménì praxi se èasto pou¾ívají polynomiální jaderné funkce vy¹¹ích øádù $Q$, obecnì definované jako:
+
+\begin{equation}
+  K(x, z) = (x^T z + c)^Q
+\end{equation}
+kde $c \geq 0$ urèuje vliv vy¹¹ích a ni¾¹ích øádù polynomu.
+
+Polynomiální jaderné funkce jsou v NLP pomìrnì hodnì oblíbené \cite{ACLShort}.
+Pøi pou¾ití jaderné funkce vy¹¹ích øádù, ale mù¾e nastat takzvaný overfitting, kdy se SVM nauèí na velmi specifické pøíznaky, které nejsou pro korektní klasifikaci smìrodatné, co¾ zpùsobí markantní zhor¹ení schopností SVM klasifikátoru.
+Z tohoto dùvodu je nejèastìji pou¾ívána polynomiální jaderná funkce 2. a 3. øádu, která není schopna tak dokonale kopírovat tvar kolem pøíznakù.
+
+\subsubsection{Radiální jaderná funkce}
+Radiální jaderná funkce, èasto oznaèována jako RBF jaderná funkce, nebo RBF kernel je dal¹í velmi oblíbenou jadernou funkcí zalo¾enou na radiální bázové funkci (radial basis function).
+Je definována jako:
+ 
+\begin{equation}
+  K(x, z) = exp(-\frac{||x-z||^2}{2\gamma^2})
+\end{equation}
+
+Obèas se také pou¾ívá jiná forma definice pro RBF jaderné funkce, nicménì základní my¹lenka, ¾e èím vzdálenìj¹í bod v prostoru pøíznakù, tím men¹í má vliv na rozhodování, zùstává ve v¹ech tìchto definicích zachována.
+Promìnná $\gamma$, pro kterou musí platit $\gamma \geq 0$, definuje jak moc bude klasifikátor brát v úvahu vzdálenìj¹í body.
+Nevhodným výbìrem této promìnné mù¾e opìt, podobnì jako v pøípade polynomiální jaderné funkce k overfittingu, proto je dùle¾ité zvolit její vhodnou hodnotu.
+
+\subsubsection{Dal¹í jádra}
+Tyto tøi vý¹e zmínìná jádra/jaderné funkce samozøejmì nejsou jediná.
+Kdykoliv je mo¾né vytvoøit novou jadernou funkci, která bude popisovat nìjaký jiný prostor.
+Taková jaderná funkce, kterou vytvoøíme v¹ak nemusí popisovat ¾ádný prostor.
+Existují tøi pøístupy pomocí kterých se mù¾eme ujistit, ¾e námi vytvoøená jaderná funkce skuteènì nìjaký prostor popisuje:
+\begin{itemize}
+\item \emph{Konstrukce} -- jádro zkonstruujeme z transformaèní funkce $\varphi(x)$.
+\item \emph{Matematické podmínky jádra (Mercerovy podmínky)} -- Pokud jaderná funkce $K(x, z)$ splòuje následující dvì podmínky, pak existuje prostor, který je danou jadernou funkcí popsán:
+ \begin{itemize}
+  \item $K(x, x^{'})$ musí být symetrická funkce (tzn. $K(x, x^{'}) = K(x^{'}, x)$,$\forall x, x^{'} \in X$)
+  \item Pro matici:
+  	$\begin{bmatrix}
+       K(x_1, x_1) & K(x_1, x_2) & \cdots  & K(x_1, x_N)  \\[0.3em]
+       K(x_2, x_1) & K(x_2, x_2) & \cdots  & K(x_2, x_N)  \\[0.3em]
+       \cdots      & \cdots      & \cdots  & \cdots       \\[0.3em]
+       K(x_N, x_1) & K(x_N, x_2) & \cdots  & K(x_N, x_N)  \\[0.3em]
+    \end{bmatrix}$ musí platit, ¾e je pozitivnì semi-definitní pro libovolné $x_1,\dots, x_N \in X$
+ \end{itemize} 
+\item \emph{Do we even care?} -- tento pøístup je velmi zvlá¹tní, nicménì obèas také pou¾ívaný.
+	Vytvoøí se prostì libovolná jaderná funkce, aplikuje se v SVM a pokud funguje, tak nás nezajímá, ¾e dané jádro neexistuje.
+	Tento pøístup v¹ak rozhodnì není doporuèitelným.
+\end{itemize}
+
+\section{Vytvoøení rozhodovací hranice}
+Jak ji¾ bylo vý¹e zmínìno, SVM klasifikátor se pøi uèení sna¾í vytvoøit optimální rozhodovací hranici (hyperplocha) tak, aby dìlila prostor pøíznakù na dva podprostory, kde ka¾dý obsahuje objekty v¾dy pouze z jedné tøídy a v¾dy se sna¾í maximalizovat vzdálenost rozhodovací hranice ode v¹ech bodù v prostoru.
+
+
+\begin{figure}[H]
+    \begin{center}
+      \includegraphics[width=10cm,keepaspectratio]{fig/margins}
+      \caption{Ukázka mo¾ných marginù, vlevo maximální, ¹iroký; vpravo tenký} 
+      \label{SVM-THEORY-MARGINS}
+    \end{center}
+\end{figure}
+
+Pøedpokládejme diskriminaèní funkci $f(x)$, která definuje urèitou hyperplochu, která lineárnì rozdìluje prostor $X$ na pozitivní a negativní tøídy.
+Nejbli¾¹í vektory $x \in X$ k této hyperplo¹e jsou oznaèeny $x_+$ pro pozitivní a $x_-$ pro negativní tøídy.
+Definujeme takzvaný \emph{geometrický margin} hyperplochy $f$ na trénovacích datech $X$, co¾ je \emph{maximální ¹íøka (margin)} volného prostoru mezi rozdìlovací hyperplochou $f$ a nejbli¾¹ími body v prostoru $X$ (viz obrázek \ref{SVM-THEORY-MARGINS}).
+Je definován jako:
+
+\begin{equation}
+  m_x(f) = \frac{1}{2} \widehat{w}^T (x_+ - x_-)
+\end{equation}
+
+kde vektor $\widehat{w}$ je jednotkový vektor vektoru $w$ a body $x_+$ a $x_-$ jsou od hyperplochy stejnì daleko, co¾ znamená, ¾e existuje nìjaká konstanta $\alpha > 0$, pro kterou platí:
+
+\begin{equation}
+  f(x_+) = w^T  x_+ = \alpha
+\end{equation}
+\begin{equation}
+  f(x_-) = w^T  x_- = -\alpha
+\end{equation}
+
+Nyní nastavíme hodnotu promìnné $\alpha$ na $\alpha = 1$ a po úpravách získáme následující definici maximálního marginu:
+
+\begin{equation}
+  m_X(f) = \frac{1}{||w||}
+\end{equation}
+
+Abychom tedy dostali optimální rozdìlovací hranici s maximálním marginem, budeme muset maximalizovat hodnotu maximálního marginu.
+Tato operace je ov¹em ekvivalentní s minimalizací $\frac{1}{2}||w||^2$.
+Nalezení specifické diskriminaèní funkce s maximálním geometrickým marginem je tedy ekvivalentní s následujícím optimalizaèním problémem:
+
+
+
+
+
+
+
+
+
+
+
+  minimalizace		 $\frac{1}{2}||w||^2$
+\begin{equation}
+  za podmínek: y_n(w^T x_i + b) \geq 1, kde n = 1,\ldots,l
+\end{equation}
+
+
+
+
+
+
+
+
+Tato optimalizace pøedpokládá, ¾e trénovací mno¾ina $X$ je lineárnì separovatelná.
+Podmínka $y_n(w^T x_n + b) \geq 1$ potom zaji¹»uje, ¾e diskriminaèní funkce oklasifikuje v¹echna data v trénovací mno¾inì korektnì.
+
+Nicménì mù¾e nastat problém, ¾e trénovací mno¾ina $X$ nemusí být lineárnì separovatelná.
+Aby klasifikátor byl schopný se nauèit i na takové trénovací mno¾inì, musíme jej upravit tak, aby byl mohl nekorektnì oklasifikovat nìjaké záznamy z trénovací mno¾iny a tím, i za cenu chyb, diskriminaèní funkci najít.
+Toto opatøení mù¾e nìkdy pomoci nalézt ¹ir¹í margin a tím zlep¹it výsledky klasifikátoru oproti pøedchozímu, u¾¹ímu, marginu.
+Tuto úpravu udìláme za pomocí takzvané \emph{chybové promìnné (slack variable)} $\xi_i$, kterou odeèteme od pravé strany optimalizaèní podmínky -- tzn. umo¾níme chybu.
+Takto upravený problém nyní vypadá následovnì:
+
+
+
+
+
+
+
+
+
+  minimalizace		 $\frac{1}{2}||w||^2$
+\begin{equation}
+  za podmínek: y_n(w^T x_i + b) \geq 1 - \xi_i, kde n = 1,\ldots,l
+\end{equation}
+
+
+
+
+
+
+
+Pokud tedy platí, ¾e $y_i(w^T x_i + b) < 1$ respektive $\xi_i > 1$, pak je záznam $x_i \in X$ ¹patnì klasifikována.
+Pokud ale platí, ¾e $0 \leq \xi_i \leq 1$, pak $x_i \in X$ le¾í uvnitø marginu.
+$x_i$ je tedy klasifikováno korektnì, jestli¾e platí, ¾e $\xi_i \leq 0$.
+Z tohoto vyplývá, ¾e suma v¹ech chybových promìnných reprezentuje míru chybovosti:
+
+\begin{equation}
+  \xi(X) = \sum^n_{i=1}\xi_i
+\end{equation}
+\begin{equation}
+  X = \{(x_i,y_i)\}^l_{i=1}
+\end{equation}
+
+Abychom byli schopni  minimalizovat míru chybovosti vzhledem k maximalizaci marginu (penalizace, za ¹patnou klasifikaci a marginové chyby) zavedeme konstantu $C > 0$, kterou budeme pøenásobovat míru chybovosti.
+Tato konstanta se nazývá \emph{konstanta soft-margin (soft-margin constant)}.
+Na¹e optimalizaèní úloha tedy s touto soft-margin konstantou vypadá následovnì:
+
+
+
+
+
+
+
+
+
+  minimalizace		 $\frac{1}{2}||w||^2 + C \sum^{n}_{i=1}\xi_i$
+\begin{equation}
+  za podmínek: y_n(w^T x_i + b) \geq 1 - \xi_i, kde n = 1,\ldots,l
+\end{equation}
+
+
+
+
+
+
+
+
+Nyní pro vyøe¹ení tohoto optimalizaèního problému pou¾ijeme metodu Lagrangeových multiplikátorù a získáme optimalizaèní problém:
+
+maximalizace 
+\begin{equation}
+  \frac{1}{2}\sum^{n}_{i=1}\sum^{n}_{j=1}y_iy_j\alpha_i\alpha_jx^T_i x_j
+\end{equation}
+za podmínek:
+\begin{equation}
+  \sum^n_{y_i\alpha_i = 0}, 0 \leq \alpha_i \leq C
+\end{equation}
+
+Skalární souèin $x^T_i x_j$ v maximalizaèní rovnici mù¾eme nahradit libovolnou jadernou funkcí a dosáhnout tím nelineární transfomrace a dosáhnout tak ¹irokého marginu ve vysoce dimenzionálních prostorech pøíznakù. (viz \ref{SVM-THEORY-KERNELS}).
+
+Díky vyu¾ití Lagrangeovy teorie pro øe¹ení, má výsledné øe¹ení nalezené po vyøe¹ení optimalizaèního problému zajímavé vlastnosti.
+Bylo napøíklad dokázáno, ¾e získané øe¹ení je v¾dy globální díky tomu, ¾e formulace problému je konvexní \cite{Burges1988}.
+
+Zajímavou vlastností support vector machines je, ¾e ne v¹echny vektory z tréninkové mno¾iny se podílejí na výsledném øe¹ení.
+Pou¾ijme rovnici pro výpoèet váhového vektoru $w$ získaného derivací pøi øe¹ení Lagran¾ánu, a to:
+
+\begin{equation}
+  w = \sum^{n}_{i=1}y_i \alpha_i x_i
+\end{equation}
+
+V¹echny vektory $x_i$ pro které tedy platí, ¾e  $\alpha_i > 0$ jsou vektory které le¾í na pomezí marginu, uvnitø marginu, nebo jsou ¹patnì klasifikovány.
+Tyto vektory jsou nazývány \emph{support vektory (support vectors)}.
+Vektory, které v¹ak mají hodnotu $\alpha_i \leq 0$ nejsou vùbec do øe¹ení zahrnuty. 
+Tudí¾ tyto vektory by mohly být zcela odstranìny z tréninkové sady a nemìlo by to ¾ádný vliv na výsledné øe¹ení.
+Díky této vlastnosti jsou SVM ménì náchylné na overfitting a také klasifikaèní model, který tyto vektory tvoøí je díky tomu velmi malý a rychlý.
+
+
+\chapter{Features}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
 \chapter{Vlastní implementace}
-V této kapitole se budeme zabývat implementací jednotlivých algoritmù z kapitoly \ref{SF} a nástroji pou¾itými k jejich implementaci.
+V této kapitole se budeme zabývat implementací jednotlivých algoritmù z kapitoly SF a nástroji pou¾itými k jejich implementaci.
 
 \section{Obecné}
 \subsection{NLTK} \label{IMP-OBEC-NLTK}
