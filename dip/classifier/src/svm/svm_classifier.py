@@ -4,7 +4,6 @@ import logging
 import numpy as np
 import cvxopt
 import cvxopt.solvers
-import cPickle as pickle
 
 from src.kernels import *
 
@@ -15,8 +14,6 @@ class SVM():
     '''
 
     def __init__(self, kernel, C=None, silent=False, qp_maxiter=200):
-        # init logger
-        self._logger = logging.getLogger()
         self.kernel = kernel
         if C:
             self.C = float(C)
@@ -85,7 +82,7 @@ class SVM():
         self.lm = all_lm[nonzero_mask]
         self.lm_count = len(self.lm)
         if self.lm_count == 0:
-            self.logger.error('0 support vectors found - no solution!!!')
+            print '0 support vectors found - no solution!!!'
             self.model_exists = False
             return
         # store training set and Y for nonzero lm
@@ -126,46 +123,3 @@ class SVM():
                 predict[i] = s
             return np.sign(predict + self.b)
 
-    def store_model(self, path, token_list):
-        '''
-        Store classification model into some file for future classification.
-        @param path path to file, where the model will be stored
-        @param token_list list of token mapping for future classification
-        '''
-        self._logger.info('Storing SVM model data')
-        model = {}
-        model['lm'] = self.lm
-        model['lm_count'] = self.lm_count
-        model['all_lm_count'] =  self.all_lm_count
-        model['C'] = self.C
-        model['w'] = self.w
-        model['b'] = self.b
-        model['X'] = self.X
-        model['Y'] = self.Y
-        model['lm'] = self.lm
-        model['kernel'] = self.kernel
-        model['token_list'] = token_list
-
-        # store model
-        pickle.dump(model, open(path, 'wb'))
-
-    def load_model(self, path):
-        '''
-        Load classification model from file.
-        @param path path to model file
-        @return list of token mapping for future classification
-        '''
-        self._logger.info('Loading SVM model data')
-        model = pickle.load(open(path, 'rb'))
-        self.lm = model['lm']
-        self.lm_count = model['lm_count']
-        self.all_lm_count = model['all_lm_count']
-        self.C = model['C']
-        self.w = model['w']
-        self.b = model['b']
-        self.X = model['X']
-        self.Y = model['Y']
-        self.lm = model['lm']
-        self.kernel = model['kernel']
-
-        return model['token_list']
