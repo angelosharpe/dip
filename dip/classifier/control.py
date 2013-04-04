@@ -20,7 +20,7 @@ def svm_data(args):
     Functinon runs data regeneration according to input arguments
     '''
     t = SVMTest()
-    t.regenerate_data(dbfile=args.path, count=args.count,
+    t.regenerate_data(dbfile=args.db_file, count=args.count,
             max_token_size=args.max_token_size)
 
 def svm_annealing(args):
@@ -108,20 +108,65 @@ def bayes_features(args):
     bt.get_best_features(count=args.count, n_fold_cv=args.n_fold_cv)
 
 # COMMON
-# TODO!!!
-def _thread_svm():
-    # load data
-    # run simulated annealing
-    # run test with optimal parameters
-    # return results
-    pass
 
-def _thread_bayes():
+def _print_results(t,tp, fp, tn, fn, u=None, c=None):
+    '''
+    method prints results from of testing
+    @param t type (svm or bayes)
+    @param tp true positive reults
+    @param fp false positive results
+    @param tn true negative results
+    @param fn false negative results
+    @param u unknown results
+    @param c corelation results
+    '''
+    precision = tp / ((tp + fn) + 0.0000000000001)
+    recall = tp / ((tp + fn) + 0.0000000000001)
+    acc = (tp + tn) / ((tp + tn + fn + fn) + 0.0000000000001)
+    f_measure = 2 * ((precision * recall)/((precision + recall) + 0.0000000000001))
+    ret = '##################################\n'
+    ret += '########## ' + str(t) + ' restults ##########\n'
+    ret += '##################################\n'
+    ret += 'True positive = ' + str(tp) + '\n'
+    ret += 'True negative = ' + str(tn) + '\n'
+    ret += 'False positive = ' + str(fn) + '\n'
+    ret += 'False negative = ' + str(fn) + '\n'
+    if u is not None:
+        ret += 'Unknown = ' + str(u) + '\n'
+    ret += 'Precision = ' + str(precision) + '\n'
+    ret += 'Recall = ' + str(recall) + '\n'
+    ret += 'Accuracy = ' + str(acc) + '\n'
+    ret += 'F-measure = ' + str(f_measure) + '\n'
+    if c is not None:
+        ret += 'Corelation = ' + str(c) + '\n'
+    ret += '##################################\n'
+    print ret
+
+
+
+def _thread_svm(db_file, count, max_token_size, n_fold_cv, kernel):
+    from src.svm.svm_test import SVMTest
+    t = SVMTest()
     # load data
-    # run feature selection
-    # run test with best features
+    t.regenerate_data(dbfile=db_file, count=count,
+            max_token_size=max_token_size)
+    # run simulated annealing
+    state, energy = t.run_annealing(n_fold_cv=n_fold_cv, kernel=kernel)
+    # run test with optimal parameters
+    result = t.run(c=state[1], param=state[0], n_fold_cv=n_fold_cv,
+            kernel=kernel)
     # return results
-    pass
+    return {'type':'svm', 'result': result, 'state':state, 'emergy':energy}
+
+def _thread_bayes(db_file, low, high, count, n_fold_cv):
+    from src.bayes.bayesian_test import BayesianTest
+    bt = BayesianTest(dbfile=db_file, low=low, high=high)
+    # run feature selection
+    features = bt.get_best_features(count=count, n_fold_cv=n_fold_cv)
+    # run test with best features
+    result = bt.run(features=features, count=count, n_fold_cv=n_fold_cv)
+    # return results
+    return {'type':'bayes', 'result': result, 'features':features}
 
 def common_run(args):
     '''
@@ -132,10 +177,23 @@ def common_run(args):
     job_server.set_ncpus()
     # create jobs
     jobs = []
-    jobs.append(job_server.submit(_thread_svm, ()))
-    jobs.append(job_server.submit(_thread_bayes, ()))
-    results = [job() for job in jobs]
-
+    jobs.append(job_server.submit(_thread_svm, (args.db_file, args.count,
+        args.max_token_size, args.n_fold_cv, args.kernel)))
+    jobs.append(job_server.submit(_thread_bayes, (args.db_file, args.low,
+        args.high, args.count, args.n_fold_cv)))
+    result = [job() for job in jobs]
+    # print result
+    for r in result:
+        if r['type'] == 'bayes':
+            _print_results(t=r['type'], tp=r['result']['true_positive'],
+                fp=r['result']['false_positive'], tn=r['result']['true_negative'],
+                fn=r['result']['false_negative'], u=r['result']['unknown'],
+                c=r['result']['corelation'])
+            print r['features']
+        else:
+            _print_results(t=r['type'], tp=r['result']['true_positive'],
+                fp=r['result']['false_positive'], tn=r['result']['true_negative'],
+                fn=r['result']['false_negative'])
 
 def parse_args():
     '''
@@ -259,6 +317,8 @@ def parse_args():
             help='Defines number of used fold cross-validations')
     parser_common.add_argument('--count', '-c', type=int, default=5000,
             help='Count of processed entries from DB')
+    parser_common.add_argument('--max_token_size','-t', default=1, type=int,
+            help='Size of word n-tuples')
     # SVM params
     parser_common.add_argument('--kernel', '-k', type=str, default='RBF',
             choices=['RBF', 'linear', 'polynomial'],
