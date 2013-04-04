@@ -171,7 +171,7 @@ class Annealing():
         if difference <= 0:
             return 1.0
         else:
-            return math.e**(-difference/self.temp)
+            return math.e**(-difference/self.temp + 0.000000000000000001)
 
     def _get_temperature(self, iteration):
         '''
