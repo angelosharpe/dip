@@ -38,9 +38,14 @@ class Entry:
                     None],
                 'emoticon':[
                     self._feature_emoticon,
+                    self._feature_emoticon_y,
+                    self._feature_emoticon_y_n,
+                    self._feature_emoticon_emotion,
                     None],
                 'tag':[
                     self._feature_tag,
+                    self._feature_tag_y,
+                    self._feature_tag_y_n,
                     None],
                 'sentence':[
                     self._feature_sentence_count,
@@ -221,7 +226,7 @@ class Entry:
 
     def _feature_email_y(self):
         '''
-        Yield emails -- use whole email. Add token only if present.
+        Yield emails -- Add token YES only if present.
         '''
         found = 0
         for email in self._get_re_token(regexps.emails_re):
@@ -250,12 +255,75 @@ class Entry:
         for emoticon in self._get_re_token(regexps.emoticons_re):
             yield Emoticon(''.join(list(emoticon)))
 
+    def _feature_emoticon_y(self):
+        '''
+        Yield emotico
+        '''
+        found = False
+        for emoticon in self._get_re_token(regexps.emoticons_re):
+            found = True
+            break
+        if found:
+            yield Emoticon('YES')
+
+    def _feature_emoticon_y_n(self):
+        '''
+        Yield emoticon
+        '''
+        found = False
+        for emoticon in self._get_re_token(regexps.emoticons_re):
+            found = True
+            break
+        if found:
+            yield Emoticon('YES')
+        else:
+            yield Emoticon('NO')
+
+    def _feature_emoticon_emotion(self):
+        '''
+        Yield emoticon emootion
+        '''
+        for sad_emoticon in self._get_re_token(regexps.sad_emoticons_re):
+            yield Emoticon('SAD')
+            break
+        for happy_emoticon in self._get_re_token(regexps.happy_emoticons_re):
+            yield Emoticon('HAPPY')
+            break
+        for other_emoticon in self._get_re_token(regexps.other_emoticons_re):
+            yield Emoticon('OTHER')
+            break
+
+
     def _feature_tag(self):
         '''
         Yield tag tokens.
         '''
         for tag in self._get_re_token(regexps.tags_re):
             yield Tag(''.join(list(tag)))
+
+    def _feature_tag_y(self):
+        '''
+        Yield tag tokens.
+        '''
+        found = False
+        for tag in self._get_re_token(regexps.tags_re):
+            found = True
+            break
+        if found:
+            yield Tag('YES')
+
+    def _feature_tag_y_n(self):
+        '''
+        Yield tag tokens.
+        '''
+        found = False
+        for tag in self._get_re_token(regexps.tags_re):
+            found = True
+            break
+        if found:
+            yield Tag('YES')
+        else:
+            yield Tag('NO')
 
     def _feature_sentence_count(self):
         '''

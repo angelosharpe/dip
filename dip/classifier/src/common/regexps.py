@@ -8,14 +8,41 @@ tear = r'\'?'
 nose = r'[oO-]?'
 # d, D, ), ], /, S, (. [, \, |, p, P, o, O, c, C, @, 3, &
 mouths = r'[dD\)\]/S\(\[\\\|pPoOcC@{}3&]'
+sad_mouths = r'[/S\(\[\\\|cC@{]'
+happy_mouths = r'[dD\)\]pP}3]'
+other_mouths = r'[oO&]'
+
 faces = ''.join([top, eyes, tear, nose, mouths])
+sad_faces = ''.join([top, eyes, tear, nose, sad_mouths])
+happy_faces = ''.join([top, eyes, tear, nose, happy_mouths])
+other_faces = ''.join([top, eyes, tear, nose, other_mouths])
+
 # other emoticons definitions
 other_emoticons = [
     r'\^_+\^', r'o\.O', r'@_+@', r'-_+-',
     r'\.\.+', r',,+', r'<3',
 ]
+other_sad_emoticons = [
+    r'-_+-'
+]
+other_happy_emoticons = [
+    r'\^_+\^', r'<3',
+]
+other_other_emoticons = [
+    r'o\.O', r'@_+@', r'\.\.+', r',,+'
+]
+# regexps
 emoticons_re = re.compile(
     '\s(' + '|'.join(other_emoticons + [faces]) + ')\s'
+)
+sad_emoticons_re = re.compile(
+    '\s(' + '|'.join(other_sad_emoticons + [sad_faces]) + ')\s'
+)
+happy_emoticons_re = re.compile(
+    '\s(' + '|'.join(other_happy_emoticons + [happy_faces]) + ')\s'
+)
+other_emoticons_re = re.compile(
+    '\s(' + '|'.join(other_other_emoticons + [other_faces]) + ')\s'
 )
 
 
