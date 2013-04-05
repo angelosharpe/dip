@@ -754,34 +754,202 @@ Tudí¾ tyto vektory by mohly být zcela odstranìny z tréninkové sady a nemìlo by t
 Díky této vlastnosti jsou SVM ménì náchylné na overfitting a také klasifikaèní model, který tyto vektory tvoøí je díky tomu velmi malý a rychlý.
 
 
-\chapter{Features}
+\chapter{Tokenizace a výbìr vhodných pøíznakù}
+V této kapitole se budeme zabývat tvorbou tokenù, které klasifikátory pou¾ívají pro trénovaní a klasifikaci textu.
+
+Nejprve si ale definujme, co to tokenizace je:
+
+\begin{definition}
+Tokenizace je proces rozdìlování vstupního textu do vhodných tokenù (nejèastìji slov, frází, symbolù a jiných významových elementù).
+Seznam takto vytvoøených tokenù se potom pou¾ívá pro dal¹í zpracování (v pøípadì této práce, jako vstup klasifikátorù).
+\end{definition}
+
+V této práci rozdìlujeme tokeny na dva typy:
+\begin{itemize}
+	\item Speciální pøíznaky -- V textu se mohou nacházet skryté znaky, které vìt¹inou nejsou klasifikátory bìhem klasifikace schopny zachytit a které mohou výrazným podílem napomoct pøesnosti klasifikace.
+Ka¾dý druh klasifikovaného textu ale, mù¾e mít citlivost k rùzným znakùm zcela jinou, je proto nutné dbát na to, jak vybrat optimální znaky pro daný vstupní text a pou¾itou klasifikaèní metodu.
+	\item Textové tokeny -- Mimo vý¹e zmínìných speciálních pøíznakù jsou v¹ak v textu pøíznaky jednotlivých slov, znakù, atd. , která jsou pro klasifikaci nejdùle¾itìj¹ími nositeli informace.
+Proto také velmi zále¾í na výbìru, popøípadì úpravì, vstupních slov a zpùsobu jejich zpracování.
+\end{itemize}
+
+Nyní pøistoupíme k detailnìj¹ímu popisu vý¹e popsaných typù tokenù tak jak je k nim pøistupováno v praktické èásti této práce.
+Následnì popí¹eme práci naivního Bayesovského klasifikátoru a klasifikátoru zalo¾eného na metodì SVM s vytvoøenými tokeny.
+
+\section{Speciální pøíznaky v textu}
+Nyní rozebereme speciální pøíznaky v textu.
+Jak ji¾ bylo zmínìno tyto pøíznaky jsou v¹echny implementovány v prakticé èásti této práce.
+
+Budeme popisovat jednotlivé druhy speciálních pøíznakù, které jsou z textu extrahovány a které jsou následnì pøedávány klasifikátorùm, je¾ s nimi dále pracují.
+Tyto pøíznaky jsou mnohdy v textu skryté a klasickými pøístupy pro tokenizaci textu (viz \ref{Textove_tokeny}) nejsme schopni tyto data z textu získat.
+Tyto speciální pøíznaky mohou z textu urèovat náladu pisatele, zobecòovat informace obsa¾né v textu a tím napomoct klasifikaci atd.
+Vzhledem k tomu, ¾e takovýchto speciálních pøíznakù bychom byli schopni vymyslet obrovské mno¾ství, je nemo¾né je popsat a implementovat v¹echny.
+V této práci bylo zvoleno nìkolik typù tìchto speciálních pøíznakù, které byly imlpementovány a budou zde tedy popsány.
+
+V následujícím popisu pøíznaky dìlíme do skupin podle typu informace, kterou se pomocí nich sna¾íme z textu dostat.
+Tyto skupiny jsou potom dìleny na typy pøíznakù ze skupiny, které popisují jednotlivé varianty implementace této varianty, které jsouv praktické èásti implementovány.
+
+\subsection{URL}
+Skupina pøíznakù s názvem URL je skupinou, hledající v klasifikovaném textu internetové odkazy ("http://adresa.com", "ftp://adresa.cz", "adresa.cz/odkaz.html", atd.) a sna¾ící se z tìchto odkazù vytvoøit tokeny co nejvhodnìj¹í pro klasifikaci.
+ 
+Skupina URL má v praktické èásti práce následující mo¾né varianty speciálních pøíznakù:
+
+\begin{itemize}
+  \item \emph{Celé URL} -- celé URL nalezené v textu je bráno jako pøíznak.
+  \item \emph{Doména URL} -- doména daného URL je brána jako pøíznak. (napøíklad: \emph{"http://healthland.time.com/2013/04/02/bird-flu-is-back-in-china-but-this-time-its-h7n9/"} $\longrightarrow$ \emph{"time.com"})
+  \item \emph{Existence URL ANO/NE} -- existuje-li v textu URL, pak se vytvoøí pro daný text pøíznak definující, ¾e se v textu URL vyskytovalo.
+  Pokud se v textu ale URL nenachází, vytvoøí se namísto pøíznaku \emph{ANO} pøíznak \emph{NE} definující neexistenci URL v textu.
+  \item \emph{Existence URL ANO} -- tento typ pøíznaku URL je variací na pøedchozí pøíznak \emph{Existence URL ANO/NE}.
+  Pøíznak se ale vytvoøí pouze, pokud se v textu URL nachází.
+  Jestli¾e se nenachází, pøíznak vytvoøen není. 
+  \item \emph{Nepou¾ívat URL} -- tato varianta zcela zru¹í pou¾ívání URL jako pøíznakù pro klasifikaci.
+\end{itemize}
+
+\subsection{Emailové adresy}
+Skupina pøíznakù Emailové adresy sdru¾uje dohromady varianty pøíznakù pracující s nalezenými emailovými adresami v textu.
+
+Mo¾né varianty pøíznakù v této skupinì jsou:
+\begin{itemize}
+  \item \emph{Celý email} -- celý email nalezený v textu je brán jako pøíznak.
+  \item \emph{Existence emailu ANO/NE} -- pøíznak definuje, zda se v textu nachází nìjaká emailová adresa.
+  Pokud ano, je vytvoøen pøíznak \emph{ANO} a pokud ne je vytvoøen pøíznak \emph{NE}.
+  \item \emph{Existence emailu ANO} -- nachází-li se v textu nìkde emailová adresa, vytvoøí se pøíznak definující, existenci této emailové adresy.
+  Na rozdíl od pøedchozí varianty \emph{Existence emailu ANO/NE} se nevytváøí pøíznak NE v pøípadì nenalezení emailové adresy v textu.
+  \item \emph{Nepou¾ívat emailové adresy} -- tato varianta zcela zru¹í pou¾ívání pøíznakù emailových adres jako pøíznakù pro klasifikaci.
+\end{itemize}
+
+\subsection{Emotikony}
+Dal¹í skupinou pøíznakù, které v této práci rozpoznáváme a pøedáváme klasifikátorùm jsou pøíznaky emotkonù (smajlíkù).
+
+Tato skupina pøíznakù se v na¹í implementaci dìlí na následující typy:
+\begin{itemize}
+  \item \emph{Existence jednotlivých emotikonù} -- pro ka¾dý nalezený emotikon je vytvoøen pøíznak.
+  \item \emph{Existence emotikonù obecnì ANO/NE} -- jestli¾e se v textu nachází nìjaké emotikony, je vytvoøen pøíznak \emph{ANO}, jestli¾e se nenacházejí je vytvoøen pøíznak \emph{NE}.
+  \item \emph{Existence emotikonù obecnì ANO} -- obdobné jako \emph{Existence emotikonù obecnì ANO/NE} pouze s tím rozdílem, ¾e jestli¾e se v textu nenacházejí ¾ádné emotikony, ¾ádný pøíznak se nevytvoøí.
+  \item \emph{Nálada emotikonù} -- v textu se vyhledávají emotkiony a zji¹»uje se jejich nálada. 
+  Typy emotikounù jsou rozdìleny do tøech tøíd -- smutné(":-(", ":'(", \ldots), veselé(":-)", ":-P", \ldots ) a ostatní ("o.O", ":-O", \ldots).
+  Jestli¾e je v textu nalezen nìjaký emotikon z vý¹e zmínìných tøíd, pak je vytvoøen odpovídající pøíznak \emph{SAD}, \emph{HAPPY}, nebo \emph{OTHER}.
+  Nachází-li se v textu více typù emotikonù, jsou samozøejmì vytvoøeno více odpovídajících pøíznakù. (tzn. pokud se v textu nachází napøíklad následující mno¾ina emotikonù:":-)", ":-P", ":(", jsou pro daný text vytvoøeny dva pøíznaky \emph{HAPPY} a \emph{SAD})
+  \item \emph{Nepou¾ívat emotikony} -- tato varianta zcela zru¹í pou¾ívání emotikonù jako pøíznakù pro klasifikaci.
+\end{itemize}
+
+\subsection{Tagy}
+Takzvané tagy jsou textové znaèky (klíèová slova), které autoøi pøipisují k textu, aby daný text pøiøadili k nìjakému tématu a umo¾nili tak ostatním u¾ivatelùm snáze nalézt pøíspìvky k jimi hledanému tématu.
+Tyto tagy bývají ve tvaru \#TAG (napøíklad "\#influenza", "\#sick", \ldots).
+Do této skupiny byly v této práci zaøazeny také tagy u¾ivatelù pou¾ívané ve formátu @JMÉNO\_U®IVATELE, které odkazjují na zmínìného u¾ivatele.
+
+Mo¾né typy jsou v pøípadì této skupiny jsou následující:
+\begin{itemize}
+  \item \emph{Celý tag} -- celý tag nalezený v textu je pou¾it jako pøíznak pro klasifikaci.
+  \item \emph{Existence tagù ANO/NE} -- jestli¾e se v textu nachází nìjaké tagy, je vytvoøen pøíznak \emph{ANO}, jestli¾e se nenacházejí je vytvoøen pøíznak \emph{NE}.
+  \item \emph{Existence tagù ANO} -- jako v \emph{Existence tagù ANO/NE}, ale v pøípadì ¾e ¾ádný tag nebyl nalezen, tak se nevytváøí pøíznak NE.
+  \item \emph{Nepou¾ívat tagy} -- tato varianta zcela zru¹í pou¾ívání tagù jako pøíznakù pro klasifikaci.
+\end{itemize}
+
+\subsection{Vìty}
+V pøípadì této skupiny se jedná pouze o jediný typ pøíznaku.
+V celém vstupním textu se spoèítá poèet napsaných vìt a toto èíslo se pou¾ije jako pøíznak pro klasifikaci.
+Samozøejmì, stejnì jako ve vý¹e popsaných skupinách pøíznakù, i tento pøíznak se dá zcela zru¹it a nepou¾ívat.
+
+\subsection{Èasy}
+V textu se velmi èasto nacházejí rùzné èasové údaje, které by mohly velkou mírou pøispìt výsledkùm na¹eho klasifikátoru.
+Proto byla vytvoøena skupina pøíznakù nazvána \emph{Èasy}, která vytváøí pøíznaky z nalezených èasových informací v textu.
+
+Obsahuje tyto typy:
+\begin{itemize}
+  \item \emph{Celý èas} -- jako pøíznaky pro klasifikaci se pou¾ijí v¹echny èasové infomrace nalezené v textu.
+  \item \emph{Èas ve 24h formátu} -- èasové informace nalezené v textu jsou konvertovány do 24 hodinového formátu a následnì pou¾ity jako pøíznaky.
+  \item \emph{Pouze hodiny ve 24h formátu} -- èasové informace jsou stejnì jako v \emph{Èas ve 24h formátu} pøevdeny do 24h formátu, ale jako pøíznaky jsou pou¾ity pouze informace o hodinách.
+  \item \emph{Nepou¾ívat èasy} --  tato varianta zcela zru¹í pou¾ívání èasù jako pøíznakù pro klasifikaci.
+\end{itemize}
+
+\subsection{Data}
+Podobnì jako skupina \emph{Èasy}, funguje i skupina \emph{Data}, která ale pracuje s daty, ze kterých vytváøí pøíznaky.
+V následujícím textu budeme písmenem D oznaèovat dny, písmenem M mìsíce a písmenem Y roky (tzn. datum 15.2.1998 je ve formátu DMY).
+
+Obsahuje tyto mo¾né typy pøíznakù:
+
+\begin{itemize}
+  \item \emph{Celé datum} -- jako pøíznak je v pøípadì tohoto typu pøíznakù pou¾ito datum nalezené v textu.
+  \item \emph{Datum ve formátu DMY} --v pøípadì tohoto typu je datum nalezené v textu pøevedeno do formátu DMY a v tomto formátu je pou¾ito jako pøíznak.
+  \item \emph{Datum ve formátu MY} -- podobnì jako v pøedchozím typu je datum pøevedeno do formátu DMY, ale jako pøíznak jsou pou¾ity pouze informace o mìsíci a roku (tzn. MY)
+  \item \emph{Datum ve formátu Y} -- opìt podobné jako \emph{Datum ve formátu DMY} ale pro vytvoøení pøíznaku je pou¾it pouze rok z data nalezeného v textu.
+  \item \emph{Nepou¾ívat data} -- tato varianta zcela zru¹í pou¾ívání èasù jako pøíznakù pro klasifikaci.
+\end{itemize}
+
+\section{Textové tokeny} \label{Textove_tokeny}
+Jak ji¾ bylo zmínìno v pøedchozím textu, 
+
+Pro tokenizaci obecnì existuje velmi mnoho pøístupù a zpùsobù zde v¹ak popí¹eme pouze tøi, jejich¾ výsledky následnì v kapitole \ref{TESTY} porovnáne.
 
 
+\subsubsection{Základní pøístup k tokenizaci}
+Základní tokenizace dìlí vstupní vìtu pouze na jednotlivá slova, která jsou posléze pou¾ita jako tokeny. 
+
+To znamená:
+
+Mìjme vstupní text \textit{'Damned headache. I have to sleep.'}
+takovýto text se rozdìlí na slova, tzn. vznikne následující seznam slov:
+
+$['Damned', 'headache', 'I', 'have', 'to', 'sleep']$.
+
+Takto vytvoøená slova jsou tedy tokeny s nimi¾ se klasifikátor uèí, nebo které klasifikuje.
+
+\subsubsection{Základní pøístup k tokenizaci se stematizací}
+Tento pøístup je velmi podobný pøedchozímu.
+Li¹í se od nìj pouze tím, ¾e slova které jsou vytvoøeny rozdìlením pøevede na koøeny (stematizace).
+Tímto krokem se sní¾í poèet slov ve slovníku klasifikátoru.
+To zpùsobí, ¾e u Bayesovského klasifikátoru dojde k výraznému zmen¹ení velikosti slovníku vytvoøeného pøi uèení a u klasifikátoru SVM se sní¾í poèet dimenzí pøíznakù a zjednodu¹í se tak nalezení optimální nadroviny.
+
+To znamená:
+
+Mìjme vstupní text \textit{'Damned headache. I have to sleep.'}
+takovýto text se rozdìlí na slova, tzn. vznikne následující seznam slov:
+
+$['Damned', 'headache', 'I', 'have', 'to', 'sleep']$.
+
+Nyní v¹echna tato slova pøevedeme na tvar koøene (stematizace), èím¾ získáme seznam následujících slov:
+
+$['Damn', 'headache', 'I', 'have', 'to', 'sleep']$.
+
+Takto vytvoøené koøeny slov se ji¾ pou¾ijí jako tokeny pro uèení klasifikátorù, nebo samozøejmì také mù¾e být vstupní text rozdìlený na tato slova klasifikátory klasifikován do daných tøíd.
 
 
+\subsubsection{Alternativní pøístup k tokenizaci}
+Základní pøístup k tokenizaci vstupního textu ale trpí jedním velkým neduhem, a to, ¾e tokeny jsou zcela samostatné bloky, které se, a» u¾ naivní Bayesovský klasifikátor, nebo klasifikátor zalo¾ený na support vector machines, uèí ani¾ by byl schopný z nich urèit kontext tìchto slov.
+V¾dy» jak bylo ji¾ bylo vý¹e zmínìno, Bayesovský klasifikátor je oznaèován jako naivní právì proto, ¾e nebere v potaz závislosti jednotlivých tokenù na sobì (co¾ vychází z odvození rovnice \ref{equation_used} pou¾ívané pro klasifikaci viz. \ref{SF-BAYES-MAT-bayes_theorem-deriv}).
+Proto jsem se sna¾il tuto nevýhodu kompenzovat tím, ¾e jsem pou¾il tento alternativní pøístup k tokenizaci zachovávající nejbli¾¹í kontext.
+Ten na rozdíl od základní tokenizace nevytváøí tokeny pouze z jednotlivých slov, ale také z $N$ za sebou jdoucích slov, èím¾ bere v potaz jejich kontext ve vìtì.
+Nevýhodou tohoto pøístupu je, ¾e pro velké uèící mno¾iny výraznì roste velikost slovníku u Bayesovského klasifikátoru a SVM klasifikátoru se zvìt¹uje poèet dimenzí pøíznakù, co¾ vede k obtí¾nìj¹ímu nalezení optimální dìlící nadroviny.
+Tato vlastnost ale opìt mù¾e být alespoò èásteènì kompenzována stematizací jednotlivých slov, a tím i sní¾ením celkového poètu rùzných tokenù.
+Uka¾me si alternativní pøístup k tokenizaci na pøíkladu:
 
+Mìjme opìt zprávu \textit{'Damned headache. I have to sleep.'}.
+Prvním krokem pøi zpracování této zprávy je její rozdìlení na vìty, proto¾e kontext za sebou jdoucích slov funguje v¾dy v rámci jedné vìty.
+Pro rozdìlení vstupního textu na jednotlivé vìty je s úspìchem pou¾ita knihovna NLTK (viz. \ref{IMP-OBEC-NLTK}).
+Vstupní text je nyní v tomto tvaru
+$$['Damned\ headache.', 'I\ have\ to\ sleep]$$\\
+Na rozdíl od základního pøístupu, který vytváøí tokeny pouze z jednotlivých slov, vytváøíme tokeny z libovolných za sebou jdoucích $N$-tic o maximální délce $N$, v¾dy tak, ¾e $N$-tice se skládají v¾dy jen ze slov dané vìty.
+Hodnota $N$ je nastavena na optimální hodnotu urèenou experimentálnì za pomocí testù tak, aby stále je¹tì vylep¹ovala výslednou pøesnost klasifikátoru a pøitom aby velikost slovníku nepøesáhla pøijatelnou mez.
+Pøed tím, ne¾ se samozøejmì ze slov udìlají tokeny, pøevedou se v¹echna slova na koøeny.
+Tokeny pro vstupní text a $N = 3$ budou tedy vypadat následovnì pro první vìtu:
+$$['Damn', 'headache', ('Damn', 'headache')]$$
+a pro druhou vìtu:
+$$['I', 'have', 'to', 'sleep', ['I', 'have'], ['have', 'to'], ['to', 'sleep'], ['I', 'have', 'to'], ['have', 'to', 'sleep']]$$
+S tìmito tokeny pak klasifikátor pracuje stejnì jako s jakýmikoliv jinými tokeny.
 
+\section{Pøíznaky a tokeny v Bayesovském klasifikátoru}
 
+Bayesovský klasifikátor bere postupnì v¹echny tokeny a pøíznaky z trénovací mo¾inu a v závisosti na 
+labelech trénovacích dat poèítá pravdìpodobnosti s jakými dané tokeny a pøíznaky nále¾í do tøídy spamu.
+Takto vypoèítané pravdìpodobnosti pro jednotlivé tokeny a pøíznaky si ukládá do svého slovníku, pomocí neho¾ následnì klasifikuje nové vstupní texty.
 
+V Bayesovském klasifikátoru je velmi dùle¾ité vybrat pro danou trénovací mno¾inu dat vhodné pøíznaky, které se z textu budou extrahovat a pou¾ívat pro klasifikaci.
+Proto je v této práci klasifikátor trénován se v¹emi mo¾nými kombinacemi pou¾itých pøíznakù a jsou zvoleny ty pøíznaky, pro které mají výsledky klasifikátoru na testovacích datech s tìmito daty nejvìt¹í korelaci.
 
+\section{Pøíznaky a tokeny v SVM klasifikátoru}
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+Na rozdíl od Bayesovského klasifikátoru, problém volby vhodných pøíznakù a tokenù u klasifikátoru zalo¾eném na SVM odpadá, co¾ vychází z definice SVM.
+Jeliko¾ si klasifikátor pøi uèení vytváøí váhový vektor, který urèuje míru dùle¾itosti jednotlivých pøíznakù v prostoru pøíznakù na výsledek klasifikace, tak je jasné, ¾e klasifikátor doká¾e irelevantní pøíznaky ignorovat a øídit se hlavnì pøíznaky, které na výslednou klasifikaci budou mít nejlep¹í vliv.
 
 
 
@@ -813,42 +981,39 @@ Klasifikátor pou¾ívá pro ukládání dat pøedev¹ím tedy databáze pravdìpodobností j
 To je proces, pøi nìm¾ je datová struktura, nebo objekt pøeveden na proud dat, jen¾ se dá jednodu¹e ulo¾it a zpìtnì pøevést zpìt na danou strukturu èi objekt.
 V klasifikátoru je pou¾ita knihovní funkce pythonu s názvem \textit{pickle}, umo¾òující provést serializaci libovolné datové struktury pythonu a zpìt.
 
-\subsection{Tokenizace} \label{IMP-BAYES-TOKEN}
-Jak ji¾ bylo zmínìno v pøedchozím textu, tokenizace je rozdìlení vstupního textu do vhodných tokenù (nejèastìji slov).
-Tyto tokeny si klasifikátor ukládá pøi uèení do své databáze a upravuje jim postupnì v prùbìhu uèení pravdìpodobnost s jakou nále¾í do tøídy spamu.
-Pøed tokenizací je celý vstupní text upraven tak, ¾e jsou vynechány ve¹keré nealfanumerické znaky.
-Toto v¹ak bude ve finální verzi odstranìno a bude vytvoøen seznam znakù takzvaných \uv{features} a funkce, která bude s tìmito znaky (emotikony, tøi teèky, atd.) pracovat a pøidìlovat jim nìjakou pravìpodobnost nále¾itosti ke spamu, která bude následnì pracovávána.
 
-\subsubsection{Klasický pøístup k tokenizaci}
-Klasická tokenizace u Bayesovského klasifikátoru dìlí vstupní vìtu pouze na slova.
-To znamená:
+\chapter{Testy} \label{TESTY}
 
-Mìjme vstupní zprávu \textit{'Damned headache. I have to sleep.'}
-takováto zpráva se rozdìlí na slova, tzn. vznikne následující seznam tokenù:
-$['Damned', 'headache', 'I', 'have', 'to', 'sleep']$
-S tìmito tokeny potom klasifikátor pracuje klasickým zpùsobem, jak bylo vysvìtleno vý¹e (\ref{SF-BAYES-PRINCIP}).
+%##################################
+%########## svmrestults ##########
+%##################################
+%True positive = 93.4
+%True negative = 91.6
+%False positive = 8.4
+%False negative = 8.4
+%Precision = 0.917485265226
+%Recall = 0.917485265226
+%Accuracy = 0.91674925669
+%F-measure = 0.917485265226
+%##################################
+%
+%##################################
+%########## bayesrestults ##########
+%##################################
+%True positive = 90.2
+%True negative = 90.6
+%False positive = 9.8
+%False negative = 9.8
+%Unknown = 0.0
+%Precision = 0.902
+%Recall = 0.902
+%Accuracy = 0.902195608782
+%F-measure = 0.902
+%Corelation = 0.826996274323
+%##################################
+%{'emoticon': 1, 'sentence': 1, 'url': 4, 'tag': 1, 'time': 0, 'date': 0, 'email': 0}$$
 
-\subsubsection{Alternativní pøístup k tokenizaci}
-Jak bylo øe¹eno, implementovaný Bayesovský klasifikátor je oznaèován jako naivní proto, ¾e nebere v potaz závislosti jednotlivých tokenù na sobì (co¾ vychází z odvození rovnice \ref{equation_used} pou¾ívané pro klasifikaci viz. \ref{SF-BAYES-MAT-bayes_theorem-deriv}).
-Proto jsem se sna¾il tuto nevýhodu kompenzovat tím, ¾e jsem vytvoøil alternativní pøístup k tokenizaci.
-Ten na rozdíl od klasické tokenizace nevytváøí tokeny pouze z jednotlivých slov, ale také z $N$ slov za sebou jdoucích, èím¾ bere v potaz jejich kontext ve vìtì.
-Nevýhodou tohoto pøístupu je, ¾e pro velké uèící mno¾iny výraznì roste velikost slovníku klasifikátoru.
-Uka¾me si alternativní pøístup k tokenizaci na pøikladu:
 
-Mìjme napøíklad opìt zprávu \textit{'Damned headache. I have to sleep.'}.
-Prvním krokem pøi zpracování zprávy je její rozdìlení na vìty, proto¾e kontext za sebou jdoucích slova funguje v¾dy v rámci jedné vìty.
-Pro rozdìlení vstupního textu na jednotlivé vìty je s úspìchem pou¾ita knihovna NLTK (viz. \ref{IMP-OBEC-NLTK}).
-Vstupní text je nyní v tomto tvaru
-$$['Damned\ headache.', 'I\ have\ to\ sleep]$$\\
-Na rozdíl od klasického pøístupu, který vytváøí tokeny pouze z jednotlivých slov, vytváøíme tokeny z libovolných za sebou jdoucích $N$-tic o maximální délce $N$.
-Hodnota $N$ je nastavena na optimální hodnotu urèenou experimentálnì za pomocí testù tak, aby stále je¹tì vylep¹ovala výslednou pøesnost klasifikátoru a pøitom aby velikost slovníku nepøesáhla pøijatelnou mez.
-Tokeny pro vstupní text a $N = 3$ budou tedy vypadat následovnì pro první vìtu:
-$$['Damned', 'headache', ('Damned', 'headache')]$$
-a pro druhou vìtu:
-$$['I', 'have', 'to', 'sleep', ['I', 'have'], ['have', 'to'], ['to', 'sleep'], ['I', 'have', 'to'], ['have', 'to', 'sleep']]$$
-S tìmito tokeny pak klasifikátor pracuje stejnì jako s klasickými.
-
-\chapter{Testy}
 \section{Data}\label{TEST-DATA}
 Jedním z úkolù vyplývajících ze zadání této práce bylo vytvoøit datovou sadu pro uèení a testování vytvoøených klasifikátorù.
 Zdrojem tìchto dat byla databáze tweetù projektu M-eco\footnote{http://www.meco-project.eu/}, ve kterém participuje výzkumná skupina NLP pracující pøi Fakultì informaèních technologii VUT v Brnì.
