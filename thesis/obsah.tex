@@ -12,8 +12,21 @@ Tato úloha spadá do vý¹e zmínìné skupiny statistických metod a metod strojového 
 Metody klasifikace textu lze pou¾ít pro velké mno¾ství úloh, které se týkají zpracovávání pøirozeného jazyka, a to pøedev¹ím díky jejich flexibilitì a ji¾ velmi dobøe zpracované teorii.
 
 V této práci se nejprve budeme zabývat obecnými pøístupy pou¾ívanými pro øe¹ení úloh zpracovávání pøirozeného jazyka.
-Poté se podrobnìji podíváme na problematiku naivního Bayesovského klasifikátoru, jeho mo¾ných variací, vylep¹ení atd., a to jak na teoretické základy této metody, tak na aplikaci této metody v praxi.
-Budou zde prezentovány výsledky dosa¾ené pomocí jednotlivých úprav Bayesovského klasifikátoru a ty budou na závìr porovnány.
+Pro tuto práci byly zvoleny dvì klasifikaèní metody, jedna probabilistická a jedna neprobabilistická.
+
+Tou první, probabilistickou metodu, která je v této práci podrobnì popsána, je metoda nazývaná \textit{Bayesovský klasifikátor}, vyu¾ívající ke klasifikaci textu Bayesova teorému.
+Bayesovský klasifikátor, nebo také Bayesovský filtr, jak je obèas nazýván, je velmi èasto pou¾íván e-mailovými klienty pro zji¹»ování, zda je e-mailová zpráva nevy¾ádanou po¹tou, nebo ne.
+
+Druhou zvolenou metodou je neporobabilistická klasifikaèní metoda \textit{SVM}(support vector machines).
+Je¾ pomocí namapování vstupního textu do $N$-dimenzionálního prostoru a následným rozdìlením tohoto prostoru na dva poloprostory doká¾e vstupní text klasifikovat.
+
+Obì metody jsou v této práci podrobnì rozebrány jak z teoretického, tak praktického hlediska.
+
+Souèástí této práce je mimo toretické èásti prezentované v tomto dokumentu, také praktická, implementaèní èást ve které je vytvoøen program a implementovány obì vý¹e zmínìné klasifikaèní metody, které jsou testovány a porovnány.
+Souèástí praktické èásti je také mno¾ina trénovacích a testovacích dat, které jsou potom pou¾ívány v testech.
+V této práci bude také popsána implementaèní èást, ve ní¾ budou specifikovány ve¹keré problémy a pou¾ité postupy pøi implementaci praktické èásti.
+
+Na závìr budou prezentovány výsledky získané z porovnání dvou vý¹e zmínìných implementovaných klasifikátorù.
 
 \section{Zadání práce a motivace} \label{UVOD-MOTIVACE}
 Zadáním této práce bylo seznámit se s problematikou klasifikace dokumentù dle tématu a zvolit si dvì metody, kterými se budu podrobnìji zabývat.
@@ -21,14 +34,10 @@ Následnì tyto dvì metody analyzovat a implementovat program, který pomocí tìchto
 Pro svùj program anotuji velkou sadu dokumentù, které budu následnì pou¾ívat pro trénování a testování mnou vytvoøeného programu.
 Na tìchto datech následnì porovnám dvì zvolené metody klasifikace pomocí standardních metrik pro hodnocení klasifikátorù.
 
-Toto téma diplomové práce jsem si zvolil, jeliko¾ ji¾ témìø rok pracuji na projektu M-eco\footnote{http://www.meco-project.eu/} ve skupinì NLP na VUT FIT, kde se zabývám klasifikací tweetù\footnote{krátkých zpráv o maximální délce 140 znakù, je¾ u¾ivatelé sociální sítì Twitter(http://twitter.com/) pí¹í na své profily}.
-Chtìl bych této práce vyu¾ít k tomu, abych prohloubil své znalosti o problematice klasifikace dokumentù a abych následnì vylep¹il klasifikátor, který je v souèasné dobì v provozu a pomocí nìj¾ jsou filtrovány tweety pøidávané do databáze.  
+Toto téma diplomové práce jsem si zvolil, jeliko¾  jsem témìø dva roky pracoval na projektu M-eco\footnote{http://www.meco-project.eu/} ve skupinì NLP na VUT FIT, kde jsem se zabýval klasifikací tweetù\footnote{krátkých zpráv o maximální délce 140 znakù, je¾ u¾ivatelé sociální sítì Twitter(http://twitter.com/) pí¹í na své profily}.
+Chtìl bych této práce vyu¾ít k tomu, abych prohloubil své znalosti o problematice klasifikace dokumentù a hloubìj¹ímu porozumìní klasifikaèních metod, zejména pak klasifikátoru zalo¾eného na SVM, jeliko¾ metoda SVM je velmi dobøe variabilní a lze ji pou¾ít pro øe¹ení velkého mno¾stí rùzných problémù.
 
-
-Pro podrobnìj¹í prostudování jsem si zvolil jednu probabilistickou a jednu neprobabilistickou klasifikaèní metodu.
-Jako první, probabilistickou metodu, která je v souèasné dobì ji¾ implementována a která je v této práci podrobnì popsána, jsem si zvolil \textit{Bayesovský klasifikátor}, vyu¾ívající ke klasifikaci textu Bayesova teorému.
-Bayesovský klasifikátor, nebo také Bayesovský filtr je velmi èasto pou¾íván e-mailovými klienty pro zji¹»ování, zda je e-mailová zprává nevy¾ádanou po¹tou, nebo ne.
-Druhou zvolenou metodou, která v¹ak je¹tì nebyla implementována a kterou zatím studuji, je metoda \textit{SVM}(support vector machines).
+Bayesovský klasifikátor implementovaný této práci byl v reálu dlouho pou¾íván na filtrování tweetù pøidávaných do databáze M-eco.
 
 
 \chapter{Zpracování pøirozené øeèi}
