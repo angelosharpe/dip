@@ -39,6 +39,15 @@ Chtìl bych této práce vyu¾ít k tomu, abych prohloubil své znalosti o problematic
 
 Bayesovský klasifikátor implementovaný této práci byl v reálu dlouho pou¾íván na filtrování tweetù pøidávaných do databáze M-eco.
 
+\section{Návaznost práce na semstrální projekt} \label{UVOD-NAVAZNOST}
+Tato práce úzce navazuje odevzdaný dokument semestrálního projektu, jen¾ byl vytvoøen pro stejnojmenný pøedmìt.
+
+Semestrální projekt obsahoval úvodní kapitolu o problematice zpracování pøirozeného jazyka a popis problematiky naivního Bayesovského klasifikátoru, jen¾ byl pro tuto práci také implementován (\ref{BAYES}).
+Byla vytvoøena malá testovací sada, pro trénování a testování tohoto klasifikátoru.
+Nad touto datovou sadou a klasifikátorem byly následnì provedeny testy v nich¾ byl zhodnocen vliv tokenizace (\ref{TOKENIZACE}) na klasifikaèní schopnosti implementovaného Bayesovského klasifikátoru.
+V odevzdané práci je¹tì nebyly implementovány speciální pøíznaky (\ref{TOKENIZACE-SPEC}).
+
+
 
 \chapter{Zpracování pøirozené øeèi}
 V této kapitole se budeme struènì zabývat historií (\ref{NLP-H}) oboru zpracovávání pøirozeného jazyka, poté si pøiblí¾íme hlavní úkoly, které se v oboru zpracovávání pøirozeného jazyka øe¹í (\ref{NLP-HU}) a nakonec se podrobnìji podíváme na klasifikaèní úlohy(\ref{NLP-KU}), které jsou hlavním tématem této práce.
@@ -245,7 +254,7 @@ V roce 1988 vyslovil Michael Kearns ve své práci s názvem \textit{Thoughts on hy
 Od té doby bylo vyvynuto více algoritmù pro boosting klasifikace, nicménì vìt¹ina z nich se zakládá na iterativním uèení mno¾iny slabých klasifikátorù a jejich následném sdru¾ení do jednoho pøesného klasifikátoru.
 Historicky nejvýznam¹j¹ím boostingovým algoritmem je zøejmì algoritmus \textit{AdaBoost}(adaptive boosting), vytvoøený Yoavem Freundem a Robertem Schapirem, který publikovali v práci \textit{A Decision-Theoretic Generalization of on-Line Learning and an Application to Boosting}\cite{boosting}.
 
-\chapter{Bayesovský klasifikátor} \label{SF-BAYES}
+\chapter{Bayesovský klasifikátor} \label{BAYES}
 Bayesovský klasifikátor (naivní Bayesovský klasifikátor) je klasifikátor postavený na zjednodu¹eném Bayesovském teorému.
 Zjednodu¹ení plyne z toho, ¾e výskyt nebo naopak neexistence jednoho tokenu (slova) není závislá na existenci nebo neexistenci jiného tokenu(slova).
 Tudí¾ i kdy¾ tokeny na sobì závisejí, Bayesovský klasifikátor s nimi pracuje jako se zcela nezávislými událostmi.
@@ -763,7 +772,7 @@ Tudí¾ tyto vektory by mohly být zcela odstranìny z tréninkové sady a nemìlo by t
 Díky této vlastnosti jsou SVM ménì náchylné na overfitting a také klasifikaèní model, který tyto vektory tvoøí je díky tomu velmi malý a rychlý.
 
 
-\chapter{Tokenizace a výbìr vhodných pøíznakù}
+\chapter{Tokenizace a výbìr vhodných pøíznakù} \label{TOKENIZACE}
 V této kapitole se budeme zabývat tvorbou tokenù, které klasifikátory pou¾ívají pro trénovaní a klasifikaci textu.
 
 Nejprve si ale definujme, co to tokenizace je:
@@ -784,7 +793,7 @@ Proto také velmi zále¾í na výbìru, popøípadì úpravì, vstupních slov a zpùsobu je
 Nyní pøistoupíme k detailnìj¹ímu popisu vý¹e popsaných typù tokenù tak jak je k nim pøistupováno v praktické èásti této práce.
 Následnì popí¹eme práci naivního Bayesovského klasifikátoru a klasifikátoru zalo¾eného na metodì SVM s vytvoøenými tokeny.
 
-\section{Speciální pøíznaky v textu}
+\section{Speciální pøíznaky v textu} \label{TOKENIZACE-SPEC}
 Nyní rozebereme speciální pøíznaky v textu.
 Jak ji¾ bylo zmínìno tyto pøíznaky jsou v¹echny implementovány v prakticé èásti této práce.
 
@@ -971,24 +980,77 @@ Jeliko¾ si klasifikátor pøi uèení vytváøí váhový vektor, který urèuje míru dùle¾
 
 
 \chapter{Vlastní implementace}
-V této kapitole se budeme zabývat implementací jednotlivých algoritmù z kapitoly SF a nástroji pou¾itými k jejich implementaci.
+V této kapitole se budeme zabývat vlastní implementací obou klasifikaèních algoritmù z kapitol \ref{BAYES} a \ref{SVM}.
+Kromì pou¾itých knihoven zde popí¹eme také architekturu programu implementovaného v praktické èásti této práce.
+Také zde budou pøedstaveny problémy, ke kterým pøi implementaci do¹lo a také jakým zpùsobem byly vyøe¹eny
 
-\section{Obecné}
-\subsection{NLTK} \label{IMP-OBEC-NLTK}
+Celý program je implementován v programovacím jazyku Python.
+Jazyk Python byl zvolen hlavnì z toho dùvodu, ¾e pro nìj existuje mnoho knihoven, které mohly být v této práci pou¾ity a za jejich pomocí se výraznì zjednodu¹ila implementace.
+Mezi tyto pou¾ité knihovny patøí zejména knihovna pro zpracování pøirozené øeèi NLTK, knihovna Numpy (Numerical python) která umo¾òuje v prostøedí jazyka Python velmi jednodu¹e pracovat se slo¾itìj¹í matematikou a knihovna CVXOPT vyu¾itá v implementaci SVM klasifikátoru pro øe¹ení úloh kvadratického programování.
+
+Tyto knihovny budou mimo jiné také podrobnìji popsány dále v této kapitole.
+
+\section{Pou¾ité knihovny}
+\subsection{NLTK} \label{IMP-NLTK}
 NLTK neboli Natural Language ToolKit je balík knihoven pro skriptovací jazyk pyhton 2.7 urèený pro symbolické a statistické zpracovávání pøirozené øeèi.
-NLTK obsahuje velké mno¾ství rùzných nástrojù, ale také ukázkových dat, které velmi zjednodu¹ují práci pøi zpracovávání pøirozeného jazyka.
+Nabízí jednoduché rozhraní pro velké mno¾ství rùzných nástrojù pro zpracování textu, ale také velké mno¾ství ukázkových dat, které lze pou¾ít jako testovací a tréhovací data pøi vyvíjení softwaru pracujícího s pøirozeným jazykem.
+Díky vynikající dokumentaci je NLTK skvìlou knihovnou výraznì zjednodu¹ující implementaci softwaru pracujícího nìjakým zpùsobem s pøirozeným jazykem.
 
-V této práci je z tohoto balíku pou¾ívána pouze jedna funkce, a to rozdìlovaè vìt podle jazyka.
-To znamená, ¾e tato funkce najde ve vìtì interpunkèní znaménka daného nastaveného jazyka a vstupní text rozdìlí na vìty.
-S rozdìlenými vìtami se dále pracuje (viz tokenizace \ref{IMP-BAYES-TOKEN}).
+V praktické èásti této práce je knihovna NLTK pou¾ívána jako souèást pøedzpracování vstupního textu urèeného buï k uèení klasifikiátorù, nebo ji¾ pøímo pro klasifikaci.
+Je pou¾ita k tìmto dvìma operacím:
+textem.
+\begin{enumerate}
+ \item Rozdìlení vìt -- Prvním modulem z této knihovny který je v práci pou¾it je modul /emph{punkt} (\emph{nltk/tokenize/punkt}), jen¾ rozdìluje vstupní text na list vìt.
+ \item Pøevedení slov na jejich koøeny -- Druhým modulem z této knihovny je modul /emph{snowball} \emph{nltk.stem.snowball} jeho¾ úkolem je z jednotlivých slov vstupního textu udìlat koøen slov. (více viz \ref{Textove_tokeny})
+\end{enumerate}
 
-\section{Bayesovský klasifikátor}
+\subsection{Numpy} \label{IMP-NUMPY}
+Numpy je základním balíkem pro numerické výpoèty v programovacím jazyce Python.
+Tato knihovna nabízí práci s mnohadimenzionálními poli, dal¹ími objekty od nich odvozenými (masked arrays, matice, $\ldots$), s velkým mno¾stvím rychlých matematických operací nad poli zahrnujících diskrétní Fourierovy transformace, tøídìní, základní lineární algebru, a mnoho dal¹ími.
+Tato knihovna je pro programy øe¹ící vìt¹í mno¾ství slo¾itìj¹ích matematických výpoètù prakticky nutností, nebo» výraznì zrychlí výpoèty a  programátorovi zjednodu¹í práci s matematickými daty.
+Mnoho dal¹ích knihoven øe¹ící nìjaké rozsáhlej¹í matematické úkony je zalo¾ených právì na Numpy.
+Mezi tyto knihovny patøi i CVXOPT (viz \ref{IMP-CVXOPT}) pou¾itý pro implementaci SVM klasifikátoru v praktické èásti této práce.
+
+\subsection{CVXOPT} \label{IMP-CVXOPT}
+CVXOPT je volnì dostupný balík knihoven pro øe¹ení konvexních optimalizaèních problému (mimo jiné do této skupiny problémù patøí i kvadratické programování pou¾itév implementaci SVM klasifikátoru) v programovacím jazyce Python.
+Jejím hlavním úkolem je zjednodu¹it vývoj softwaru, jen¾ potøebuje pro svùj bìh øe¹it konvexní optimalizaèní úlohy, ani¾ by bylo potøeba implementovat slo¾ité optimalizaèní algoritmy.
+
+
+\section{Architektura programu a implementace obecných èástí}
+V této èásti kapitoly o implementaci si ve zkratce pøedstavíme architekturu implementovaného programu a implementaci obecných èástí programu.
+
+
+\subsection{Architektura programu}
+V koøenovém adresáøi tohoto projektu se nachází spou¹tìcí skript, pomocí kterého je program ovládaný a který nabízí ve¹keré operace, které se dají s programem provést.
+Výpis nápovìdy k programu bude vypsán v Pøíloze XXXXX. 
+
+Nad koøenovým adresáøem se nachází adresáø \texttt{/src/} obsahující tøi podadresáøe, ka¾dý obsahující jednu logickou èást programu:
+
+\begin{enumerate}
+ \item Adresáø \texttt{common} -- v tomto adresáøi se nacházejí ve¹keré operace, které jsou pro oba implementované klasifikátory spoleèné, a to extrakce textových tokenù a tokenù speciálních pøíznakù z textu.
+ \item Adresáø \texttt{bayes} -- v tomto adresáøi se nachází kompletní implementace naivního Bayesovského klasifikátoru.
+ \item Adresáø \texttt{svm} -- v tomto adresáøi se nachází kompletní implementace klasifikátoru zalo¾eného na SVM.
+\end{enumerate}
+
+Mimo èást se zdrojovými kódy se potom nachází adresáø data, který obsahuje ve¹kerá ruènì anotovaná data a natrénované klasifikaèní modely pro oba klasifikátory, které po umo¾òují klasifikátor pou¾ívat bez toho, ani¾ by se musel poka¾dé znovu spou¹tìt trénovací algoritmus na mno¾inì tréninkových dat.
+
+\subsection{Implementace obecných èástí programu}
+
+
+\section{Implementace Bayesovského klasifikátoru}
 Bayesovský klasifikátor je implementován jako modul ve skriptovacím jazyce Python verze 2.7.
 Pro výpoèet klasifikace je pou¾ita rovnice \ref{equation_used}. 
 \subsection{Ukládání dat}
 Klasifikátor pou¾ívá pro ukládání dat pøedev¹ím tedy databáze pravdìpodobností jednotlivých tokenù, na které klasifikátor pøi svém uèení narazil, serializaci.
 To je proces, pøi nìm¾ je datová struktura, nebo objekt pøeveden na proud dat, jen¾ se dá jednodu¹e ulo¾it a zpìtnì pøevést zpìt na danou strukturu èi objekt.
 V klasifikátoru je pou¾ita knihovní funkce pythonu s názvem \textit{pickle}, umo¾òující provést serializaci libovolné datové struktury pythonu a zpìt.
+
+\section{Implementace klasifikátoru SVM}
+
+
+
+
+
 
 
 \chapter{Testy} \label{TESTY}
