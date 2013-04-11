@@ -11,10 +11,24 @@ import regexps
 from feature import *
 
 class Entry:
+    '''
+    Entry object contains every text input for both classification and learning.
+    It also provideas all operations on input text (stematization, features
+    selection, etc.)
+    '''
     # lemmatizer class member
     stmr = EnglishStemmer()
 
     def __init__(self, entry, language, id=None, guid=None, label=None, max_token_size=2):
+        '''
+        Init method
+        @param entry: input text
+        @param language: language of input text
+        @param id: id from database
+        @param guid: tweet guid from database
+        @param label: label from manual classification
+        @param max_token_size: text tokenization parameter
+        '''
         self._logger = logging.getLogger()
         # entry id in dabatase
         self.id = id
@@ -69,8 +83,8 @@ class Entry:
         '''
         Method checks whether input features selection dictionary is acceptable 
         by Entry class.
-        @param feats input features
-        @return boolean value True if feature dict contains all features in
+        @param feats: input features
+        @return: boolean value True if feature dict contains all features in
                 correct format
         '''
         # check number of features
@@ -100,6 +114,8 @@ class Entry:
         ''''
         This method splits string into sentences according to language of
         the string. Other languages are also supported but not yet implemented.
+        @param entry: input text
+        @return: list of sentences
         '''
         if not entry:
             return []
@@ -117,7 +133,8 @@ class Entry:
         words. Sentences are split on nonaplha characters then empty words
         are removed. Then stematizer is used to simplyfy words used as tokens
         in classifier.
-        @param text whole text (this is the last step of feature export)
+        @param text: whole text (this is the last step of feature export)
+        @return: list of words
         '''
         word_list = []
         sentences = self._to_sentences(text)
@@ -130,6 +147,7 @@ class Entry:
     def _get_ntuple_token(self):
         '''
         This method generates tokens(N-tuples) from word lists
+        @return: yields text tokens
         '''
         word_list = self._to_words(self.text)
         for sentence in word_list:
@@ -143,7 +161,8 @@ class Entry:
         text and removes every occurance of matched patterns. Findall returns
         tuple of re groups which have to be joined back into one to be removed
         from original text.
-        @param token_re regexp which determines token
+        @param token_re: regexp which determines token
+        @return: yields text tokens
         '''
         tokens = re.findall(token_re, self.text)
         if tokens:
@@ -156,7 +175,8 @@ class Entry:
         '''
         This method returns yields tokens matched with regexp in the original
         text. Findall returns tuple of re groups.
-        @param token_re regexp which determines token
+        @param token_re: regexp which determines token
+        @return: yields text tokens
         '''
         tokens = re.findall(token_re, self.text)
         if tokens:
@@ -174,6 +194,7 @@ class Entry:
     def _feature_url_whole(self):
         '''
         Yield URLs -- use whole url.
+        @return: yields features
         '''
         for found_url in self._get_re_token(regexps.urls_re):
             full_url = ''.join(list(found_url))
@@ -182,6 +203,7 @@ class Entry:
     def _feature_url_domain(self):
         '''
         Yield URLs -- use only domain names.
+        @return: yields features
         '''
         for found_url in self._get_re_token(regexps.urls_re):
             full_url = ''.join(list(found_url))
@@ -195,6 +217,7 @@ class Entry:
     def _feature_url_y(self):
         '''
         Yield emails -- is url present? Add token only if present.
+        @return: yields features
         '''
         found = 0
         for found_url in self._get_re_token(regexps.urls_re):
@@ -206,6 +229,7 @@ class Entry:
     def _feature_url_y_n(self):
         '''
         Yield emails -- is url present? Add yes token if present and no it not.
+        @return: yields features
         '''
         found = 0
         for found_url in self._get_re_token(regexps.urls_re):
@@ -219,7 +243,7 @@ class Entry:
     def _feature_email_whole(self):
         '''
         Yield emails -- use whole email.
-
+        @return: yields features
         '''
         for email in self._get_re_token(regexps.emails_re):
             yield Email(''.join(list(email)))
@@ -227,6 +251,7 @@ class Entry:
     def _feature_email_y(self):
         '''
         Yield emails -- Add token YES only if present.
+        @return: yields features
         '''
         found = 0
         for email in self._get_re_token(regexps.emails_re):
@@ -238,6 +263,7 @@ class Entry:
     def _feature_email_y_n(self):
         '''
         Yield emails -- use whole email. Add yes token if present and no it not.
+        @return: yields features
         '''
         found = 0
         for email in self._get_re_token(regexps.emails_re):
@@ -251,13 +277,15 @@ class Entry:
     def _feature_emoticon(self):
         '''
         Yield emoticon tokens.
+        @return: yields features
         '''
         for emoticon in self._get_re_token(regexps.emoticons_re):
             yield Emoticon(''.join(list(emoticon)))
 
     def _feature_emoticon_y(self):
         '''
-        Yield emotico
+        Yield emoticon
+        @return: yields features
         '''
         found = False
         for emoticon in self._get_re_token(regexps.emoticons_re):
@@ -269,6 +297,7 @@ class Entry:
     def _feature_emoticon_y_n(self):
         '''
         Yield emoticon
+        @return: yields features
         '''
         found = False
         for emoticon in self._get_re_token(regexps.emoticons_re):
@@ -282,6 +311,7 @@ class Entry:
     def _feature_emoticon_emotion(self):
         '''
         Yield emoticon emootion
+        @return: yields features
         '''
         for sad_emoticon in self._get_re_token(regexps.sad_emoticons_re):
             yield Emoticon('SAD')
@@ -297,6 +327,7 @@ class Entry:
     def _feature_tag(self):
         '''
         Yield tag tokens.
+        @return: yields features
         '''
         for tag in self._get_re_token(regexps.tags_re):
             yield Tag(''.join(list(tag)))
@@ -304,6 +335,7 @@ class Entry:
     def _feature_tag_y(self):
         '''
         Yield tag tokens.
+        @return: yields features
         '''
         found = False
         for tag in self._get_re_token(regexps.tags_re):
@@ -315,6 +347,7 @@ class Entry:
     def _feature_tag_y_n(self):
         '''
         Yield tag tokens.
+        @return: yields features
         '''
         found = False
         for tag in self._get_re_token(regexps.tags_re):
@@ -328,6 +361,7 @@ class Entry:
     def _feature_sentence_count(self):
         '''
         Yield sentence count.
+        @return: yields features
         '''
         count = self._get_sentence_count_token()
         yield SentenceCount(count)
@@ -335,6 +369,7 @@ class Entry:
     def _feature_time(self):
         '''
         Yield time tokens.
+        @return: yields features
         '''
         for time in self._get_re_token(regexps.time_re):
             yield Time(''.join(list(time)))
@@ -342,6 +377,7 @@ class Entry:
     def _get_24h_time(self, findall_output):
         '''
         This method coverts time from am/pm to 24h format
+        @return: yields features
         '''
         hours = int(findall_output[0])
         minutes = int(findall_output[2])
@@ -353,6 +389,7 @@ class Entry:
     def _feature_time_24h(self):
         '''
         Yield time tokens in 24h format.
+        @return: yields features
         '''
         for time in self._get_re_token(regexps.time_re):
             formated_time = self._get_24h_time(time)
@@ -361,6 +398,7 @@ class Entry:
     def _feature_time_24h_hours_only(self):
         '''
         Yield time tokens in 24h format.
+        @return: yields features
         '''
         for time in self._get_re_token(regexps.time_re):
             formated_time = self._get_24h_time(time)
@@ -395,6 +433,7 @@ class Entry:
     def _feature_date(self):
         '''
         Yield date tokens found in text
+        @return: yields features
         '''
         for date in self._get_re_token(regexps.date_re):
             yield Date(''.join(list(date)))
@@ -402,6 +441,7 @@ class Entry:
     def _feature_date_formated_dmy(self):
         '''
         Yield date tokens converted into united format dd-mm-yyyy
+        @return: yields features
         '''
         for date in self._get_re_token(regexps.date_re):
             formated_date = self._get_formated_date(date)
@@ -410,6 +450,7 @@ class Entry:
     def _feature_date_formated_my(self):
         '''
         Yield date tokens converted into united format mm-yyyy
+        @return: yields features
         '''
         for date in self._get_re_token(regexps.date_re):
             formated_date = self._get_formated_date(date)
@@ -418,6 +459,7 @@ class Entry:
     def _feature_date_formated_y(self):
         '''
         Yield date tokens converted into united format yyyy
+        @return: yields features
         '''
         for date in self._get_re_token(regexps.date_re):
             formated_date = self._get_formated_date(date)
@@ -426,7 +468,8 @@ class Entry:
     def get_token(self, features):
         '''
         This method yields selected tokens - features and n-tuples.
-        @param features dictionary containing chosen features and it's types
+        @param features: dictionary containing chosen features and it's types
+        @return: yields tokens
         '''
         # yield features
         for feature in features:
@@ -441,6 +484,7 @@ class Entry:
     def get_token_all(self):
         '''
         This method yields all possible tokens - features and n-tuples.
+        @return: yields tokens
         '''
         for feature in self.features_func_count:
             for i in self.features_func_count[feature]:

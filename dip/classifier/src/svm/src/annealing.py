@@ -15,11 +15,11 @@ def _thread_get_energy(svm, data, state, i, n_fold_cv):
     '''
     This function calculates energy of given state. This is a separate function
     because of parallelisation restrictions in python.
-    @param svm used support vector machine object
-    @param data tuple containing X1, X2, Y1 and Y2
-    @param state tuple containing gamma and C
-    @param i i-th step of n-fold cross-validation
-    @param n_fold_cv specification of cross validation
+    @param svm: used support vector machine object
+    @param data: tuple containing X1, X2, Y1 and Y2
+    @param state: tuple containing gamma and C
+    @param i: i-th step of n-fold cross-validation
+    @param n_fold_cv: specification of cross validation
     '''
     import numpy as np
     # get data (only for iteration 0 of 10fcv)
@@ -42,6 +42,10 @@ def _thread_get_energy(svm, data, state, i, n_fold_cv):
         return sys.maxint
 
 class Annealing():
+    '''
+    Simulated annealing class takes care of optimal selecting the C and kernel
+    variables for support vector machines classifier.
+    '''
     #parameters bounds
     P_MIN = 0.0001
     P_MAX = 30
@@ -50,6 +54,14 @@ class Annealing():
 
     def __init__(self, kernel=None, init_temp=sys.maxint, iter_limit=1000,
                  n_fold_cv=None, max_token_size=1):
+        '''
+        init method
+        @param kernel: instance of Kernel object
+        @param init_temp: initial temperature for annealing
+        @param iter_limit: limit of iterations for annealing
+        @param n_fold_cv: cross validation setup
+        @param max_token_size: tokeniation parameter
+        '''
         # add and setup logger
         self._logger = logging.getLogger()
         self._logger.setLevel(logging.DEBUG)
@@ -86,8 +98,9 @@ class Annealing():
 
     def _init_state(self, matrix_size=5):
         '''
-        Generates random initial state
-        @return tuple representing best initial state -- (param, C)
+        Method creates optimal initial point from the grid on tho input space.
+        @param matrix_size: specify grid size
+        @return: tuple representing best initial state -- (param, C)
         '''
         best_state = ()
         best_energy = None
@@ -112,7 +125,7 @@ class Annealing():
         '''
         Generate neigbor point. Generate direction vector and find random point
         on this vector.
-        @return tuple representing neighbor -- (param, C)
+        @return: tuple representing neighbor -- (param, C)
         '''
         # generate direction point in a circle around current state
         while True:
@@ -142,8 +155,8 @@ class Annealing():
         '''
         This method generates calculates energy of some state of svm classifier.
         If n-fold cross validation is enabled, energy is calclated using it.
-        @param state tuple containing gamma and C
-        @return tuple of energies, first one has higher priority than second one
+        @param state: tuple containing gamma and C
+        @return: tuple of energies, first one has higher priority than second one
         '''
         # apply state
         self.kernel.change_param(state[0])
@@ -164,7 +177,8 @@ class Annealing():
         state has lower energy, than actual state, jump is done right away,
         If the element has higher energy, there is still slight possibility of
         jump.
-        @param neighbor_energy Energy of neighbor state
+        @param neighbor_energy: Energy of neighbor state
+        @return: probability of jumping to neighbor state
         '''
         # priority is to mimimize error rate, then to minimize number of SV
         difference = neighbor_energy - self.energy
@@ -176,13 +190,15 @@ class Annealing():
     def _get_temperature(self, iteration):
         '''
         Returns temperature according to the state of annealing process.
-        @param iteration current iteration
+        @param iteration: current iteration
+        @return: temperature
         '''
         return  (1 - (float(iteration) / self.iter_limit)) * self.iter_limit
 
     def run(self):
         '''
         Run simulated annealing!!!
+        @return: best state and energy tupple
         '''
         iteration = 0
         while self.iter_limit > iteration:

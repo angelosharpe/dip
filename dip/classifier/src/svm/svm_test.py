@@ -13,6 +13,10 @@ class SVMTest():
     Class for testing svm classifier.
     '''
     def __init__(self, silent=False):
+        '''
+        init method
+        @param silent: set silent mode
+        '''
         # add and setup logger
         self._logger = logging.getLogger()
         if silent:
@@ -24,10 +28,10 @@ class SVMTest():
         '''
         Method for running annealing process to find out the best SVM and kernel
         configuration parameters
-        @param n_fold_cv n fold-cross validation parameter
-        @param max_token_size sets maximal size of word tokens
-        @param kernel used kernel - possibilities in src/kernels.py
-        @return tupple of best C and gamma parameters
+        @param n_fold_cv: n fold-cross validation parameter
+        @param max_token_size: sets maximal size of word tokens
+        @param kernel: used kernel - possibilities in src/kernels.py
+        @return: tupple of best C and gamma parameters
         '''
         k = str2kernel[kernel]()
         a = Annealing(kernel=k, n_fold_cv=n_fold_cv,
@@ -39,10 +43,10 @@ class SVMTest():
     def regenerate_data(self, dbfile, count=1000, max_token_size=1):
         '''
         Regenerate database files according to input parameters
-        @param dbfile database file containing anotated data
-        @param count used number of entries
-        @param max_token_size sets maximal size of word tokens
-        @return data transformed into SVM usable format
+        @param dbfile: database file containing anotated data
+        @param count: used number of entries
+        @param max_token_size: sets maximal size of word tokens
+        @return: data transformed into SVM usable format
         '''
         data = Data(dbfile=dbfile, max_token_size=max_token_size)
         data.regenerate_X1_X2(count)
@@ -51,6 +55,7 @@ class SVMTest():
     def _calculate_results(self, clas_res):
         '''
         method prints results from of testing
+        @param clas_res: classification results
         '''
         precision = clas_res['true_positive'] / ((clas_res['true_positive'] + \
                     clas_res['false_positive']) + 0.0000000000001)
@@ -76,10 +81,11 @@ class SVMTest():
     def run(self, c=5, param=100, n_fold_cv=10, kernel='RBF'):
         '''
         Run tests with given parameters on currently loaded data
-        @param c SVM classifier parameter
-        @param param kernel parameter
-        @param n_fold_cv n fold-cross validation parameter
-        @param kernel used kernel - possibilities in src/kernels.py
+        @param c: SVM classifier parameter
+        @param param: kernel parameter
+        @param n_fold_cv: n-fold cross-validation parameter
+        @param kernel: used kernel - possibilities in src/kernels.py
+        @return: classification results
         '''
         data = Data(dbfile=None, n_fold_cv=n_fold_cv)
 

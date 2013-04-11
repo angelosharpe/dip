@@ -13,6 +13,9 @@ class WordDictionary:
         self.words = {}
 
     def load(self):
+        '''
+        Load word dictionary from pickle file
+        '''
         try:
             filehandler = open(self.filename,'rb')
         except IOError:
@@ -22,10 +25,17 @@ class WordDictionary:
         self.words = pickle.load(filehandler)
 
     def store(self):
+        '''
+        Store word dictionary to pickle file
+        '''
         filehandler = open(self.filename, 'wb')
         pickle.dump(self.words, filehandler)
 
     def to_xml(self, filename):
+        '''
+        Export Word Dictionary object to XML file
+        @param filename: word dictionary pickle file
+        '''
         self._logger.info('Generatingdictionary XML sorted by probability to \
                 file: ' + filename + '...')
         if specification:

@@ -11,8 +11,8 @@ class BayesianClassifier:
     Class using for classification of tweets. Use classify()
     method for classification, train() method for training of
     bayesian filter.
-    @param low classification threshold
-    @param high classification threshold
+    @param low: classification threshold
+    @param high: classification threshold
     '''
 
     HR_PROB = 0.99
@@ -33,7 +33,12 @@ class BayesianClassifier:
             self.word_dict = WordDictionary()
 
     def train(self, entry, classification, features):
-        '''Add each token to word dictionary for futher classification.'''
+        '''
+        Add each token to word dictionary for futher classification.
+        @param entry: entry object contatining text
+        @param classification: human classified label
+        @param features: features to be used to tokenize entry
+        '''
         language = entry.get_language()
         # for each token add to word dictionary
         for token in entry.get_token(features):
@@ -53,9 +58,6 @@ class BayesianClassifier:
         First one classifies tokens(n-tuples) and second one classifis features.
         Currently both results from both classifiers are merged into result with
         classical average
-        @param text input text
-        @param language input text language
-        @result probability that text is relevant
         --------------------------------------------------------------
         For each token claculate probability of being relevant to topic
         and calculate according to bayes theorem
@@ -63,6 +65,10 @@ class BayesianClassifier:
                  p1p2p3........pn                           a
         P = ------------------------------------------ = -------
            p1p2p3........pn + (1-p1)(1-p2)...(1-pn)       a + b
+        --------------------------------------------------------------
+        @param text: input text
+        @param language: input text language
+        @return: probability that text is relevant
 
         '''
         input_entry = Entry(id=None, guid=None, entry=text, language=language)

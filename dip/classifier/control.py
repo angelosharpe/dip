@@ -112,13 +112,13 @@ def bayes_features(args):
 def _print_results(t,tp, fp, tn, fn, u=None, c=None):
     '''
     method prints results from of testing
-    @param t type (svm or bayes)
-    @param tp true positive reults
-    @param fp false positive results
-    @param tn true negative results
-    @param fn false negative results
-    @param u unknown results
-    @param c corelation results
+    @param t: type (svm or bayes)
+    @param tp: true positive reults
+    @param fp: false positive results
+    @param tn: true negative results
+    @param fn: false negative results
+    @param u: unknown results
+    @param c: corelation results
     '''
     precision = tp / ((tp + fn) + 0.0000000000001)
     recall = tp / ((tp + fn) + 0.0000000000001)

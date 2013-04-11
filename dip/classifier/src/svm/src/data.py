@@ -8,10 +8,14 @@ from ...common.entry import Entry
 class Data():
     '''
     class used for data extraction and preparation
-    @param dbfile source db file containing table docs
-                   (lang, relevance, text annotation)
     '''
     def __init__(self, dbfile=None, n_fold_cv=10, max_token_size=1):
+        '''
+        init method
+        @param dbfile: source db file containing table docs
+        @param n_fold_cv: cross-validation specification
+        @param max_token_size: set tokenization parameter
+        '''
         # add and setup logger
         self._logger = logging.getLogger()
         logging.basicConfig(level=logging.DEBUG)
@@ -27,8 +31,8 @@ class Data():
     def _get_data_from_db(self, count=1000):
         '''
         Method gets entries from database and
-        @param count count of relevant and irelevant entries (2*count)
-        @return list of entry objects
+        @param count: count of relevant and irelevant entries (2*count)
+        @return: list of entry objects
         '''
         # connect to database
         try:
@@ -60,8 +64,10 @@ class Data():
 
     def _generate_X1_X2(self, entries):
         '''
-        Method generates X and Y matrices for svm classifier
-        @param entries list of input entries
+        Method generates X1 (vectors in feature space labeled 1) and X2 (vectors
+        in feature space labeled -1) matrices svm classifier.
+        @param entries: list of input entries
+        @return matrices X1 and X2
         '''
         self.token_list = [] # all encountered tokens
         relevant_mapping = [] # mapping of articles into tokens
@@ -104,12 +110,13 @@ class Data():
 
     def _split_X1_X2(self, X1, X2, i=None):
         '''
-        Splits X1 and X2 to training and testing set, generates Y1 and Y2
-        vectors.
+        Splits X1 and X2 (vectors in feature space)to training and testing set,
+        generates Y1 and Y2 vectors (labels).
         If i is not specified, all currently loaded data are returned
-        @param X1 relevant vectors
-        @param X2 irelevant vectors
-        @param i iteration in n-fold cross-validation
+        @param X1: relevant vectors
+        @param X2: irelevant vectors
+        @param i: iteration in n-fold cross-validation
+        @return: matrices X1, Y1 and if i is specified then also X2, Y2
         '''
         # number of X1 and X2 vectors
         count_1 = X1.shape[0]
@@ -148,6 +155,7 @@ class Data():
     def regenerate_X1_X2(self, count):
         '''
         Method regenerates X1 and X2 values from database file.
+        @param count: specifies number of slected entries
         '''
         self.X1, self.X2 = self._generate_X1_X2(self._get_data_from_db(count=count))
         X1_output = open('models/svm/X1_X2/X1.npy', 'wb')
@@ -166,8 +174,8 @@ class Data():
         '''
         Get training and testing set for n-fold cross-validation.
         If i is not specified, all currently loaded data are returned
-        @param i iteration in n-fold cross-validation
-        @return tuple X_train, Y_train, X_test, Y_test
+        @param i: iteration in n-fold cross-validation
+        @return: tuple X_train, Y_train, X_test, Y_test
         '''
         if i is None:
             return self._split_X1_X2(self.X1, self.X2)
@@ -177,6 +185,6 @@ class Data():
     def get_token_list(self):
         '''
         Get token mapping list
-        @return token mapping list
+        @return: token mapping list
         '''
         return self.token_list

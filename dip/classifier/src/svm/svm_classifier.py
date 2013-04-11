@@ -10,10 +10,17 @@ from src.kernels import *
 class SVM():
     '''
     Implementation of support vector machine classifier. It allows to train,
-    classify and store/load scm classification models.
+    classify and store/load svm classification models.
     '''
 
     def __init__(self, kernel, C=None, silent=False, qp_maxiter=200):
+        '''
+        init function
+        @param kernel: kernel object
+        @param C: C parameter for svm
+        @param silent: set silent mode
+        @param qp_maxiter: set maximal amount of iteration of qp
+        '''
         self.kernel = kernel
         if C:
             self.C = float(C)
@@ -35,8 +42,8 @@ class SVM():
     def train(self, X, Y):
         '''
         Method for training svm classifier
-        @param X training set
-        @param Y testing set
+        @param X: training set
+        @param Y: testing set
         '''
         n_samples, n_features = X.shape
 
@@ -108,8 +115,8 @@ class SVM():
     def predict(self, X):
         '''
         Fucntion tries to predict input entries according to previous training.
-        @param X tokens mapped into numpy array
-        @return numpy array containing 1 and -1 for relevant and irelevante
+        @param X: tokens mapped into numpy array
+        @return: numpy array containing 1 and -1 for relevant and irelevante
                 entries
         '''
         if self.w is not None:
@@ -123,3 +130,47 @@ class SVM():
                 predict[i] = s
             return np.sign(predict + self.b)
 
+    def store_model(self, path, token_list):
+        '''
+        Store classification model into some file for future classification.
+        @param path path: to file, where the model will be stored
+        @param token_list: list of token mapping for future classification
+        @return: svm model pickle
+        '''
+        self._logger.info('Storing SVM model data')
+        model = {}
+        model['lm'] = self.lm
+        model['lm_count'] = self.lm_count
+        model['all_lm_count'] =  self.all_lm_count
+        model['C'] = self.C
+        model['w'] = self.w
+        model['b'] = self.b
+        model['X'] = self.X
+        model['Y'] = self.Y
+        model['lm'] = self.lm
+        model['kernel'] = self.kernel
+        model['token_list'] = token_list
+
+        # store model
+        pickle.dump(model, open(path, 'wb'))
+
+    def load_model(self, path):
+        '''
+        Load classification model from file.
+        @param path: path to model file
+        @return: list of token mapping for future classification
+        '''
+        self._logger.info('Loading SVM model data')
+        model = pickle.load(open(path, 'rb'))
+        self.lm = model['lm']
+        self.lm_count = model['lm_count']
+        self.all_lm_count = model['all_lm_count']
+        self.C = model['C']
+        self.w = model['w']
+        self.b = model['b']
+        self.X = model['X']
+        self.Y = model['Y']
+        self.lm = model['lm']
+        self.kernel = model['kernel']
+
+        return model['token_list']

@@ -9,10 +9,16 @@ class Feature():
     def __str__(self):
         return 'Feature {0} ({1})'.format(self.__class__.__name__, self.data)
     def get_data(self):
-        'Returns value stored in the Feature object'
+        '''
+        Returns value stored in the Feature object
+        @return: value of Feature object
+        '''
         return self.data
     def get_data_str(self):
-        'Returns str representation of value stored in the Feature object'
+        '''
+        Returns str representation of value stored in the Feature object
+        @return: string value of object
+        '''
         return 'Feature {0} ({1})'.format(self.__class__.__name__, self.data)
 
 class Url(Feature):

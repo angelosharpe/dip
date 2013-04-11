@@ -10,9 +10,9 @@ from ..common.entry import Entry
 class BayesianTest:
     '''
     Class for testing bayesian classifier.
-    @param low classification threshold
-    @param high classification threshold
-    @param dbfile source db file containing table docs
+    @param low: classification threshold
+    @param high: classification threshold
+    @param dbfile: source db file containing table docs
                    (lang, relevance, text annotation)
     '''
 
@@ -29,7 +29,6 @@ class BayesianTest:
         '''
         This method prints corelation between user defined input
         in human_classified_pickle and automatic classification.
-        @param test_res containst list of tuples (classified_prob, real_prob)
         --------------------------------------------------------------
                           covariance
                               |
@@ -46,6 +45,8 @@ class BayesianTest:
         --------------------------------------------------------------
         a = E(XY), b = E(X), c = E(Y), d,= E(X^2), e = E(Y^2)
         --------------------------------------------------------------
+        @param test_res: containst list of tuples (classified_prob, real_prob)
+        @return: calculated corelation
         '''
         entry_count = len(test_res)
         a = 0.0
@@ -76,6 +77,7 @@ class BayesianTest:
     def _calculate_results(self, clas_res):
         '''
         method prints results from of testing
+        @param clas_res: dictionary of classification results
         '''
         precision = clas_res['true_positive'] / ((clas_res['true_positive'] + \
                     clas_res['false_positive']) + 0.0000000000001)
@@ -103,11 +105,11 @@ class BayesianTest:
             used_features):
         '''
         Cross validation method
-        @param used_relevant relevant entries
-        @param used_irelevant irelevant entries
-        @param n_fold_cvn-fold-cross-validation setup
-        @param used_features defines which features to use. 
-        @return results of cross validation
+        @param used_relevant: relevant entries
+        @param used_irelevant: irelevant entries
+        @param n_fold_cv: n-fold-cross-validation setup
+        @param used_features: defines which features to use.
+        @return: results of cross validation
         '''
         # dictionary containing n-fold-cross-validation results
         results = []
@@ -188,8 +190,9 @@ class BayesianTest:
         '''
         Method runs test of avilable features and selects one most fitting for
         current dataset.
-        @param count count of processed entries (count*relevant,count*irelevant)
-        @param n_fold_cv n-fold-cross-validation setup
+        @param count: count of processed entries (count*relevant,count*irelevant)
+        @param n_fold_cv: n-fold-cross-validation setup
+        @return dictionary containing best suiting features for current dataset
         '''
 
         # connect to database
@@ -261,11 +264,11 @@ class BayesianTest:
 
     def run(self, features, count=100, n_fold_cv=10):
         '''
-        method trains and tests entries from input databse
-        @param count count of processed entries (count*relevant,count*irelevant)
-        @param n_fold_cv n-fold-cross-validation setup
-        @param used_features defines which features to use. If not defined, not
-                using any
+        method trains and tests entries from input databse 
+        @param features: defines which features to use. If not defined, not using any
+        @param count: count of processed entries (count*relevant,count*irelevant)
+        @param n_fold_cv: n-fold-cross-validation setup
+        @return: classification results
         '''
         # connect to database
         try:
