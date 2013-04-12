@@ -979,12 +979,12 @@ Jeliko¾ si klasifikátor pøi uèení vytváøí váhový vektor, který urèuje míru dùle¾
 
 
 
-\chapter{Vlastní implementace}
+\chapter{Vlastní implementace} \label{IMPLEMENTACE}
 V této kapitole se budeme zabývat vlastní implementací obou klasifikaèních algoritmù z kapitol \ref{BAYES} a \ref{SVM}.
 Kromì pou¾itých knihoven zde popí¹eme také architekturu programu implementovaného v praktické èásti této práce.
 Také zde budou pøedstaveny problémy, ke kterým pøi implementaci do¹lo a také jakým zpùsobem byly vyøe¹eny
 
-Celý program je implementován v programovacím jazyku Python.
+Celý program je implementován v programovacím jazyce Python 2.7.
 Jazyk Python byl zvolen hlavnì z toho dùvodu, ¾e pro nìj existuje mnoho knihoven, které mohly být v této práci pou¾ity a za jejich pomocí se výraznì zjednodu¹ila implementace.
 Mezi tyto pou¾ité knihovny patøí zejména knihovna pro zpracování pøirozené øeèi NLTK, knihovna Numpy (Numerical python) která umo¾òuje v prostøedí jazyka Python velmi jednodu¹e pracovat se slo¾itìj¹í matematikou a knihovna CVXOPT vyu¾itá v implementaci SVM klasifikátoru pro øe¹ení úloh kvadratického programování.
 
@@ -1016,12 +1016,15 @@ CVXOPT je volnì dostupný balík knihoven pro øe¹ení konvexních optimalizaèních pr
 Jejím hlavním úkolem je zjednodu¹it vývoj softwaru, jen¾ potøebuje pro svùj bìh øe¹it konvexní optimalizaèní úlohy, ani¾ by bylo potøeba implementovat slo¾ité optimalizaèní algoritmy.
 
 
-\section{Architektura programu a implementace obecných èástí}
-V této èásti kapitoly o implementaci si ve zkratce pøedstavíme architekturu implementovaného programu a implementaci obecných èástí programu.
-
+\section{Architektura a implementace programu}
+V této èásti kapitoly o architektuøe a implementaci programu v praktické èásti si ve zkratce pøedstavíme jak ji¾ název napovídá architekturu, tedy návrh struktury implementovaného programu, a implementaci klasifikaèních algoritmù z praktické èásti této práce.
 
 \subsection{Architektura programu}
-V koøenovém adresáøi tohoto projektu se nachází spou¹tìcí skript, pomocí kterého je program ovládaný a který nabízí ve¹keré operace, které se dají s programem provést.
+\subsubsection{Fyzická architektura}
+Fyzická architektura programu pøedstavuje popis fyzického rozdìlení zdrojových souborù programu.
+Toto rozdìlení zde bude popsáno, aby se ètenáø orientoval v následujícím textu zabývajícím se popisem implementace programu z praktické èásti této práce.
+
+V koøenovém adresáøi tohoto projektu se nachází spou¹tìcí skript \texttt{control.py} , pomocí nìho¾ je program ovládaný a který nabízí ve¹keré operace, které se dají s programem provést.
 Výpis nápovìdy k programu bude vypsán v Pøíloze XXXXX. 
 
 Nad koøenovým adresáøem se nachází adresáø \texttt{/src/} obsahující tøi podadresáøe, ka¾dý obsahující jednu logickou èást programu:
@@ -1034,7 +1037,67 @@ Nad koøenovým adresáøem se nachází adresáø \texttt{/src/} obsahující tøi podadre
 
 Mimo èást se zdrojovými kódy se potom nachází adresáø data, který obsahuje ve¹kerá ruènì anotovaná data a natrénované klasifikaèní modely pro oba klasifikátory, které po umo¾òují klasifikátor pou¾ívat bez toho, ani¾ by se musel poka¾dé znovu spou¹tìt trénovací algoritmus na mno¾inì tréninkových dat.
 
-\subsection{Implementace obecných èástí programu}
+\subsubsection{Architektura tøíd}
+V této èásti dokumentu bude popsána architektura tøíd s jejich krátkým popisem, ketrá umo¾ní èitateli velmi rychle pochopit architekturu a funkcnost programu.
+
+Program implementovaný jako praktická èást této práce je, jak ji¾ bylo vý¹e zmínìno (\ref{IMPLEMENTACE}), implementován  v programovacím jazyce Python, jen¾ umo¾òuje vyu¾ití objektovì orientovaného pøístupu k vývoji aplikací.
+Díky této vlastnosti Pythonu bylo mo¾né implementovat program objektovì a vyu¾ít tak výhod tohoto pøístupu.
+
+Jak Bayesovský klasifikátor, tak klasifikátor zalo¾ený na support vector machines jsou v praktické èásti této práce vytvoøeny tak, aby bylo mo¾né je pou¾ívat jako modulù programovacího jazyka Python.
+To znamená, ¾e lze oba klasifikátory importovat jako modul do novì implementované aplikace a pou¾ít pro klasifikaci libovolného vstupního textu.
+Tohoto bylo vyu¾ito v projektu M-eco, v nìm¾ byl Bayesovský klasifikátor pou¾itý ve skriptu vkládajícím nová data do databáze, kde filtroval relevantní data od nerelevantní a relevantní data byla následnì vkládána do databáze.
+V projektu jsou tedy implementovány dvì základní tøídy \texttt{SVM} a \texttt{BayesianClassifier}.
+Obì tyto tøídy obsahují metody pro trénování klasifikátoru z trénovacích dat a metody umo¾òující po pøedchozím nauèení klasifikátoru klasifikovat data do daných tøíd.
+
+\begin{figure}[H]
+    \begin{center}
+      \includegraphics[width=15cm,keepaspectratio]{fig/Features-diag}
+      \caption{Diagram tøíd dìdících z tøídy Features} 
+      \label{features-diag}
+    \end{center}
+\end{figure}
+
+Jeliko¾ jak Bayesovský klasifikátor, tak klasifikátor zalo¾ený na support vector machines pracují se vstupním textem prakticky stejnì, byla vytvoøena tøída \texttt{Entry} a tøídy dìdící z rodièovské tøídy \texttt{Feature} (viz obr. \ref{features-diag}), nacházející se v adresáøi texttt{common}.
+Tyto tøídy pou¾ívají oba klasifikátory pro práci s ve¹kerým vstupním textem, tedy jak pro klasifikaci, tak pro uèení.
+Instance tøídy \texttt{Entry} se vytváøí pro ka¾dý text vstupující do klasifikátoru, jejím úkolem je text rozdìlit na tokeny tak, aby samotné klasifikátory ji¾ s textem nemusely nijak pracovat, ale aby dostaly pouze seznam textových a speciálních tokenù, jen¾ vstupní text obsahoval.
+Tato tøída tedy zodpovídá za vyhledávání jednotlivých speciálních tokenù (viz \ref{TOKENIZACE-SPEC}), jen¾ potom jako instance tøíd dìdících ze tøídy \texttt{Features} spoleènì s $N$-ticemi jednotlivých textových tokenù (viz \ref{Textove_tokeny}) pøedává klasifikátorum.
+
+Aby bylo mo¾né oba klasifikátory testovat a posléze i vzájemnì porovnávat, byly pro ka¾dý klasifikátor vytvoøeny tøídy, je¾ mají na starost testování.
+tyto tøídy se nazývají \texttt{SVMTest} pro klasifikátor zalo¾ený na support vector machines a 
+\texttt{BayesianTest} pro Bayesovský klasifikátor.
+Obì tyto tøídy obsahují metody pro spou¹tìní testù klasifikátorù a jejich následné vyhodnocení.
+
+Jeliko¾ oba implementované klasifikátory pracují na diametrálnì odli¹ných pøístupech, má ka¾dý klasifikátor potøebu jinak nakládat s tokeny získanými z instancí tøídy \texttt{Entry}.
+Proto ka¾dý klasifikátor obsluhuje nìkolik tøíd, je¾ pøi klasifikaci, nebo uèení pou¾ívá.
+
+V pøípadì Bayesovského klasifikátoru je takovouto dal¹í pou¾ívanou tøídou pouze jediná tøída s názvem \texttt{WordDictionary}, která se stará o slovník tokenù Bayesovského klasifikátoru.
+Tento slovník tokenù obsahuje pravdìpodobnostní hodnoty jednotlivých tokenù nalezených bìhem uèení a pravdìpodobnost jejich nále¾itosti do urèité tøídy. 
+Tato tøída také zabezpeèuje ve¹keré operace provádìné s tímto slovnikem tokenù, jako napøíklad jeho ulo¾ení do souboru a opìtovné naètení, díky èemu¾ je mo¾né Bayesovsý klasifikátor, stejnì jako klasifikátor zalo¾ený na metodì support vector machines pou¾ívat, ani¾ bychom jej museli bezprostøednì pøed klasifikací uèit, co¾ je velmi zdlouhavý proces.
+Mimo operací exportu a importu slovníku také tato tøída umo¾òuje exportovat daný slovník do souboru v jazyce XML.
+
+Podobnì jako Bayesovský klasifikátor, potøebuje i klasifikátor zalo¾ený na metodì support vector machines tøídou, jen¾ pracuje se vstupní textem a tokeny z nìj vytvoøenými a pøipraví ji do podoby, ve které je klasifikátor schopen s ním pracovat.
+Tato tøída se u klasifikátoru zalo¾eného na SVM jmenuje \texttt{Data}.
+Její funkcí je vytvoøit prostor pøíznakù ze vstupních dat a data rozdìlit na bloky trénovacích a testovacích dat.
+Dal¹í specifickou tøídou, jen¾ klasifikátor zalo¾ený na SVM pou¾ívá je tøída \texttt{Kernel} a její podtøídy, jen¾ klasifikátor potøebuje pro výpoèet jaderné funkce pro klasifikaci.
+Tuto tøídu dìdí v implementovaném programu následující tøi specifické jaderné funkce:
+
+\begin{itemize}
+  \item Lineární jaderná funkce
+  \item Polynomiální jaderná funkce
+  \item Radiální bázová jaderná funkce
+\end{itemize}
+
+Poslední tøídou která je v souvislosti s klasifikátorem zalo¾eným na SVM spojená je tøída \texttt{Annealing}, je¾ øe¹í obtí¾ný úkol vhodného výbìru parametrù u klasifikátoru a jím pou¾ívané jaderné funkce.
+Více o tomto výbìru bude popsáno v èásti o implementaci klasifikátoru SVM (viz \ref{IMPLEMENTATION-SVM}).
+
+Tímto jsme velmi obecnì pro¹li v¹echny tøídy implementované v prakcické èásti této práce.
+Pro podrobnìj¹í popis tøíd je vgenerována dokumentace pomocí dokumentaèního nástroje \texttt{epydoc}.
+Dokumentace je pøilo¾ena na CD, je¾ je souèástí této práce.
+
+\section{Implementace}
+V této èásti kapitoly se budem podrobnìji zabývat postupem implementace jednotlivých vybraných èásti programu z praktické èásti této práce.
+Pokusíme se zde rozebrat problémy, jen¾ pøi implementaci nastaly a jejich øe¹ení.
+Tato sekce bude pro vìt¹í pøehlednost rozdìlena na implementaci Bayesovského klasifikátoru a klasifikátoru zalo¾eného na SVM, ve kterých budeme rozebírat odpovídající implementaèní problémy.
 
 
 \section{Implementace Bayesovského klasifikátoru}
@@ -1045,8 +1108,11 @@ Klasifikátor pou¾ívá pro ukládání dat pøedev¹ím tedy databáze pravdìpodobností j
 To je proces, pøi nìm¾ je datová struktura, nebo objekt pøeveden na proud dat, jen¾ se dá jednodu¹e ulo¾it a zpìtnì pøevést zpìt na danou strukturu èi objekt.
 V klasifikátoru je pou¾ita knihovní funkce pythonu s názvem \textit{pickle}, umo¾òující provést serializaci libovolné datové struktury pythonu a zpìt.
 
-\section{Implementace klasifikátoru SVM}
+\section{Implementace klasifikátoru SVM}\label{IMPLEMENTATION-SVM}
 
+\subsection{Parametry kvadratického programování}
+
+\subsection{Volba vhodných parametrù klasifikátoru a Jaderných funkcí}
 
 
 
@@ -1210,7 +1276,7 @@ Testovací mno¾ina pro nìmecký jazyk sestává z 25 relevantních tweetù a 191 irele
 \subsection{Shrnutí výsledkù testù}
 Z výsledkù pro jednotlivé jazyky je zøejmé, ¾e pro anglický jazyk klasifikátor pracuje vcelku spolehlivì a s pomìrnì vysokou pøesností (F--measure = 0.8661).
 Pro nìmecký jazyk jsou v¹ak výsledky klasifikace pomìrnì ¹patné (F--measure = 0.3358).
-Nepøesnost klasifikátoru je zøejmì zpùsobena nevyvá¾eností trénovacích dat, ale také tím, ¾e nìmecký jazyk je gramaticky výraznì slo¾itìj¹i, ne¾ jazyk anglický.
+Nepøesnost klasifikátoru je zøejmì zpùsobena nevyvá¾eností trénovacích dat, ale také tím, ¾e nìmecký jazyk je gramaticky výraznì slo¾itìj¹í, ne¾ jazyk anglický.
 
 Zamìøme se nyní na vylep¹ení klasifikátoru, které pøiná¹í alternativní pøístup k tokenizaci oproti klasickému pøístupu (viz \ref{IMP-BAYES-TOKEN}).
 Podíváme-li se do tabulky výsledkù klasifikátoru, je jasnì vidìt, ¾e pøesnost klasifikátoru roste s rostoucím $N$.
