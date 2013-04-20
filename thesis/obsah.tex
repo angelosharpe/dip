@@ -11,8 +11,8 @@ Významnou úlohou øe¹enou ve zpracovávání pøirozeného jazyka je klasifikace textu
 Tato úloha spadá do vý¹e zmínìné skupiny statistických metod a metod strojového uèení.
 Metody klasifikace textu lze pou¾ít pro velké mno¾ství úloh, které se týkají zpracovávání pøirozeného jazyka, a to pøedev¹ím díky jejich flexibilitì a ji¾ velmi dobøe zpracované teorii.
 
-V této práci se nejprve budeme zabývat obecnými pøístupy pou¾ívanými pro øe¹ení úloh zpracovávání pøirozeného jazyka.
-Pro tuto práci byly zvoleny dvì klasifikaèní metody, jedna probabilistická a jedna neprobabilistická.
+V této práci se nejprve budeme zabývat obecnými pøístupy pou¾ívanými pro øe¹ení úloh zpracovávání pøirozeného jazyka a následnì pøedstavíme dvì zvolené klasifikaèní metody.
+Jednu probabilistickou a jednu neprobabilistickou.
 
 Tou první, probabilistickou metodu, která je v této práci podrobnì popsána, je metoda nazývaná \textit{Bayesovský klasifikátor}, vyu¾ívající ke klasifikaci textu Bayesova teorému.
 Bayesovský klasifikátor, nebo také Bayesovský filtr, jak je obèas nazýván, je velmi èasto pou¾íván e-mailovými klienty pro zji¹»ování, zda je e-mailová zpráva nevy¾ádanou po¹tou, nebo ne.
@@ -22,7 +22,7 @@ Je¾ pomocí namapování vstupního textu do $N$-dimenzionálního prostoru a následný
 
 Obì metody jsou v této práci podrobnì rozebrány jak z teoretického, tak praktického hlediska.
 
-Souèástí této práce je mimo toretické èásti prezentované v tomto dokumentu, také praktická, implementaèní èást ve které je vytvoøen program a implementovány obì vý¹e zmínìné klasifikaèní metody, které jsou testovány a porovnány.
+Souèástí této práce je mimo toretické èásti prezentované v tomto dokumentu, také praktická, implementaèní èást, ve které je vytvoøen program a implementovány obì vý¹e zmínìné klasifikaèní metody, které jsou testovány a porovnány.
 Souèástí praktické èásti je také mno¾ina trénovacích a testovacích dat, které jsou potom pou¾ívány v testech.
 V této práci bude také popsána implementaèní èást, ve ní¾ budou specifikovány ve¹keré problémy a pou¾ité postupy pøi implementaci praktické èásti.
 
@@ -31,7 +31,9 @@ Na závìr budou prezentovány výsledky získané z porovnání dvou vý¹e zmínìných imp
 \section{Zadání práce a motivace} \label{UVOD-MOTIVACE}
 Zadáním této práce bylo seznámit se s problematikou klasifikace dokumentù dle tématu a zvolit si dvì metody, kterými se budu podrobnìji zabývat.
 Následnì tyto dvì metody analyzovat a implementovat program, který pomocí tìchto metod bude klasifikovat vstupní dokumenty do urèitých tøíd.
-Pro svùj program anotuji velkou sadu dokumentù, které budu následnì pou¾ívat pro trénování a testování mnou vytvoøeného programu.
+U obou metod jsem mìl dle zadání dbát na výbìr vhodných pøíznakù z textu.
+
+Pro potøeby této práce jsem anotoval velkou sadu dokumentù, které budu následnì pou¾ívat pro trénování a testování mnou vytvoøeného programu.
 Na tìchto datech následnì porovnám dvì zvolené metody klasifikace pomocí standardních metrik pro hodnocení klasifikátorù.
 
 Toto téma diplomové práce jsem si zvolil, jeliko¾  jsem témìø dva roky pracoval na projektu M-eco\footnote{http://www.meco-project.eu/} ve skupinì NLP na VUT FIT, kde jsem se zabýval klasifikací tweetù\footnote{krátkých zpráv o maximální délce 140 znakù, je¾ u¾ivatelé sociální sítì Twitter(http://twitter.com/) pí¹í na své profily}.
@@ -656,27 +658,14 @@ Abychom tedy dostali optimální rozdìlovací hranici s maximálním marginem, budeme
 Tato operace je ov¹em ekvivalentní s minimalizací $\frac{1}{2}||w||^2$.
 Nalezení specifické diskriminaèní funkce s maximálním geometrickým marginem je tedy ekvivalentní s následujícím optimalizaèním problémem:
 
-
-
-
-
-
-
-
-
-
-
-  minimalizace		 $\frac{1}{2}||w||^2$
 \begin{equation}
-  za podmínek: y_n(w^T x_i + b) \geq 1, kde n = 1,\ldots,l
+\begin{aligned}
+& \underset{w,b}{\text{minimalizace}}
+& & \frac{1}{2}||w||^2 \\
+& \text{kde}
+& & y_n(w^T x_i + b) \geq 1, & n = 1,\ldots,l
+\end{aligned}
 \end{equation}
-
-
-
-
-
-
-
 
 Tato optimalizace pøedpokládá, ¾e trénovací mno¾ina $X$ je lineárnì separovatelná.
 Podmínka $y_n(w^T x_n + b) \geq 1$ potom zaji¹»uje, ¾e diskriminaèní funkce oklasifikuje v¹echna data v trénovací mno¾inì korektnì.
@@ -687,24 +676,14 @@ Toto opatøení mù¾e nìkdy pomoci nalézt ¹ir¹í margin a tím zlep¹it výsledky klasi
 Tuto úpravu udìláme za pomocí takzvané \emph{chybové promìnné (slack variable)} $\xi_i$, kterou odeèteme od pravé strany optimalizaèní podmínky -- tzn. umo¾níme chybu.
 Takto upravený problém nyní vypadá následovnì:
 
-
-
-
-
-
-
-
-
-  minimalizace		 $\frac{1}{2}||w||^2$
 \begin{equation}
-  za podmínek: y_n(w^T x_i + b) \geq 1 - \xi_i, kde n = 1,\ldots,l
+\begin{aligned}
+& \underset{w,b}{\text{minimalizace}}
+& & \frac{1}{2}||w||^2 \\
+& \text{kde}
+& & y_n(w^T x_i + b) \geq 1 - \xi_i, & n = 1,\ldots,l
+\end{aligned}
 \end{equation}
-
-
-
-
-
-
 
 Pokud tedy platí, ¾e $y_i(w^T x_i + b) < 1$ respektive $\xi_i > 1$, pak je záznam $x_i \in X$ ¹patnì klasifikována.
 Pokud ale platí, ¾e $0 \leq \xi_i \leq 1$, pak $x_i \in X$ le¾í uvnitø marginu.
@@ -722,36 +701,26 @@ Abychom byli schopni  minimalizovat míru chybovosti vzhledem k maximalizaci marg
 Tato konstanta se nazývá \emph{konstanta soft-margin (soft-margin constant)}.
 Na¹e optimalizaèní úloha tedy s touto soft-margin konstantou vypadá následovnì:
 
-
-
-
-
-
-
-
-
-  minimalizace		 $\frac{1}{2}||w||^2 + C \sum^{n}_{i=1}\xi_i$
 \begin{equation}
-  za podmínek: y_n(w^T x_i + b) \geq 1 - \xi_i, kde n = 1,\ldots,l
+\begin{aligned}
+& \underset{w,b}{\text{minimalizace}}
+& & \frac{1}{2}||w||^2 + C \sum^{n}_{i=1}\xi_i \\
+& \text{kde}
+& & y_n(w^T x_i + b) \geq 1 - \xi_i, & n = 1,\ldots,l
+\end{aligned}
 \end{equation}
-
-
-
-
-
-
-
 
 Nyní pro vyøe¹ení tohoto optimalizaèního problému pou¾ijeme metodu Lagrangeových multiplikátorù a získáme optimalizaèní problém:
 
-maximalizace 
 \begin{equation}
-  \frac{1}{2}\sum^{n}_{i=1}\sum^{n}_{j=1}y_iy_j\alpha_i\alpha_jx^T_i x_j
+\begin{aligned}
+& \underset{\alpha}{\text{maximalizace}}
+& & \frac{1}{2}\sum^{n}_{i=1}\sum^{n}_{j=1}y_iy_j\alpha_i\alpha_jx^T_i x_j \\
+& \text{kde}
+& & \sum^n_{i=0} y_i\alpha_i = 0, & 0 \leq \alpha_i \leq C
+\end{aligned}
 \end{equation}
-za podmínek:
-\begin{equation}
-  \sum^n_{y_i\alpha_i = 0}, 0 \leq \alpha_i \leq C
-\end{equation}
+
 
 Skalární souèin $x^T_i x_j$ v maximalizaèní rovnici mù¾eme nahradit libovolnou jadernou funkcí a dosáhnout tím nelineární transfomrace a dosáhnout tak ¹irokého marginu ve vysoce dimenzionálních prostorech pøíznakù. (viz \ref{SVM-THEORY-KERNELS}).
 
