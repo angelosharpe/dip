@@ -1077,6 +1077,7 @@ Klasifikátor pou¾ívá pro ukládání dat pøedev¹ím tedy databáze pravdìpodobností j
 To je proces, pøi nìm¾ je datová struktura, nebo objekt pøeveden na proud dat, jen¾ se dá jednodu¹e ulo¾it a zpìtnì pøevést zpìt na danou strukturu èi objekt.
 V klasifikátoru je pou¾ita knihovní funkce pythonu s názvem \textit{pickle}, umo¾òující provést serializaci libovolné datové struktury pythonu a zpìt.
 
+
 \section{Implementace klasifikátoru SVM}\label{IMPLEMENTATION-SVM}
 
 \subsection{Parametry kvadratického programování}
@@ -1090,34 +1091,38 @@ V klasifikátoru je pou¾ita knihovní funkce pythonu s názvem \textit{pickle}, umo
 
 \chapter{Testy} \label{TESTY}
 
+%./control.py common -d ../data/tweets/annotated.db -n 5 -c 100000 -t 1 -k RBF -a 0.5 -b 0.5
 %##################################
-%########## svmrestults ##########
+%########## svm restults ##########
 %##################################
-%True positive = 93.4
-%True negative = 91.6
-%False positive = 8.4
-%False negative = 8.4
-%Precision = 0.917485265226
-%Recall = 0.917485265226
-%Accuracy = 0.91674925669
-%F-measure = 0.917485265226
+%True positive = 93.0
+%True negative = 92.8
+%False positive = 7.2
+%False negative = 7.2
+%Precision = 0.928143712575
+%Recall = 0.928143712575
+%Accuracy = 0.928071928072
+%F-measure = 0.928143712575
 %##################################
 %
 %##################################
-%########## bayesrestults ##########
+%########## bayes restults ##########
 %##################################
-%True positive = 90.2
-%True negative = 90.6
-%False positive = 9.8
-%False negative = 9.8
+%True positive = 90.0
+%True negative = 91.2
+%False positive = 10.0
+%False negative = 10.0
 %Unknown = 0.0
-%Precision = 0.902
-%Recall = 0.902
-%Accuracy = 0.902195608782
-%F-measure = 0.902
-%Corelation = 0.826996274323
+%Precision = 0.9
+%Recall = 0.9
+%Accuracy = 0.900596421471
+%F-measure = 0.9
+%Corelation = 0.836320369874
 %##################################
-%{'emoticon': 1, 'sentence': 1, 'url': 4, 'tag': 1, 'time': 0, 'date': 0, 'email': 0}$$
+%{'emoticon': 3, 'sentence': 1, 'url': 2, 'tag': 1, 'time': 0, 'date': 0, 'email': 2}
+
+
+
 
 
 \section{Data}\label{TEST-DATA}
