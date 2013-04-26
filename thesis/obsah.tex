@@ -555,7 +555,7 @@ Co¾ je skuteènì skalární souèin definovaný v prostoru pøíznakù s mapovací funkcí
 
 Tímto jsme dokázali, ¾e opravdu není tøeba pøevádìt celý prostor pøíznakù, ale staèí nám vypoèítat jednoduchou funkci $K(x, z) = (1 + x^T z)^2$ a tím dosáhnout daleko jednodu¹eji ký¾eného výsledku.
 
-\subsection{Jádra}
+\subsection{Jádra} \label{SVM-KERNELS}
 \label{SVM-THEORY-KERNELS}
 Jádra, nebo také jaderné funkce, jsou tedy funkce, pomocí nich¾ je klasifikátor SVM  schopen vypoèítat diskriminaèní rovnici pro optimální rozdìlení prostoru pøíznakù.
 V závislosti na tom jaké jádro je pøi trénování klasifikátoru pou¾ito je klasifikátor lineární nebo nelineární a dosahuje rozdílných výsledkù na rùzných datech.
@@ -702,6 +702,7 @@ Tato konstanta se nazývá \emph{konstanta soft-margin (soft-margin constant)}.
 Na¹e optimalizaèní úloha tedy s touto soft-margin konstantou vypadá následovnì:
 
 \begin{equation}
+\label{SVM_C}
 \begin{aligned}
 & \underset{w,b}{\text{minimalizace}}
 & & \frac{1}{2}||w||^2 + C \sum^{n}_{i=1}\xi_i \\
@@ -715,7 +716,7 @@ Nyní pro vyøe¹ení tohoto optimalizaèního problému pou¾ijeme metodu Lagrangeových
 \begin{equation}
 \begin{aligned}
 & \underset{\alpha}{\text{maximalizace}}
-& & \frac{1}{2}\sum^{n}_{i=1}\sum^{n}_{j=1}y_iy_j\alpha_i\alpha_jx^T_i x_j \\
+& & \sum^{n}_{i=1}\alpha_i - \frac{1}{2}\sum^{n}_{i=1}\sum^{n}_{j=1}y_iy_j\alpha_i\alpha_jx^T_i x_j \\
 & \text{kde}
 & & \sum^n_{i=0} y_i\alpha_i = 0, & 0 \leq \alpha_i \leq C
 \end{aligned}
@@ -959,7 +960,7 @@ Mezi tyto pou¾ité knihovny patøí zejména knihovna pro zpracování pøirozené øeèi 
 
 Tyto knihovny budou mimo jiné také podrobnìji popsány dále v této kapitole.
 
-\section{Pou¾ité knihovny}
+\section{Pou¾ité knihovny} \label{IMPL_LIB}
 \subsection{NLTK} \label{IMP-NLTK}
 NLTK neboli Natural Language ToolKit je balík knihoven pro skriptovací jazyk pyhton 2.7 urèený pro symbolické a statistické zpracovávání pøirozené øeèi.
 Nabízí jednoduché rozhraní pro velké mno¾ství rùzných nástrojù pro zpracování textu, ale také velké mno¾ství ukázkových dat, které lze pou¾ít jako testovací a tréhovací data pøi vyvíjení softwaru pracujícího s pøirozeným jazykem.
@@ -978,10 +979,10 @@ Numpy je základním balíkem pro numerické výpoèty v programovacím jazyce Python.
 Tato knihovna nabízí práci s mnohadimenzionálními poli, dal¹ími objekty od nich odvozenými (masked arrays, matice, $\ldots$), s velkým mno¾stvím rychlých matematických operací nad poli zahrnujících diskrétní Fourierovy transformace, tøídìní, základní lineární algebru, a mnoho dal¹ími.
 Tato knihovna je pro programy øe¹ící vìt¹í mno¾ství slo¾itìj¹ích matematických výpoètù prakticky nutností, nebo» výraznì zrychlí výpoèty a  programátorovi zjednodu¹í práci s matematickými daty.
 Mnoho dal¹ích knihoven øe¹ící nìjaké rozsáhlej¹í matematické úkony je zalo¾ených právì na Numpy.
-Mezi tyto knihovny patøi i CVXOPT (viz \ref{IMP-CVXOPT}) pou¾itý pro implementaci SVM klasifikátoru v praktické èásti této práce.
+Mezi tyto knihovny patøi i \texttt{CVXOPT} (viz \ref{IMP-CVXOPT}) pou¾itý pro implementaci SVM klasifikátoru v praktické èásti této práce.
 
 \subsection{CVXOPT} \label{IMP-CVXOPT}
-CVXOPT je volnì dostupný balík knihoven pro øe¹ení konvexních optimalizaèních problému (mimo jiné do této skupiny problémù patøí i kvadratické programování pou¾itév implementaci SVM klasifikátoru) v programovacím jazyce Python.
+\texttt{CVXOPT} je volnì dostupný balík knihoven pro øe¹ení konvexních optimalizaèních problému (mimo jiné do této skupiny problémù patøí i kvadratické programování jen¾ je pou¾ito v implementaci SVM klasifikátoru) v programovacím jazyce Python.
 Jejím hlavním úkolem je zjednodu¹it vývoj softwaru, jen¾ potøebuje pro svùj bìh øe¹it konvexní optimalizaèní úlohy, ani¾ by bylo potøeba implementovat slo¾ité optimalizaèní algoritmy.
 
 
@@ -1070,17 +1071,185 @@ Tato sekce bude pro vìt¹í pøehlednost rozdìlena na implementaci Bayesovského kla
 
 
 \section{Implementace Bayesovského klasifikátoru}
-Bayesovský klasifikátor je implementován jako modul ve skriptovacím jazyce Python verze 2.7.
-Pro výpoèet klasifikace je pou¾ita rovnice \ref{equation_used}. 
-\subsection{Ukládání dat}
-Klasifikátor pou¾ívá pro ukládání dat pøedev¹ím tedy databáze pravdìpodobností jednotlivých tokenù, na které klasifikátor pøi svém uèení narazil, serializaci.
-To je proces, pøi nìm¾ je datová struktura, nebo objekt pøeveden na proud dat, jen¾ se dá jednodu¹e ulo¾it a zpìtnì pøevést zpìt na danou strukturu èi objekt.
-V klasifikátoru je pou¾ita knihovní funkce pythonu s názvem \textit{pickle}, umo¾òující provést serializaci libovolné datové struktury pythonu a zpìt.
+Pøi implementaci Bayesovského klasifikátoru nenastaly prakticky ¾ádné problémy. 
+Bylo pouze tøeba vyøe¹it ukládání dat slovníku obsahujícího pravdìpodobnostní hodnoty jednotlivých tokenù na nì¾ klasifikátor pøi svém uèení narazil do souboru tak, aby se klasifikátor nemusel pøed ka¾dou klasifikací znovu uèit v¹echna data z trénovací sady, co¾ by bylo velmi zdlouhavé.
+Pro tuto potøebu jsem zvolil knihovní funkci programovacího jazyku Python s názvem \textit{pickle}, které umo¾òuje provést takzvanou serializaci libovolné datové struktury programovacího jazyka do souboru a zpìt.
 
 
 \section{Implementace klasifikátoru SVM}\label{IMPLEMENTATION-SVM}
+Na rozdíl od implementace Bayesovského klasifikátoru nastaly pøi implementaci klasifikátoru zalo¾eného na support vector machines urèité problémy, a to zejména tyto dva:
+
+\begin{itemize}
+\item Jaké parametry pøedat balíèku kvadratického programování
+\item Jak optimálnì zvolit parametr $C$ (viz. \ref{SVM_C}) a parametry jaderných funkcí.
+\end{itemize}
+
+Mimo tìchto dvou problémù byla v implementaci pou¾ita takzvaná gram matice, která výraznì zrychlila proces trénování klasifikátoru \ref{IMP-GRAM}.
 
 \subsection{Parametry kvadratického programování}
+
+Jak ji¾ bylo zmínìno vý¹e v této kapitole o pou¾itých knihovnách (viz \ref{IMPL_LIB}) pro øe¹ení optimalizaèního problému, vycházejícího z matematického popisu klasifikátoru SVM (viz \ref{SVM}) byl pou¾it balík knihoven pro programovací jazyk Python s názvem \texttt{CVXOPT}, pøesnìji modul \texttt{qp} z tohoto balíku knihoven umo¾òující øe¹it optimalizaèní problémy pomocí kvadratického programování.
+
+Optimalizaèní problém, který potøebujeme øe¹it je popsán na konci kapitoly \ref{SVM} a vypadá následovnì:
+
+\begin{equation}
+\label{IMP_SVM_MAX}
+\begin{aligned}
+& \underset{\alpha}{\text{maximalizace}}
+& & \sum^{n}_{i=1}\alpha_i - \frac{1}{2}\sum^{n}_{i=1}\sum^{n}_{j=1}y_iy_j\alpha_i\alpha_jx^T_i x_j \\
+& \text{kde}
+& & \sum^n_{i=0} y_i\alpha_i = 0, & 0 \leq \alpha_i \leq C
+\end{aligned}
+\end{equation}
+
+Zde se nám ji¾ ukazuje první problém, který je tøeba vyøe¹it, a sice ten, ¾e optimalizaèní algoritmus kvadratického programování v balíku \texttt{CVXOPT.qp} je implemntován tak, aby øe¹il minimalizaèní problémy. 
+Musíme tedy pøevést problém \ref{IMP_SVM_MAX} na ekvivalentní minimalizaèní problém:
+
+\begin{equation}
+\label{IMP_SVM_MIN}
+\begin{aligned}
+& \underset{\alpha}{\text{minimalizace}}
+& & \frac{1}{2}\sum^{n}_{i=1}\sum^{n}_{j=1}y_iy_j\alpha_i\alpha_jx^T_i x_j - \sum^{n}_{i=1}\alpha_i\\
+& \text{kde}
+& & \sum^n_{i=0} y_i\alpha_i = 0, & 0 \leq \alpha_i \leq C
+\end{aligned}
+\end{equation}
+
+V dokumentaci balíku \texttt{CVXOPT} je definován formát kvadratických problémù, jen¾ je modul \texttt{qp} schopen øe¹it.
+Vypadá takto:
+
+\begin{equation}
+\label{IMP_SVM_CVXOPT}
+\begin{aligned}
+& \underset{\alpha}{\text{minimalizace}}
+& & \frac{1}{2} \alpha^T P \alpha + q^T \alpha\\
+& \text{kde}
+& & G\alpha \leq h \\
+& & & A\alpha = b
+\end{aligned}
+\end{equation}
+
+Museli jsme tedy urèit, jaké hodnoty dosadit za parametry $P$ (kvadratické koeficienty), $q$ (lineární koeficienty), $G$ a $h$ (podmínky nerovnosti), $A$ a $b$ (podmínky rovnosti).
+
+Za promìnnou $P$ jsme dosadili matici 
+
+\begin{equation}P = 
+\begin{bmatrix}
+y_1y_1 \; x^T_1x_1 & y_1y_2 \; x^T_1x_2 & y_1y_3 \; x^T_1x_3 & \cdots & y_1y_N \; x^T_1x_N \\
+y_2y_1 \; x^T_2x_1 & y_2y_2 \; x^T_2x_2 & y_2y_3 \; x^T_2x_3 & \cdots & y_2y_N \; x^T_2x_N \\
+\vdots            & \vdots           & \vdots          & \vdots & \vdots          \\
+y_Ny_1 \; x^T_Nx_1 & y_Ny_2 \; x^T_Nx_2 & y_Ny_3 \; x^T_Nx_3 & \cdots & y_Ny_N \; x^T_Nx_N
+\end{bmatrix}
+\end{equation}
+
+kde platí, ¾e $x_N \in X$ a $y_N \in Y$.
+Tato matice v¹ak platí pouze v pøípadì, ¾e nepou¾íváme jaderných funkcí pro vytvoøení nelineární diskriminaèní funkce.
+Jestli¾e v¹ak pou¾íváme jadernou funkci $K(x_1, x_2)$ poèítající skalární souèin v prostoru pøíznakù (viz \ref{SVM-KERNELS}), tak musíme nahradit skalární souèin $x^T_mx_n$ za tuto jadernou funkci, do ní¾ dosadíme jednotlivé vektory.
+Matice $P$ pøi pou¾ití jaderných funkcí bude tedy vypadat následovnì:
+
+\begin{equation}P = 
+\begin{bmatrix}
+y_1y_1 \; K(x_1, x_1) & y_1y_2 \; K(x_1, x_2) & y_1y_3 \; K(x_1, x_3) & \cdots & y_1y_N \; K(x_1, x_N) \\
+y_2y_1 \; K(x_2, x_1) & y_2y_2 \; K(x_2, x_2) & y_2y_3 \; K(x_2, x_3) & \cdots & y_2y_N \; K(x_2, x_N) \\
+\vdots                & \vdots                & \vdots                & \vdots & \vdots                \\
+y_Ny_1 \; K(x_N, x_1) & y_Ny_2 \; K(x_N, x_2) & y_Ny_3 \; K(x_N, x_3) & \cdots & y_Ny_N \; K(x_N, x_N)
+\end{bmatrix}
+\end{equation}
+
+Dal¹ím parametrem, který musíme kvadratickému programování poskytnout je parametr lineárních koeficientù $q$.
+Tím bude pouze vektor stejné délky, jako je poèet vstupních dat obsahující hodnoty -1, tedy:
+
+\begin{equation}
+q = (-1, -1, \ldots, -1), \hspace{5em} |q| = |X|
+\end{equation}
+
+Nyní se dostáváme k parametrùm $G$, $h$ a $A$, $b$ tyto parametry jak bylo ji¾ vý¹e zmínìno definují podmínky (constrains) optimalizaèního procesu. 
+Jak vychází z podmínek rovnice \ref{IMP_SVM_MIN}, musíme zadat jednu podmínku rovnosti, a sice:
+
+\begin{equation}
+\sum^n_{i=0} y_i\alpha_i = 0
+\end{equation}
+
+To je provedeno velmi jednoduchým zpùsobem, a to ¾e promìnná $A$ bude obsahovat vektor $Y$ (labely trénovacích dat) a promìnná $b$ bude hodnota 0, tedy:
+
+\begin{equation}
+A = (y_1, y_2, \ldots, y_N), \hspace{5em} y_i \in Y; i \in |Y|
+\end{equation}
+\begin{equation}
+b = 0
+\end{equation}
+
+V programu je mo¾né zvolit, zda chce u¾ivatel pou¾ívat promìnnou $C$ -- zda umo¾ní poru¹ovat margin (viz \ref{SVM-THEORY-MARGINS}).
+Pokud se promìnná nepou¾ívá, pak má optimalizaèní problém následující tvar:
+
+\begin{equation}
+\label{IMP_SVM_MIN_BEZ_C}
+\begin{aligned}
+& \underset{\alpha}{\text{minimalizace}}
+& & \frac{1}{2}\sum^{n}_{i=1}\sum^{n}_{j=1}y_iy_j\alpha_i\alpha_jx^T_i x_j - \sum^{n}_{i=1}\alpha_i\\
+& \text{kde}
+& & \sum^n_{i=0} y_i\alpha_i = 0, & 0 \leq \alpha_i \leq \infty
+\end{aligned}
+\end{equation}
+
+Podíváme-li se podrobnìji na omezení podmínky $\sum^n_{i=0} y_i\alpha_i = 0$, vidíme, ¾e $\alpha$ mù¾e nabývat libovolné hodnoty od 0 do nekoneèna, tudí¾ parametry podmínky nerovnosti budou takovéto:
+
+\begin{equation}
+\label{IMP-G}
+G = \begin{bmatrix}
+-1 & 0 & \cdots & 0\\
+0 & -1 & \cdots & 0\\
+\vdots & \vdots & \ddots & 0\\
+0 & 0 & \cdots & -1 \\
+\end{bmatrix}
+\end{equation}
+\begin{equation}
+\label{IMP-h}
+h = (0, 0, \ldots, 0), \hspace{5em} |h| = |X|
+\end{equation}
+
+Promìnné $G$ a $h$ (\ref{IMP-G} a \ref{IMP-h}) po vlo¾ení do kvadratického programování popisují právì podmínku $0 \leq \alpha_i \leq \infty$.
+
+Jestli¾e ale u¾ivatel zadá, ¾e chce pou¾ívat promìnnou $C$, situace se tro¹ku komplikuje.
+Minimalizaèní úloha, kterou potøebujeme vyøe¹it se nepatrnì zmìní do následující podoby:
+
+\begin{equation}
+\label{IMP_SVM_MIN_S_C}
+\begin{aligned}
+& \underset{\alpha}{\text{minimalizace}}
+& & \frac{1}{2}\sum^{n}_{i=1}\sum^{n}_{j=1}y_iy_j\alpha_i\alpha_jx^T_i x_j - \sum^{n}_{i=1}\alpha_i\\
+& \text{kde}
+& & \sum^n_{i=0} y_i\alpha_i = 0, & 0 \leq \alpha_i \leq C
+\end{aligned}
+\end{equation}
+
+Podmínka, jen¾ v pøedchozím pøípadì (bez $C$) nebyla zhora nijak omezená je najednou limitována hodnotu promìnné $C$.
+Parametr $G$ a $h$ se tedy oproti pøedchozímu pøípadu bude muset roz¹íøit tak, aby pojal i pravou èast podmínky.
+Bude tedy vypadat takto:
+
+\begin{equation}
+\label{IMP-G}
+G = \begin{bmatrix}
+-1 & 0 & \cdots & 0\\
+0 & -1 & \cdots & 0\\
+\vdots & \vdots & \ddots & 0\\
+0 & 0 & \cdots & -1 \\
+1 & 0 & \cdots & 0\\
+0 & 1 & \cdots & 0\\
+\vdots & \vdots & \ddots & 0\\
+0 & 0 & \cdots & 1 \\
+\end{bmatrix}
+\end{equation}
+\begin{equation}
+\label{IMP-h}
+h = (0, 0, \ldots, 0, C, C, \ldots, C), \hspace{5em} |h| = 2 \cdot |X|
+\end{equation}
+
+Pokud tyto parametry tedy poskytneme modulu kvadratického programování, získáme výsledné hodnoty lagrangeových multiplikátorù, které definují support vektory, jen¾ se z trénovací mno¾iny uèením vytvoøily. 
+S tìmito lagrangeovými multiplikátory pak dále pracujeme a vytvoøíme z nich klasifikaèní model. (viz \ref{SVM-THEORY-MARGINS})
+
+\subsection{Gram matice} \label{IMP-GRAM}
+
 
 \subsection{Volba vhodných parametrù klasifikátoru a Jaderných funkcí}
 
@@ -1121,6 +1290,36 @@ V klasifikátoru je pou¾ita knihovní funkce pythonu s názvem \textit{pickle}, umo
 %##################################
 %{'emoticon': 3, 'sentence': 1, 'url': 2, 'tag': 1, 'time': 0, 'date': 0, 'email': 2}
 
+%./control.py common -d ../data/tweets/annotated.db -n 5 -c 100000 -t 2 -k RBF -a 0.5 -b 0.5
+%##################################
+%########## svm restults ##########
+%##################################
+%True positive = 94.0
+%True negative = 91.4
+%False positive = 8.6
+%False negative = 8.6
+%Precision = 0.916179337232
+%Recall = 0.916179337232
+%Accuracy = 0.915103652517
+%F-measure = 0.916179337232
+%##################################
+%
+%##################################
+%########## bayes restults ##########
+%##################################
+%True positive = 90.0
+%True negative = 91.2
+%False positive = 10.0
+%False negative = 10.0
+%Unknown = 0.0
+%Precision = 0.9
+%Recall = 0.9
+%Accuracy = 0.900596421471
+%F-measure = 0.9
+%Corelation = 0.836320369874
+%##################################
+%
+%{'emoticon': 3, 'sentence': 1, 'url': 2, 'tag': 1, 'time': 0, 'date': 0, 'email': 2}
 
 
 
@@ -1181,7 +1380,7 @@ Lze ji jednodu¹e vypoèítat následovnì:
 $$
   Accuracy = \frac{true\_positive + true\_negative}{true\_positive + true\_negative + false\_positive + false\_negative}
 $$
-Nevýhodou této metriky v¹ak je, ¾e nebere v potaz poèty záznamù v jednotlivých tídách.
+Nevýhodou této metriky v¹ak je, ¾e nebere v potaz poèty záznamù v jednotlivých tøídách.
 
 \subsubsection{Precision. Recall}
 $$
