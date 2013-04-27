@@ -17,7 +17,7 @@ Jednu probabilistickou a jednu neprobabilistickou.
 Tou první, probabilistickou metodu, která je v této práci podrobnì popsána, je metoda nazývaná \textit{Bayesovský klasifikátor}, vyu¾ívající ke klasifikaci textu Bayesova teorému.
 Bayesovský klasifikátor, nebo také Bayesovský filtr, jak je obèas nazýván, je velmi èasto pou¾íván e-mailovými klienty pro zji¹»ování, zda je e-mailová zpráva nevy¾ádanou po¹tou, nebo ne.
 
-Druhou zvolenou metodou je neporobabilistická klasifikaèní metoda \textit{SVM}(support vector machines).
+Druhou zvolenou metodou je neporobabilistická klasifikaèní metoda \textit{SVM} (support vector machines).
 Je¾ pomocí namapování vstupního textu do $N$-dimenzionálního prostoru a následným rozdìlením tohoto prostoru na dva poloprostory doká¾e vstupní text klasifikovat.
 
 Obì metody jsou v této práci podrobnì rozebrány jak z teoretického, tak praktického hlediska.
@@ -36,10 +36,10 @@ U obou metod jsem mìl dle zadání dbát na výbìr vhodných pøíznakù z textu.
 Pro potøeby této práce jsem anotoval velkou sadu dokumentù, které budu následnì pou¾ívat pro trénování a testování mnou vytvoøeného programu.
 Na tìchto datech následnì porovnám dvì zvolené metody klasifikace pomocí standardních metrik pro hodnocení klasifikátorù.
 
-Toto téma diplomové práce jsem si zvolil, jeliko¾  jsem témìø dva roky pracoval na projektu M-eco\footnote{http://www.meco-project.eu/} ve skupinì NLP na VUT FIT, kde jsem se zabýval klasifikací tweetù\footnote{krátkých zpráv o maximální délce 140 znakù, je¾ u¾ivatelé sociální sítì Twitter(http://twitter.com/) pí¹í na své profily}.
+Toto téma diplomové práce jsem si zvolil, jeliko¾  jsem témìø dva roky pracoval na projektu M-eco\footnote{http://www.meco-project.eu/} ve skupinì NLP na VUT FIT, kde jsem se zabýval klasifikací tweetù\footnote{Tweety -- pøíspìvky zveøejòované na sociální síti Twitter (http://twitter.com/)}.
 Chtìl bych této práce vyu¾ít k tomu, abych prohloubil své znalosti o problematice klasifikace dokumentù a hloubìj¹ímu porozumìní klasifikaèních metod, zejména pak klasifikátoru zalo¾eného na SVM, jeliko¾ metoda SVM je velmi dobøe variabilní a lze ji pou¾ít pro øe¹ení velkého mno¾stí rùzných problémù.
 
-Bayesovský klasifikátor implementovaný této práci byl v reálu dlouho pou¾íván na filtrování tweetù pøidávaných do databáze M-eco.
+Bayesovský klasifikátor implementovaný této práci byl nasazen do reálného provozu v projektu M-Eco.
 
 \section{Návaznost práce na semstrální projekt} \label{UVOD-NAVAZNOST}
 Tato práce úzce navazuje odevzdaný dokument semestrálního projektu, jen¾ byl vytvoøen pro stejnojmenný pøedmìt.
@@ -51,7 +51,7 @@ V odevzdané práci je¹tì nebyly implementovány speciální pøíznaky (\ref{TOKENIZAC
 
 
 
-\chapter{Zpracování pøirozené øeèi}
+\chapter{Zpracování pøirozeného jazyka}
 V této kapitole se budeme struènì zabývat historií (\ref{NLP-H}) oboru zpracovávání pøirozeného jazyka, poté si pøiblí¾íme hlavní úkoly, které se v oboru zpracovávání pøirozeného jazyka øe¹í (\ref{NLP-HU}) a nakonec se podrobnìji podíváme na klasifikaèní úlohy(\ref{NLP-KU}), které jsou hlavním tématem této práce.
 
 \section{Historie} \label{NLP-H}

@@ -81,23 +81,24 @@
   %bud pomoci nasledujicich parametru nebo pomoci vyhrazenych maker (viz dale)
   %===========================================================================
   %Klicova slova
-  keywords.cs={klasifikace, naivní bayesovský filter, bayesovský filter, bayesovský theorém, aktivní uèení, klasifikace pøirozeného jazyka, strojové uèení, zpracování pøirozeného jazyka, boosting}, %klicova slova v ceskem jazyce
-  keywords.en={classification, naive bayesian filter, bayesian filter, bayesian theorem, active learning, classification of natural language, machine learning, natural language processing, boosting}, %klicova slova v anglickem jazyce
+  keywords.cs={klasifikace, naivní bayesovský klasifikátor, bayesovský klasifikátor, bayesovský theorém, SVM klasifikátor, SVM, jaderné metody, volba parametrù SVM, klasifikace pøirozeného jazyka, strojové uèení, zpracování pøirozeného jazyka}, %klicova slova v ceskem jazyce
+  keywords.en={classification, naive bayesian classifier, bayesian classifier, bayesian theorem, SVM classifier, SVM, kernel methods, choosing SVM classifier parameters, natural language classification, machine learning, natural language processing}, %klicova slova v anglickem jazyce
   %Abstract
-  abstract.cs={Tato práce se zabývá problematikou klasifikace textových dokumentù, a to pøedev¹ím metodami filtrování spamu.
-  Hlavním cílem této práce je rozebrat libovolný algoritmus pro klasifikaci dokumentù a implementovat jej.
-  Byl zvolen algoritmus bayesovského klasifikátoru, který byl podrobnì analyzován a popsán.
-  V této práci je navr¾eno vylep¹ení základního algoritmu bayesovského klasifikátoru, které pøi následném testování vykázalo lep¹í výsledky klasifikace ne¾ pøi pou¾ití základního bayesovského klasifikátoru.}, % abstrakt v ceskem jazyce
-  abstract.en={This thesis deals with a document classification, especialy with spam filtering methods.
-  Main goal of this thesis is to analyze arbitrary document classification algorithm and to create an implementation of this algorithm.
-  The bayesian classifier was selected which was analyzed and implemented.
-  This thesis offers an improvement of this basic bayesian classifier, which was succesfuly tested and provided better results than basic implementation.}, % abstrakt v anglickem jazyce
+  abstract.cs={Tato práce se zabývá problematikou klasifikace textových dokumentù, a to pøedev¹ím metodami klasifikace textu, také nazývaných jako metody filtrování spamu.
+  Hlavním cílem této práce je rozebrat dva algoritmy pro klasifikaci dokumentù, implementovat je a následnì porovnat.
+  Byl zvoleny algoritmy bayesovského klasifikátoru a SVM klasifikátoru, které jsou v této práci podrobnì analyzovány a popsány.
+  Jedním z cílù této práce bylo optimálnì vytvoøit a vybrat pøíznaky, které by co nejvíce napomohly klasifikaci.
+  V závìru práce je provedeno mno¾ství testù ukazující úèinnost obou klasifikátorù za ruzných podmínek.}, % abstrakt v ceskem jazyce
+  abstract.en={This thesis deals with a document classification, especially with text classification method, also referred to as spam filtering methods.
+  Main goal of this thesis is to analyze two arbitrary document classification algorithms to describe then and to create an implementation of those algorithms.
+  Chosen algorithms are naive bayesian classifier and SVM classifier which were analyzed and implemented in the practical part of this thesis.
+  One of the main goals of this thesis is to optimally create and choose text features, which are best describing input text and thus lead to best classification results.
+  At the end of this thesis there is a bunch of tests showing comparison of efficiency of the two chosen classifiers under various circumstances}, % abstrakt v anglickem jazyce
   %Prohlaseni
-  declaration={Prohla¹uji, ¾e jsem tento semestrální projekt vypracoval samostatnì pod vedením pana Ing. Lubomíra Otrusiny},
+  declaration={Prohla¹uji, ¾e jsem tuto diplomovou práci vypracoval samostatnì pod vedením pana Ing. Lubomíra Otrusiny},
   %Podekovani (nepovinne)
-  acknowledgment={V prvé øadì bych chtìl podìkovat panu Ing. Lubomíru Otrusinovi za vedení práce a podnìtné pøipomínky a návrhy a dále své rodinì za podporu a pomoc, kterou mi poskytli.} % nepovinne
-}
-
+  acknowledgment={V prvé øadì bych chtìl podìkovat panu Ing. Lubomíru Otrusinovi za vedení práce a podnìtné pøipomínky a návrhy, které mi poskytl.
+  Dále pak bych chtìl podìkovat v¹em èlenùm své rodiny, za podporu a porozumìní pøi psaní této práce. Zejména pak Kubovi, který nikdy neøekl ne, kdy¾ jsem potøeboval konzultaci s nìjakým matematickým problémem a své mamce, které mi moc pomohla s konènými úpravami jazyka (a bylo to vìru potøeba).}}
 \begin{document}
   % Vysazeni titulnich stran
   % ----------------------------------------------
