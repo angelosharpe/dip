@@ -3,7 +3,6 @@
 import numpy as np
 import random
 import math
-import sys
 import logging
 import pp
 
@@ -52,13 +51,14 @@ class Annealing():
     C_MIN = 0.0001
     C_MAX = 35000
 
-    def __init__(self, kernel=None, init_temp=sys.maxint, iter_limit=1000,
-                 n_fold_cv=None, max_token_size=1):
+    def __init__(self, kernel=None, init_temp=100, cooling_factor=0.99,
+                 stop_temp=0.001, n_fold_cv=None, max_token_size=1):
         '''
         init method
         @param kernel: instance of Kernel object
         @param init_temp: initial temperature for annealing
-        @param iter_limit: limit of iterations for annealing
+        @param cooling_factor: speed of temperature cooling
+        @param stop_temp: temperature which stops annealing
         @param n_fold_cv: cross validation setup
         @param max_token_size: tokeniation parameter
         '''
@@ -71,7 +71,8 @@ class Annealing():
         self.job_server.set_ncpus()
 
         random.seed()
-        self.iter_limit = iter_limit
+        self.cooling_factor = cooling_factor
+        self.stop_temp = stop_temp
 
         # svm krenel init
         if not kernel:
@@ -187,23 +188,22 @@ class Annealing():
         else:
             return math.e**(-difference/self.temp + 0.000000000000000001)
 
-    def _get_temperature(self, iteration):
+    def _get_temperature(self):
         '''
         Returns temperature according to the state of annealing process.
-        @param iteration: current iteration
         @return: temperature
         '''
-        return  (1 - (float(iteration) / self.iter_limit)) * self.iter_limit
+        return self.temp * self.cooling_factor
 
     def run(self):
         '''
         Run simulated annealing!!!
         @return: best state and energy tupple
         '''
-        iteration = 0
-        while self.iter_limit > iteration:
+        iteration = -1
+        while self.temp > self.stop_temp:
             iteration += 1
-            self.temp = self._get_temperature(iteration)
+            self.temp = self._get_temperature()
             self._logger.info('==current temperature is {0}, iteration:{1}=='
                     .format(self.temp, iteration))
             self._logger.info('best state: {}, best_energy: {}'
