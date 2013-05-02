@@ -129,7 +129,7 @@ def _print_results(t,tp, fp, tn, fn, u=None, c=None):
     ret += '##################################\n'
     ret += 'True positive = ' + str(tp) + '\n'
     ret += 'True negative = ' + str(tn) + '\n'
-    ret += 'False positive = ' + str(fn) + '\n'
+    ret += 'False positive = ' + str(fp) + '\n'
     ret += 'False negative = ' + str(fn) + '\n'
     if u is not None:
         ret += 'Unknown = ' + str(u) + '\n'
@@ -183,6 +183,7 @@ def common_run(args):
         args.high, args.count, args.n_fold_cv)))
     result = [job() for job in jobs]
     # print result
+    print result
     for r in result:
         if r['type'] == 'bayes':
             _print_results(t=r['type'], tp=r['result']['true_positive'],
