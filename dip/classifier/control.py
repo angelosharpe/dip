@@ -86,13 +86,19 @@ def bayes_test(args):
     Function starts test of bayesian classifier with given dataset and classifier
     parameters.
     '''
-    features = eval(args.feats)
-    if isinstance(features,dict):
-        e = Entry(id=None, guid=None, entry=None, language=None)
-        if not e.check_feats(features):
-            return
+    bt = BayesianTest(dbfile=args.db_file, low=args.low, high=args.high,
+            max_token_size=args.max_token_size)
 
-    bt = BayesianTest(dbfile=args.db_file, low=args.low, high=args.high)
+    if args.feats is not None:
+        features = eval(args.feats)
+        if isinstance(features,dict):
+            e = Entry(id=None, guid=None, entry=None, language=None)
+            if not e.check_feats(features):
+                print 'Incorrect format of feature dictionary'
+                return
+    else:
+        features = bt.get_best_features(count=args.count, n_fold_cv=args.n_fold_cv)
+
     bt.run(features=features, count=args.count, n_fold_cv=args.n_fold_cv)
 
 def bayes_features(args):
@@ -100,15 +106,14 @@ def bayes_features(args):
     Function starts strats process of finding most suitable feature combination
     for selected dataset
     '''
-    # twitter results: {'emoticon':1, 'sentence':1, 'url':4, 'tag':1, 'time':0,
-    #                   'date':0, 'email':0}
     # process features
     # run
-    bt = BayesianTest(dbfile=args.db_file, low=args.low, high=args.high)
+    bt = BayesianTest(dbfile=args.db_file, low=args.low, high=args.high,
+            max_token_size=args.max_token_size)
     bt.get_best_features(count=args.count, n_fold_cv=args.n_fold_cv)
 
-# COMMON
 
+# COMMON
 def _print_results(t,tp, fp, tn, fn, u=None, c=None):
     '''
     method prints results from of testing
@@ -158,9 +163,10 @@ def _thread_svm(db_file, count, max_token_size, n_fold_cv, kernel):
     # return results
     return {'type':'svm', 'result': result, 'state':state, 'emergy':energy}
 
-def _thread_bayes(db_file, low, high, count, n_fold_cv):
+def _thread_bayes(db_file, low, high, count, n_fold_cv, max_token_size):
     from src.bayes.bayesian_test import BayesianTest
-    bt = BayesianTest(dbfile=db_file, low=low, high=high)
+    bt = BayesianTest(dbfile=db_file, low=low, high=high,
+            max_token_size=max_token_size)
     # run feature selection
     features = bt.get_best_features(count=count, n_fold_cv=n_fold_cv)
     # run test with best features
@@ -180,7 +186,7 @@ def common_run(args):
     jobs.append(job_server.submit(_thread_svm, (args.db_file, args.count,
         args.max_token_size, args.n_fold_cv, args.kernel)))
     jobs.append(job_server.submit(_thread_bayes, (args.db_file, args.low,
-        args.high, args.count, args.n_fold_cv)))
+        args.high, args.count, args.n_fold_cv, args.max_token_size)))
     result = [job() for job in jobs]
     # print result
     print result
@@ -287,26 +293,29 @@ def parse_args():
             help='Specify input database file for running tests')
     parser_bayes_test.add_argument('--n_fold_cv', '-n', type=int, default=5,
             help='Defines number of used fold cross-validations')
+    parser_bayes_test.add_argument('--max_token_size','-t', default=1, type=int,
+            help='Size of word n-tuples')
     parser_bayes_test.add_argument('--feats', '-f', type=str,
-            default="{'emoticon':1, 'sentence':1, 'url':4, 'tag':1, 'time':0, \
-                'date':0, 'email':0}",
+            default=None,
             help='python array of possible features (see src/common/entry.py)')
     parser_bayes_test.set_defaults(func=bayes_test)
 
     # BAYES - run select features
-    parser_bayes_test = subparsers_bayes.add_parser('features',
+    parser_bayes_feature = subparsers_bayes.add_parser('features',
             help='Run process of finding ideal feature combinations')
-    parser_bayes_test.add_argument('--low', '-a', type=float, default=0.4,
+    parser_bayes_feature.add_argument('--low', '-a', type=float, default=0.4,
             help='Low threshold for classifier')
-    parser_bayes_test.add_argument('--high', '-b', type=float, default=0.6,
+    parser_bayes_feature.add_argument('--high', '-b', type=float, default=0.6,
             help='High threshold for classifier')
-    parser_bayes_test.add_argument('--count', '-c', type=int, default=5000,
+    parser_bayes_feature.add_argument('--count', '-c', type=int, default=5000,
             help='Count of processed entries from DB')
-    parser_bayes_test.add_argument('--db_file', '-d', type=str, required=True,
+    parser_bayes_feature.add_argument('--db_file', '-d', type=str, required=True,
             help='Specify input database file for running tests')
-    parser_bayes_test.add_argument('--n_fold_cv', '-n', type=int, default=5,
+    parser_bayes_feature.add_argument('--n_fold_cv', '-n', type=int, default=5,
             help='Defines number of used fold cross-validations')
-    parser_bayes_test.set_defaults(func=bayes_features)
+    parser_bayes_feature.add_argument('--max_token_size','-t', default=1, type=int,
+            help='Size of word n-tuples')
+    parser_bayes_feature.set_defaults(func=bayes_features)
 
     # COMMON - compare svm and bayesian classifiers
     parser_common = subparsers.add_parser('common',

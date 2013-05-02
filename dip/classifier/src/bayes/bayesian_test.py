@@ -3,6 +3,7 @@
 import sqlite3
 import itertools
 from math import sqrt
+import copy
 
 from bayesian_classifier import BayesianClassifier
 from ..common.entry import Entry
@@ -16,7 +17,7 @@ class BayesianTest:
                    (lang, relevance, text annotation)
     '''
 
-    def __init__(self, dbfile=None, low=0.5, high=0.5):
+    def __init__(self, dbfile=None, low=0.5, high=0.5, max_token_size=2):
         # classification thresholds
         self._low = float(low)
         self._high = float(high)
@@ -24,6 +25,7 @@ class BayesianTest:
         self.bcl = BayesianClassifier(low=low, high=high)
         # dbfile with labeled data
         self.dbfile = dbfile
+        self.max_token_size = max_token_size
 
     def _test_corelation(self, test_res):
         '''
@@ -135,10 +137,12 @@ class BayesianTest:
             # train
             self.bcl._logger.info('Training starts...')
             for db_entry in to_train_relevant:
-                entry =  Entry(id=None, guid=None, entry=db_entry[1], language=db_entry[0])
+                entry = Entry(id=None, guid=None, entry=db_entry[1],
+                        language=db_entry[0], max_token_size=self.max_token_size)
                 self.bcl.train(entry, True, used_features)
             for db_entry in to_train_irelevant:
-                entry = Entry(id=None, guid=None, entry=db_entry[1], language=db_entry[0])
+                entry = Entry(id=None, guid=None, entry=db_entry[1],
+                        language=db_entry[0], max_token_size=self.max_token_size)
                 self.bcl.train(entry, False, used_features)
             self.bcl._logger.info('Trained {0} relevant and {1} irelevant entries'.format(
                 len(to_train_relevant), len(to_train_irelevant)))
@@ -179,22 +183,35 @@ class BayesianTest:
             #add results to final results
             results.append(clas_res)
 
-            # calculating iteration results
-            self.bcl._logger.info('Results:')
-            self._calculate_results(clas_res)
+        # calculate overall results for these features
+        clas_res = {}
+        clas_res['true_positive'] = 0.0
+        clas_res['true_negative'] = 0.0
+        clas_res['false_positive'] = 0.0
+        clas_res['false_negative'] = 0.0
+        clas_res['unknown'] = 0.0
+        clas_res['corelation'] = 0.0
+        for res in results:
+            clas_res['true_positive'] += res['true_positive'] / float(n_fold_cv)
+            clas_res['true_negative'] += res['true_negative'] / float(n_fold_cv)
+            clas_res['false_positive'] += res['false_positive'] / float(n_fold_cv)
+            clas_res['false_negative'] += res['false_negative'] / float(n_fold_cv)
+            clas_res['unknown'] += res['unknown'] / float(n_fold_cv)
+            clas_res['corelation'] += res['corelation'] / float(n_fold_cv)
 
         # return all cross-validation results
-        return results
+        return clas_res
 
     def get_best_features(self, count=100, n_fold_cv=10):
         '''
-        Method runs test of avilable features and selects one most fitting for
-        current dataset.
+        Method rus test of available features and select one most fitting for
+        current dataset. This is a smart version of get_best_features().
+        It calculates best corelation of each feature and use only the best
+        corelation of a type and only if it is better than without it.
         @param count: count of processed entries (count*relevant,count*irelevant)
         @param n_fold_cv: n-fold-cross-validation setup
         @return dictionary containing best suiting features for current dataset
         '''
-
         # connect to database
         try:
             conn = sqlite3.connect(self.dbfile)
@@ -219,46 +236,36 @@ class BayesianTest:
         used_relevant = relevant[:count]
         used_irelevant = irelevant[:count]
 
-        # find which features to use
-        tmp_entry = Entry(id=None, guid=None, entry=None, language=None)
-        best_corelation = 0
-        best_feat = None
+        # create controll run without features
+        tmp_entry = Entry(id=None, guid=None, entry=None, language=None,
+                max_token_size=self.max_token_size)
+        no_feat = {f:len(tmp_entry.features_func[f])-1 for f in tmp_entry.features_func}
+        controll_run = self._cross_validation(used_relevant, used_irelevant,
+                    n_fold_cv, count, no_feat)
 
-        for feat_sel in [dict(zip(tmp_entry.features_func_count, x)) for x in itertools.product(*tmp_entry.features_func_count.itervalues())]:
-            self.bcl._logger.info('Trying features:{0}'.format(feat_sel))
+        # find best features
+        results = {}
+        for f in tmp_entry.features_func:
+            results[f] = {}
+            for i in xrange(1, len(tmp_entry.features_func[f])):
+                used_feat = copy.deepcopy(no_feat)
+                used_feat[f] -= i
 
-            # calculate n_fold_cv
-            results = self._cross_validation(used_relevant, used_irelevant,
-                    n_fold_cv, count, feat_sel)
+                # calculate n_fold_cv
+                result = self._cross_validation(used_relevant, used_irelevant,
+                        n_fold_cv, count, used_feat)
 
-            # calculate overall results for these features
-            self.bcl._logger.info('Overall results:')
-            clas_res = {}
-            clas_res['true_positive'] = 0.0
-            clas_res['true_negative'] = 0.0
-            clas_res['false_positive'] = 0.0
-            clas_res['false_negative'] = 0.0
-            clas_res['unknown'] = 0.0
-            clas_res['corelation'] = 0.0
-            for res in results:
-                clas_res['true_positive'] += res['true_positive'] / float(n_fold_cv)
-                clas_res['true_negative'] += res['true_negative'] / float(n_fold_cv)
-                clas_res['false_positive'] += res['false_positive'] / float(n_fold_cv)
-                clas_res['false_negative'] += res['false_negative'] / float(n_fold_cv)
-                clas_res['unknown'] += res['unknown'] / float(n_fold_cv)
-                clas_res['corelation'] += res['corelation'] / float(n_fold_cv)
-            self._calculate_results(clas_res)
+                if result['corelation'] > controll_run['corelation']:
+                    results[f][i] = result
 
-            # store best features
-            if clas_res['corelation'] > best_corelation:
-                best_corelation = clas_res['corelation']
-                best_feat = feat_sel
-                best_res = clas_res
-                self.bcl._logger.info('Best feat is {0} with corellation = {1}'.format(
-                    best_feat, best_corelation))
-        self._calculate_results(best_res)
-        self.bcl._logger.info('Best feat is {0} with corellation = {1}'.format(
-            best_feat, best_corelation))
+        # create best feat dictionary
+        self.bcl._logger.info('No feat: {0}'.format(no_feat))
+        best_feat = no_feat
+        for t in results:
+            if results[t] != {}:
+                best_feat[t] -= max(results[t].items(), key=lambda(x): x[1]['corelation'])[0]
+
+        self.bcl._logger.info('Best feat: {0}'.format(best_feat))
         return best_feat
 
 
@@ -295,26 +302,9 @@ class BayesianTest:
         used_irelevant = irelevant[:count]
 
         # calculate n_fold_cv
-        results = self._cross_validation(used_relevant, used_irelevant,
+        result = self._cross_validation(used_relevant, used_irelevant,
                 n_fold_cv, count, features)
 
-        # calculate overall results
-        self.bcl._logger.info('Overall results:')
-        clas_res = {}
-        clas_res['true_positive'] = 0.0
-        clas_res['true_negative'] = 0.0
-        clas_res['false_positive'] = 0.0
-        clas_res['false_negative'] = 0.0
-        clas_res['unknown'] = 0.0
-        clas_res['corelation'] = 0.0
-        for res in results:
-            clas_res['true_positive'] += res['true_positive'] / float(n_fold_cv)
-            clas_res['true_negative'] += res['true_negative'] / float(n_fold_cv)
-            clas_res['false_positive'] += res['false_positive'] / float(n_fold_cv)
-            clas_res['false_negative'] += res['false_negative'] / float(n_fold_cv)
-            clas_res['unknown'] += res['unknown'] / float(n_fold_cv)
-            clas_res['corelation'] += res['corelation'] / float(n_fold_cv)
-
         # print and return results
-        self._calculate_results(clas_res)
-        return clas_res
+        self._calculate_results(result)
+        return result
