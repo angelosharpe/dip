@@ -21,7 +21,10 @@ Druhou zvolenou metodou je neporobabilistická klasifikaèní metoda \textit{SVM} (
 
 Obì metody jsou v této práci podrobnì rozebrány jak z teoretického, tak praktického hlediska.
 
-Souèástí této práce je mimo toretické èásti také praktická, implementaèní èást, ve které je vytvoøen program, v nìm¾ jsou implementovány obì vý¹e zmínìné klasifikaèní metody, které jsou následnì testovány a porovnány.
+Souèástí této práce je mimo teoretické èásti také èást praktická a èást implementaèní.
+Praktická èást se nachází v druhé polovinì tohoto dokumentu a popisuje implementaci a pøístupy k øe¹ení problémù, které nastaly pøí vytváøení implementaèní èásti.
+Také se v ní nacházejí výsledky testù, které byly nad implementovaným programem provedeny a jejich interpretace.
+Souèástí implementaèní èásti této práce je potom samotný program, v nìm¾ jsou implementovány obì vý¹e zmínìné klasifikaèní metody.
 Souèástí praktické èásti je také mno¾ina trénovacích a testovacích dat, které jsou potom pou¾ívány v testech.
 V této práci je také popsána implementaèní èást, v ní¾ jsou specifikovány ve¹keré problémy a postupy, pou¾ité pøi implementaci praktické èásti.
 
@@ -53,7 +56,7 @@ V odevzdané práci je¹tì nebyly implementovány speciální pøíznaky (viz \ref{TOKEN
 
 
 \chapter{Zpracování pøirozeného jazyka}
-V této kapitole se budeme struènì zabývat historií (viz \ref{NLP-H}) oboru zpracovávání pøirozeného jazyka (natural language processing, dále té¾ NLP), poté hlavními úkoly, které se v oboru zpracovávání pøirozeného jazyka øe¹í (\ref{NLP-HU}) a nakonec podrobnìji i klasifikaèními úlohi(viz \ref{NLP-KU}), které jsou hlavním tématem této práce.
+V této kapitole se budeme struènì zabývat historií (viz \ref{NLP-H}) oboru zpracovávání pøirozeného jazyka (natural language processing, dále té¾ NLP), poté hlavními úkoly, které se v oboru zpracovávání pøirozeného jazyka øe¹í (\ref{NLP-HU}) a nakonec podrobnìji i klasifikaèními úlohami(viz \ref{NLP-KU}), které jsou hlavním tématem této práce.
 
 \section{Historie} \label{NLP-H}
 Obor zpracovávání pøirozeného jazyka se vyvíjí soubì¾nì s historií vývoje výpoèetní techniky.
@@ -90,7 +93,7 @@ Jejich hlavním principem byla práce s pravdìpodobnostními modely a váhami jednot
 Tímto zpùsobem bylo mo¾né efektivnìji øe¹it vìt¹inu NLP úkolù.
 Vzhledem k tomu, ¾e obor zpracovávání pøirozeného jazyka pracuje s daty vytvoøenými èlovìkem, je¾ mohou obsahovat rùzné chyby, pracují statistické metody znaènì spolehlivìji ne¾ døívìj¹í ruènì psaná pravidla.
 
-V souèasné dobì je výzkum zpracovávání pøirozeného jazyka orientován pøedev¹ím na vytvoøení autonomních a semiautonomních uèících agoritmù, tedy algoritmù, schopných uèit se z dat, která pøedtím nebyla ruènì anotována, a nebo z kombinace anotovaných a neanotovaných dat.
+V souèasné dobì je výzkum zpracovávání pøirozeného jazyka orientován pøedev¹ím na vytvoøení autonomních a semiautonomních uèících algoritmù, tedy algoritmù, schopných uèit se z dat, která pøedtím nebyla ruènì anotována, a nebo z kombinace anotovaných a neanotovaných dat.
 %%%%%%%%%
 %%%%%%%%
 %%%%%%%%
@@ -101,7 +104,7 @@ Obor zpracovávání pøirozeného jazyka je velmi rozsáhlý a existuje v nìm mimo kla
 V následující èásti této práce se podíváme na hlavní úkoly, kterými se oblast NLP zabývá.
 
 \subsection{Automatická sumarizace}
-Úkolem automatické sumariace je redukovat vstupní text nebo sadu textù do nìkolika slov, nebo krátkého odstavce, popisujícího sémantický obsah vstupního textu.
+Úkolem automatické sumarizace je redukovat vstupní text nebo sadu textù do nìkolika slov, nebo krátkého odstavce, popisujícího sémantický obsah vstupního textu.
 Základním principem automatické sumarizace je zpracovávání slov, frází a vìt ze vstupního souboru, respektive vstupních souborù.
 Z vý¹e zmínìných dat program pro automatickou sumarizaci vygeneruje vnitøní sémantický popis tìchto dat.
 Ze sémantického popisu potom mù¾e vygenerovat buï sadu vhodných slov, popisujících daný soubor, nebo je mo¾né pou¾ít metody pro generování pøirozeného jazyka a vytvoøit tak vìtný popis vstupního textu.
@@ -122,7 +125,7 @@ V roce 2011 vytvoøila spoleènost IBM poèítaè s názvem \textit{Watson} specializo
 \subsection{Odstraòování víceznaènosti slov v textu}
 Odstraòování víceznaènosti slov v textu je významnou úlohou napomáhající správnému porozumìní textu.
 Víceznaèná slova jsou v textu identifikována a poté je vyhledáván jejich správný význam v kontextu vstupního textu.
-Po zji¹tìní významu slova je slovo nahrazeno nevýceznaèným synonymem.
+Po zji¹tìní významu slova je slovo nahrazeno synonymem.
 Tato úloha je velmi dùle¾itá napøíklad pro zlep¹ování kvality a pøesnosti internetových vyhledávaèù.
 Velmi zajímavé øe¹ení tohoto problému publikovala Rada Mihalcea v \uv{Using Wikipedia for Automatic Word Sense Disambiguation} \cite{wp_word_sense}, která øe¹ila identifikaci víceznaèných slov za pomoci textového obsahu internetové encyklopedie \textit{Wikipedia}\footnote{http://wikipedia.org/}.
 
@@ -143,7 +146,7 @@ Nyní se podíváme na následující tøi klasifikaèní úlohy:
 \subsubsection{Anonymizace}\label{NLP-KU-anonym}
 Klasifikaèní úloha anonymizace není pøi zpracovávání pøirozeného jazyka pøíli¹ èasto øe¹ená.
 Jejím cílem je odstranìní citlivých referencí (napøíklad osobních informací -- rodného èísla, e-mailové adresy, atd.) z tìla daného textu, co¾ umo¾òuje následnì anonymizovaný text vyu¾ít napøíklad pro výzkumné úèely.
-Anonymizace na rozdíl od spam filteringu vy¾aduje daleko jemnìj¹í pøístup ke klasifikaci, jeliko¾ pracuje nikoliv s celým dokumentem, ale pouze s jeho èástmi, nìkdy dokonce jen nìkolika slovy, nebo vìtami.
+Anonymizace na rozdíl od filtrování spamu vy¾aduje daleko jemnìj¹í pøístup ke klasifikaci, jeliko¾ pracuje nikoliv s celým dokumentem, ale pouze s jeho èástmi, nìkdy dokonce jen nìkolika slovy, nebo vìtami.
 Pro anonymizaci jsou nejèastìji pou¾ívány tyto 3 postupy: 
 \begin{itemize}
  \item Odstranìní -- odstranìní v¹ech citlivých informací z dokumentu a jejich nahrazení výplní
@@ -161,9 +164,9 @@ Zpùsoby u¾ití anonymizace viz obr. \ref{NLP-KU-anonym-img}.
 
 \subsubsection{Klasifikace tématu}\label{NLP-KU-klas_tem}
 Klasifikace tématu je úloha pøiøazování názvù témat ke vstupním textovým dokumentùm.
-Typicky daný vstupní text pokrývá vìt¹í mno¹ství témat.
+Typicky daný vstupní text pokrývá vìt¹í mno¾ství témat.
 Metody pro klasifikaci tématu mohou být zalo¾eny napøíklad na skrytých Markovových modelech.
-Výstupem klasifikátoru tématu pro vstupní text bývá velmi èasto kromì seznamu tøíd témat, kterých se zøejme vstupní text týká, také seznam pravdìpodobností definující míru nále¾itosti do jednotlivých tìchto tøíd.
+Výstupem klasifikátoru tématu pro vstupní text bývá velmi èasto kromì seznamu tøíd témat, kterých se zøejmì vstupní text týká, také seznam pravdìpodobností definující míru nále¾itosti do jednotlivých tìchto tøíd.
 
 \subsubsection{Filtrování spamu}\label{NLP-KU-spam_filt}
 Zájem o klasifikaèní problém filtrování spamu v posledních letech velmi výraznì vzrostl, a to pøedev¹ím kvùli mno¾ství nevy¾ádané po¹ty (spamu), kterou u¾ivatelé dostávají do svých e-mailových schránek.
@@ -174,7 +177,7 @@ Podle ní potom klasifikují, zda je zpráva nevy¾ádanou po¹tou.
 Klasifikátory urèující, zda je zpráva spam nebo ne mají pro klasifikaci e-mailù velmi èasto asymetrické ohodnocení pøi klasifikaci.
 Chybné oznaèení vy¾ádané po¹ty jako spamu, vedoucí k následnému odstranìní zprávy, je toti¾ vìt¹í problém, ne¾ oznaèení spamu jako vy¾ádané po¹ty.
 
-V tomto èlánku se budeme zabývat právì pøedev¹ím metodami filtrování spamu, a to nejen pro pou¾ítí pøi jeho odfiltrovávání z e-mailové po¹ty, ale také pro oznaèování relevantních textových vstupù vzhledem k danému tématu.
+V tomto èlánku se budeme zabývat právì pøedev¹ím metodami filtrování spamu, a to nejen pro pou¾ití pøi jeho odfiltrovávání z e-mailové po¹ty, ale také pro oznaèování relevantních textových vstupù vzhledem k danému tématu.
 
 \chapter{Klasifikace dokumentù}
 Jedním z úkolù této práce je získat pøehled o klasifikaci textových dokumentù, seznámit se s metodami klasifikace a aplikovat je na vytvoøenou datovou sadu.
@@ -206,7 +209,7 @@ f: X \rightarrow 2^Y
 
 kde $2^Y$ oznaèuje potenèní mno¾inu v¹ech tøíd.
 Tato forma klasifikace se také oznaèuje jako \textit{multi-label klasifikace}.
-V \textit{multi-label} klasifikaci se ke ka¾dé tøídì mù¾e pøiøadit reálné èíslo $p \in <0,1>$, které definuje míru nale¾itosti klasifikovaného objektu do pøiøazených tøíd.
+V \textit{multi-label} klasifikaci se ke ka¾dé tøídì mù¾e pøiøadit reálné èíslo $p \in <0,1>$, které definuje míru nále¾itosti klasifikovaného objektu do pøiøazených tøíd.
 Tomuto se také øíká \textit{soft klasifikace}.
 Naproti tomu, kdy¾ je pøi klasifikaci pøiøazen objekt do tøídy \uv{napevno} (ano, patøí tam / ne, nepatøí tam), pak tento zpùsob klasifikace nazýváme \textit{hard klasifikace}.
 
@@ -237,8 +240,8 @@ Je sice pravda, ¾e klasifikace a clustering k sobì mají velmi blízko, a také mno
 U clusteringu tomu tak není.
 Clustering dìlí vstupní text podle významných spoleèných pøíznakù ve vstupních datech.
 Z definice klasifikace (viz \ref{CLASS-DEF}) víme, ¾e klasifikaèní úloha je definována klasifikaèní funkcí $f$,  která vstupnímu vzorku $x$ podle jeho pøíznakù pøiøadí oznaèení tøídy $y$, do ní¾ vzorek spadá.
-Klasifikaèní úlohy v NLP se sna¾í tuto funkci $f$ co nejpøesnìjí aproximovat, aby simulovaly její výsledek.
-Naroti tomu clustering nemá podobnou funkci jako klasifikace, která by urèovala, jak má vypadat výsledek.
+Klasifikaèní úlohy v NLP se sna¾í tuto funkci $f$ co nejpøesnìji aproximovat, aby simulovaly její výsledek.
+Naproti tomu clustering nemá podobnou funkci jako klasifikace, která by urèovala, jak má vypadat výsledek.
 Výsledná struktura tøíd clusteringu je vytvoøena za bìhu metody na základì znakù podobnosti vzorkù z mno¾iny vstupù $x$.
 
 \subsection{Strojové uèení}
@@ -255,7 +258,7 @@ Algoritmy strojového uèení se dìlí do následujících tøí kategorií:
 V roce 1988 vyslovil Michael Kearns ve své práci s názvem \uv{Thoughts on hypothesis boosting} otázku, zda lze z mno¾iny slabých klasifikátorù (takových, které mají nízké hodnoty korelace testovacích a výstupních dat) vytvoøit jeden klasifikátor, který by mìl výraznì lep¹í výsledky.
 Ve své práci dokázal, ¾e tomu tak opravdu mù¾e být.
 Od té doby bylo vyvinuto více algoritmù pro boosting klasifikace, nicménì vìt¹ina z nich se zakládá na iterativním uèení mno¾iny slabých klasifikátorù a jejich následném sdru¾ení do jednoho pøesného klasifikátoru.
-Historicky nejvýznam¹j¹ím boostingovým algoritmem je zøejmì algoritmus \textit{AdaBoost}(adaptive boosting), vytvoøený Yoavem Freundem a Robertem Schapirem, který publikovali v práci \uv{A Decision-Theoretic Generalization of on-Line Learning and an Application to Boosting}\cite{boosting}.
+Historicky nejvýznamnìj¹ím boostingovým algoritmem je zøejmì algoritmus \textit{AdaBoost}(adaptive boosting), vytvoøený Yoavem Freundem a Robertem Schapirem, který publikovali v práci \uv{A Decision-Theoretic Generalization of on-Line Learning and an Application to Boosting}\cite{boosting}.
 
 \chapter{Bayesovský klasifikátor} \label{BAYES}
 Bayesovský klasifikátor (naivní Bayesovský klasifikátor) je klasifikátor postavený na zjednodu¹eném Bayesoì teorému.
@@ -295,7 +298,7 @@ Bayesovský klasifikátor vyu¾ívá Bayesova teorému, který zní následovnì:
 \end{proof}
 
 Pro klasifikaci textu není vhodné pou¾ít pøímo rovnici z Bayesova teorému, jeliko¾ by bylo tøeba zapamatovat si pro ka¾dý token tøi hodnoty a bylo by nutné provádìt velké mno¾ství výpoètù, nicménì je mo¾né rovnici upravit do tvaru, v nìm¾ si pro ka¾dý token vìty je tøeba pamatovat pouze jednu hodnotu pravdìpodobnosti a také není tøeba provádìt tolik výpoètù.
-Upravená rovnice má nasledující tvar:
+Upravená rovnice má následující tvar:
 
 \begin{equation}
 P = \frac{p_1 p_2 p_3 \ldots p_N}{p_1 p_2 p_3 \ldots p_N + (1 - p_1) (1 - p_2) (1 - p_3) \ldots (1 - p_N)} \label{equation_used} \\
@@ -307,7 +310,7 @@ Výsledné $P$ je potom porovnáno s urèitým prahem, který definuje, zda je oklasif
 \subsection{Odvození rovnice pro klasifikaci} \label{SF-BAYES-MAT-bayes_theorem-deriv}
 Nyní pøejdìme k odvození rovnice \ref{equation_used} z Bayesova teorému \ref{SF-BAYES-MAT-bayes_theorem}.
  
-Mìjme $X$ a $Y$, pøedstavující dva tokoeny, $S$ znamenající \uv{je to spam} a $\neg S$ znamenající \uv{je to ham} (=není to spam).
+Mìjme $X$ a $Y$, pøedstavující dva tokeny, $S$ znamenající \uv{je to spam} a $\neg S$ znamenající \uv{je to ham} (=není to spam).
 Pro zjednodu¹ení budeme pou¾ívat pøípad se dvìma tokeny.
 
 $$
@@ -946,14 +949,13 @@ Proto je v této práci klasifikátor trénován se v¹emi mo¾nými kombinacemi pou¾itý
 
 \section{Pøíznaky a tokeny v SVM klasifikátoru}
 
-Na rozdíl od Bayesovského klasifikátoru, problém volby vhodných pøíznakù a tokenù u SVM klasifikátoru odpadá, co¾ vychází z definice SVM.
+Na rozdíl od Bayesovského klasifikátoru, problém volby vhodných pøíznakù a tokenù u SVM klasifikátoru odpadá.
 Jeliko¾ si klasifikátor pøi uèení vytváøí váhový vektor, který urèuje míru dùle¾itosti jednotlivých pøíznakù v prostoru pøíznakù pro výsledek klasifikace, je jasné, ¾e klasifikátor doká¾e irelevantní pøíznaky ignorovat a øídit se hlavnì pøíznaky, které na výslednou klasifikaci budou mít nejlep¹í vliv.
 
-
-
-
-
-
+Pokud ov¹em bude pou¾ito pøíli¹ velké mno¾ství pøíznakù, klasifikátoru výraznì naroste poèet dimenzí, co¾ se mù¾e markantnì projevit ve zhor¹ení klasifikaèních schopností SVM klasifikátoru.
+Jeliko¾ speciálních pøíznaky generují jen malé mno¾ství tokenù, tento problém by nemìl nastat.
+Naproti tomu ale generování $N$-tic textových tokenù tento problém zpùsobit mù¾e.
+Proto je vhodné volit zvolit optimální velikost generovaných N-tic tak, aby se nezhor¹ovaly klasifikaèní schopnosti klasifikátoru.
 
 
 
@@ -1379,7 +1381,7 @@ Tento po¾adavek ji¾ má minimalizaèní charakter, a proto jej nemusíme nijak pøevá
 Pro výpoèet energie tototo po¾adavku $E_{SV}$ dostanem následující vzorec:
 
 \begin{equation}
-E_{SV} = \frac{pocet_pouzitych_SV}{vsechny\_SV}, \hspace{5em} E_{SV} \in <0,1>
+E_{SV} = \frac{pocet\_pouzitych\_SV}{vsechny\_SV}, \hspace{5em} E_{SV} \in <0,1>
 \end{equation}
 
 Výpoèet celkové energie $E$ stavu se tudí¾ bude rovnat souètu energie pøesnosti a energie support vektorù, tedy:
@@ -1391,10 +1393,19 @@ E =  E_p + E_{SV} , \hspace{5em} E \in <0,2>
 
 \subparagraph{Generování mo¾ného sousedního stavu}
 Pro generování mo¾ného sousedního stavu byla pou¾ita metoda navrhnutá v èlánku \uv{Parameter determination of support vector machine and feature selection using simulated annealing approach} \cite{annealing}.
-Tato metoda je zalo¾ena na vygenerování náhodného vektoru od aktuálního stavu
+Tato metoda je zalo¾ena na vygenerování smìrového vektoru s poèátkem v aktuálním stavu.
+Na tomto vektoru je pak náhodnì zvolen mo¾ný sousední stav. 
 
+\subparagraph{Pravdìpodobnost pøíjmutí nového stavu}
+S postupným sni¾ování teploty se z principu simulovaného ¾íhání sni¾ovat pravdìpodobnost skoku na jiné, ne¾ lep¹í stavy.
+Pro výpoèet této pravdìpodobnosti je pou¾it následující vzorec:
 
-\subparagraph{Pravdìpodobnost pøímutí nového stavu}
+\begin{equation}
+P_{skoku} = e^{\frac{\Delta E}{T}}
+\end{equation}
+
+kde $\Delta E$ je rozdíl mezi energií sousedního stavu a pùvodního stavu a $T$ je aktuální teplota v iteraci simulovaného ¾íhání.
+Pro urèení, zda se má do nového stavu skoèit, èi ne je vygenerováno náhodné èíslo $X \in <0,1>$ a pokud je $P_{skoku} > X$, pak je pro dal¹í iteraci pou¾it sousední stav jako stav základní.
 
 \chapter{Testy} \label{TESTY}
 
@@ -1413,20 +1424,6 @@ Tato metoda je zalo¾ena na vygenerování náhodného vektoru od aktuálního stavu
 %##################################
 %
 %##################################
-%########## bayes restults ##########
-%##################################
-%True positive = 90.0
-%True negative = 91.2
-%False positive = 10.0
-%False negative = 10.0
-%Unknown = 0.0
-%Precision = 0.9
-%Recall = 0.9
-%Accuracy = 0.900596421471
-%F-measure = 0.9
-%Corelation = 0.836320369874
-%##################################
-%{'emoticon': 3, 'sentence': 1, 'url': 2, 'tag': 1, 'time': 0, 'date': 0, 'email': 2}
 
 %./control.py common -d ../data/tweets/annotated.db -n 5 -c 100000 -t 2 -k RBF -a 0.5 -b 0.5
 %##################################
@@ -1441,48 +1438,55 @@ Tato metoda je zalo¾ena na vygenerování náhodného vektoru od aktuálního stavu
 %Accuracy = 0.915103652517
 %F-measure = 0.916179337232
 %##################################
-%
-%##################################
-%########## bayes restults ##########
-%##################################
-%True positive = 90.0
-%True negative = 91.2
-%False positive = 10.0
-%False negative = 10.0
-%Unknown = 0.0
-%Precision = 0.9
-%Recall = 0.9
-%Accuracy = 0.900596421471
-%F-measure = 0.9
-%Corelation = 0.836320369874
-%##################################
-%
-%{'emoticon': 3, 'sentence': 1, 'url': 2, 'tag': 1, 'time': 0, 'date': 0, 'email': 2}
 
-
+%./control.py common -d ../data/tweets/annotated.db -n 5 -c 100000 -t 3 -k RBF -a 0.5 -b 0.5 > out.txt
+%##################################
+%########## svm restults ##########
+%##################################
+%True positive = 93.0
+%True negative = 91.8
+%False positive = 8.2
+%False negative = 8.2
+%Precision = 0.918972332016
+%Recall = 0.918972332016
+%Accuracy = 0.918489065606
+%F-measure = 0.918972332016
+%##################################
 
 
 \section{Data}\label{TEST-DATA}
-Jedním z úkolù vyplývajících ze zadání této práce bylo vytvoøit datovou sadu pro uèení a testování vytvoøených klasifikátorù.
-Zdrojem tìchto dat byla databáze tweetù projektu M-eco\footnote{http://www.meco-project.eu/}, ve kterém participuje výzkumná skupina NLP pracující pøi Fakultì informaèních technologii VUT v Brnì.
+Jedním z úkolù vyplývajících ze zadání této práce bylo vytvoøit datovou sadu pro trénování a testování obou zvolených klasifikátorù.
+Zdrojem tìchto dat byla databáze tweetù projektu M-eco\footnote{http://www.meco-project.eu/}, ve kterém participovala výzkumná skupina NLP pracující pøi Fakultì informaèních technologii VUT v Brnì.
 
-Byly vytvoøeny dvì datové sady, jedna pro anglický jazyk a druhá pro nìmecký.
-Celkovì bylo anotováno 4500 tweetù pro anglický jazyk a 3000 tweetù pro nìmecký.
-Tyto datové sady potom byly rozdìleny na dvì èásti, z nich¾ jedna byla pou¾ita pro trénování klasifikátoru a druhá pro testování.
-Aby klasifikátor fungoval správnì, mìlo by rozlo¾ení relevantních a nerelevantních tweetù v trénovací mno¾inì být zhruba 50/50.
-Tento pomìr vycházi z odvození klasifikaèní rovnice (viz \ref{SF-BAYES-MAT-bayes_theorem-deriv}).
-Pro anglický jazyk jsou tweety v trénovací mno¾inì zhruba takto rozlo¾eny, nicménì pro nìmecký jazyk jsou tweety rozlo¾eny nerovnomìrnì (asi 80\% relevantních a 20\% nerelevantních).
-Mno¾ina nìmeckých trénovacích dat se v¹ak bude je¹tì roz¹iøovat a tento pomìr bude vyrovnán.
+Byly vytvoøeny dvì datové sady, jedna pro anglické tweety a druhá pro anglické èlánky.
+Jak vychází z odvození klasifikaèní rovnice pou¾ité v Bayesovském klasifikátoru (viz \ref{SF-BAYES-MAT-bayes_theorem-deriv}), mìlo by rozlo¾ení relevantních a nerelevantních dat v trénovací a testovací mno¾inì být zhruba 50/50.
+Celkovì bylo anotováno asi 4500 anglických tweetù a asi 500 anglických èlánkù.
+V databázi anotovaných anglických tweetù se nachází 502 relevantních a zbytek nerelevantních záznamù.
+Pro databázi ruènì anotovaných anglických èlánku je tento pomìr 194 relevantních ku 269 nerelevantních záznamù.
+Vzhledem k tomu, ¾e v testu chceme porovnávat dva klasifikátory, z nich¾ jeden má vlastnost limitující jeho uèící sadu, budeme pro oba klasifikátory pou¾ívat trénovací sadu o stejné velikosti -- tzn. pro tweety bude datová sada pro testy obsahovat 502 relevantních a 502 nerelevantních záznamù a pro èlánky bude obsahovat 194 relevantních a 194 nerelevantních záznamù.
 
+Pro testování byla pou¾ívána metoda \emph{$n$-fold cross-validation}.
+Tato metoda rozdìluje vstupní datovou sadu na $n$ stejnì velkých dílù.
+Jeden z tìchto dílù je pak pou¾it jako testovací sada a zbylých $n-1$ dílù je pou¾ito jako trénovací datová sada.
+Metoda sestává z $n$ iterací pøi èem¾ v ka¾dé iteraci se jako testovací datová sada pou¾ije jiná z $n$ èástí rozdìlených dat.
+Jako celkový výsledek \emph{$n$-fold cross-validation} se pou¾ijí prùmìrné výsledky testù jednotlivých bìhù.
 
-\section{Úloha implementovaného klasifikátoru}
-Jak bylo ji¾ zmínìno v úvodu práce (\ref{UVOD-MOTIVACE}), jedním z mých cílù je v této práci vytvoøit klasifikátor pro klasifikaci tweetù v projektu M-eco.
-Implementovaný klasifikátor je nauèen na rozdìlení vstupních tweetù do dvou tøíd -- \textbf{zabývající se osobními zku¹enostmi pisatelù s nemocemi (ale také zku¹enostmi z pisatelova okolí)}, nebo \textbf{nezabývající se tìmito zku¹enostmi}.
+Pøi testování v implementaèní èásti této práce byla pou¾ita metoda \emph{5-fold cross-validation}, tedy data byla rozdìlena na 5 stejných dílù a nad tìmito díly se provádìly testy.
+Èíslo 5 bylo zvoleno kvùli poèítaèi, na kterém testy probíhaly.
+Validaèní proces je paralelizován -- ka¾dá iterace v implementovaném programu vyu¾ívá právì jedno jádro a výsledky v¹ech jader jsou po dobìhnutí v¹ech iterací zprùmìrovány do jednoho výsledku.
+
+\section{Úloha implementovaných klasifikátorù}
+Jak bylo ji¾ zmínìno v úvodu práce (\ref{UVOD-MOTIVACE}), hlavním z dùvodu pro vytvoøení této práce byla potøeba vytvoøit klasifikátor pro projekt M-Eco, který klasifikuje vstupní textu do tøíd a urèuje tak, který text bude zapsán do  databáze a který nebude.
+
+Pro datovou sadu obsahující anglické tweety jsou tedy implementované klasifikátory nauèeny k rozdìlování vstupních tweetù do dvou tøíd -- \textbf{zabývající se osobními zku¹enostmi pisatelù s nemocemi (ale také zku¹enostmi z pisatelova okolí)}, nebo \textbf{nezabývající se tìmito zku¹enostmi}.
 Tedy napøíklad tweet \textit{'I have a huge headache'} nebo \textit{'My dad feels sick'} jsou relevantní, naproti tomu \textit{'Canadians should expect to see more severe cases of swine flu.'} je irelevantní. 
 
+Pro datovou sadu obsahující anglické èlánky jsou implementované klasifikátory  podobnì jako v pøípadì tweetù nauèeny k rozdìlování vstupních tweetù do dvou tøíd -- \textbf{zabývající se skuteènou nákazou ve svìtì}, nebo \textbf{nezabývající se skuteènou nákazou ve svìtì}.
+
 \section{Testovací metriky} \label{TEST-METRIKY}
-Aby bylo mo¾né nìjakým zpùsobem porovnat rùzné výsledky klasifikátoru a také posléze klasifikátory mezi sebou, je tøeba zavést vhodné metriky popisující vlastnosti klasifikátoru.
+Aby bylo mo¾né nìjakým zpùsobem objektivnì porovnat rùzné výsledky klasifikátoru a také posléze klasifikátory mezi sebou, je tøeba zavést vhodné metriky popisující výsledky klasifikátoru.
 V této èásti práce budou tyto pou¾ité metriky vysvìtleny.
+
 \subsection{Korelace}
 Korelace je statistické metoda, která definuje vzájemný vztah mezi velièinami $X$ a $Y$.
 Míru korelace urèuje koeficient korelace nabývající hodnot $<-1, 1>$.
@@ -1498,26 +1502,35 @@ kde $X$ jsou klasifikátorem automaticky spoèítané pravdìpodobnosti a $X$ jsou pr
 Pøi testování klasifikátoru se poèítá korelace mezi u¾ivatelem zadanou hodnotou vstupního textu (pøi anotaci testovací mno¾iny) a výsledkem klasifikátoru.
 Èím více se tedy korelaèní koeficient blí¾í hodnotì 1, tím lep¹í výsledek klasifikátoru pøedstavuje.
 
+Korelaci je tedy mo¾né poèítat pouze u Bayesovského klasifikátoru, který pøiøazuje ka¾dému klasifikovanému vstupu urèitou pravdìpodobnost.
+U SVM klasifikátoru hodnota, která by pøiøazovala pravdìpodobnost nále¾itosti do urèité tøídy neexistuje, proto není mo¾né spoèítat korelaci.
+
 \subsection{Výsledek klasifikace}\label{TEST-VYS_KLAS}
-Abychom byli schopni pøesnì zjistit jak klasifikátor testovací mno¾inu oklasifikoval, rozdìlíme oklasifikovaná data do ètyø skupin.
+Abychom byli schopni pøesnì zjistit jak klasifikátor testovací mno¾inu oklasifikoval, rozdìlíme oklasifikované vstupní texty do ètyø skupin.
+
 \begin{itemize}
- \item \textit{True positive} -- poèet tweetù, které byly klasifikátorem správnì zaøazeny do relevantní tøídy.
- \item \textit{True negative} -- poèet tweetù, které byly klasifikátorem správnì zaøazeny do nerelevantní tøídy.
- \item \textit{False positive} -- poèet tweetù, které byly klasifikátorem ¹patnì zaøazeny do relevantní tøídy.
- \item \textit{False negative} -- poèet tweetù, které byly klasifikátorem ¹patnì zaøazeny do nerelevantní tøídy.
+ \item \textit{True positive} -- poèet vstupních textù, které byly klasifikátorem správnì zaøazeny do relevantní tøídy.
+ \item \textit{True negative} -- poèet vstupních textù, které byly klasifikátorem správnì zaøazeny do nerelevantní tøídy.
+ \item \textit{False positive} -- poèet vstupních textù, které byly klasifikátorem ¹patnì zaøazeny do relevantní tøídy.
+ \item \textit{False negative} -- poèet vstupních textù, které byly klasifikátorem ¹patnì zaøazeny do nerelevantní tøídy.
 \end{itemize}
-Tyto hodnoty jsou tedy výsledkem porovnání pøedpokládaného výstupu klasifikátoru s reálným výstupem implementovaného klasifikátoru.
+
+Tyto hodnoty jsou výsledkem porovnání pøedpokládaného výstupu klasifikátoru s reálným výstupem implementovaného klasifikátoru.
 Je zøejmé, ¾e èím ménì záznamù se nachází ve False negative a False positive, tím lépe klasifikátor funguje.
 
-\subsection{Precision, Recall, Accuracy, F--measure}
-Dal¹ími metrikami, pomocí nich¾ budeme moci porovnávat výsledky klasifikátorù, jsou funkce Precision(pøesnost), Recall(odezva), Accuracy(pøesnost\footnote{'Accuracy' a 'Precision' se do èeského jazyka pøekládají stejnì, tzn. jako pøesnost, nicménì jde o jiné metriky pro porovnávání klasifikátorù. Z toho dùvodu budeme metriky nazývat anglickými názvy.}) a F--measure.
-Pro následující metody se pøedpokládá, ¾e jsme schopni vypoèítat hodnoty \textit{True positive}, \textit{True negative}, \textit{False positive} a \textit{False negative} (viz \ref{TEST-VYS_KLAS})
+\subsection{Precision, Recall, Accuracy, F1--measure}
+Dal¹ími metrikami, pomocí nich¾ budeme moci porovnávat výsledky klasifikátorù, jsou funkce Precision(pøesnost), Recall(odezva), Accuracy(pøesnost\footnote{'Accuracy' a 'Precision' se do èeského jazyka pøekládají stejnì, tzn. jako pøesnost, nicménì jde o jiné metriky pro porovnávání klasifikátorù. Z toho dùvodu budeme metriky nazývat anglickými názvy.}) a F1--measure.
+Pro v¹echny vý¹e zmínìné metody porovnání klasifikátorù se pøedpokládá, ¾e jsme schopni vypoèítat hodnoty \textit{True positive}, \textit{True negative}, \textit{False positive} a \textit{False negative} (viz \ref{TEST-VYS_KLAS}).
+
 \subsubsection{Accuracy}
 Nejjednodu¹¹í metrikou pro porovnávání pøesnosti klasifikátorù je metrika Accuracy.
+Tato metrika definuje pomìr, jakým jsou ve výsledcích zastoupeny správnì klasifikované vstupy.
+
 Lze ji jednodu¹e vypoèítat následovnì:
 $$
   Accuracy = \frac{true\_positive + true\_negative}{true\_positive + true\_negative + false\_positive + false\_negative}
 $$
+
 Nevýhodou této metriky v¹ak je, ¾e nebere v potaz poèty záznamù v jednotlivých tøídách.
 
 \subsubsection{Precision. Recall}
@@ -1529,60 +1542,166 @@ $$
 $$
 Precision tedy mù¾eme definovat jako pomìr správnì oklasifikovaných relevantních záznamù vùèi v¹em oklasifikovaným relevantním záznamùm.
 Recall je potom pomìr správnì oklasifikovaných relevantních záznamù vùèi skuteènì relevantním záznamùm
-\subsubsection{F--measure}
+
+\subsubsection{F1--measure}
 $$
-  Fmeasure = 2 \cdot \frac{Precision \cdot Recall}{Precision + Recall}
+  F1measure = 2 \cdot \frac{Precision \cdot Recall}{Precision + Recall}
 $$
-F--measure je jedna z metrik nejèastìji pou¾ívaných pro hodnocení klasifikátorù.
+F1--measure je jedna z metrik nejèastìji pou¾ívaných pro hodnocení klasifikátorù.
 De facto jde o váhovaný prùmìr Precision a Recall.
-F--measure nabývá hodnot $<0,1>$, kde 0 je nejhor¹í skóre popisující výsledek klasifikátoru a 1 je nejlep¹í.
+F1--measure nabývá hodnot $<0,1>$, kde 0 je nejhor¹í skóre popisující výsledek klasifikátoru a 1 je nejlep¹í.
 
 \section{Testy Bayesovského klasifikátoru}
 Nyní pøistupme k pøedstavení výsledku testù Bayesovského klasifikátoru.
-Hlavním cílem jeho testování bylo nalézt optimální délku tokenù pøi pou¾ití nového zpùsobu tokenizace (viz \ref{IMP-BAYES-TOKEN}).
-Testy jsou provádìny na manuálnì anotovaných datech(viz. \ref{TEST-DATA}.
-Testy provádíme samostatnì pro anglický jazyk na anglických tweetech a pro nìmecký jazyk na nìmeckých tweetech.
+V této kapitole budeme hledat optimální nastavení klasifikátoru pro klasifikaci jednotlivých typù textu (anglické tweety a èlánky).
+V testech se budeme zamìøovat pøedev¹ím na porovnávání rùzných zpùsobù tokenizace a to zvlá¹» textovými tokeny a zvlá¹» speciálními pøíznaky v textu.
 
-\subsection{Angliètina}
-Velikost testovací sady pro anglický jazyk bylo 120 tweetù, z nich¾ 60 bylo relevantních a dal¹ích 60 irelevantních k tématu.
-Pro zji¹tìní ideální délky $N$-tic tokenù jsme aplikovali testy pro postupnì zvìt¹ující se $N$, a to dokud se zlep¹ovala hodnota korelaèního koeficientu (korelace) a F--measure (viz \ref{TEST-METRIKY}).
-Následující tabulka øíká, jak se klasifikátor choval pøi zmìnì nastavení maximální délky za sebou jdoucích $N$-tic slov(tokenù).
+Pro testování klasifikace anglických tweetù je pou¾ita datová sada manuálnì anotovaných tweetù a pro testování klasifikace anglických èlánkù je pou¾ita datová sada manuálnì anotovaných èlánkù (viz. \ref{TEST-DATA}).
+
+\subsection{Testy textové tokenizace}
+Pro zji¹tìní ideální délky $N$-tic textových tokenù jsme aplikovali testy pro postupnì se zvy¹ující $N$, a to dokud se zlep¹ovala hodnota korelaèního koeficientu (korelace) a F1-measure (viz \ref{TEST-METRIKY}).
+
+\subsection{Tweety}
+%{'emoticon': 3, 'sentence': 1, 'url': 0, 'tag': 1, 'time': 3, 'date': 4, 'email': 2} best
+Jak ji¾ bylo vý¹e v této kapitole zmínìno, pro trénování anglických tweetù je pou¾ívána datová sada obsahující 502 relevantních a 502 nerelevantních tweetù.
+
+Následující tabulka øíká, jak se klasifikátor choval pøi zmìnì nastavení maximální délky za sebou jdoucích $N$-tic textových tokenù:
+
 \begin{center}
-\begin{scriptsize}
-\begin{tabular}{| c || c | c | c | c | c | c |}
-  N-length       & 1             & 2              & 3             & 4              & 5              & 6              \\
-  Korelace       & 0.5184        & 0.5409         & 0.5541        & 0.559          & 0.5668         & 0.5668         \\
-  True positive  & 51.0 (42.5\%) & 52.0 (43.33\%) & 54.0 (45.0\%) & 55.0 (45.83\%) & 55.0 (45.83\%) & 55.0 (45.83\%) \\
-  True negative  & 48.0 (40.0\%) & 48.0 (40.0\%)  & 48.0 (40.0\%) & 48.0 (40.0\%)  & 48.0 (40.0\%)  & 48.0 (40.0\%)  \\
-  False positive & 12.0 (10.0\%) & 12.0 (10.0\%)  & 12.0 (10.0\%) & 12.0 (10.0\%)  & 12.0 (10.0\%)  & 12.0 (10.0\%)  \\
-  False negative & 9.0 (7.5\%)   & 8.0 (6.67\%)   & 6.0 (5.0\%)   & 5.0 (4.17\%)   & 5.0 (4.17\%)   & 5.0 (4.17\%)   \\
-  Precision      & 0.8095        & 0.8125         & 0.8182        & 0.8209         & 0.8209         & 0.8209         \\
-  Recall         & 0.85          & 0.8667         & 0.9           & 0.9167         & 0.9167         & 0.9167         \\
-  Accuracy       & 0.825         & 0.8334         & 0.85          & 0.8583         & 0.8583         & 0.8583         \\
-  F-measure      & 0.829         & 0.8387         & 0.8572        & 0.8661         & 0.8661         & 0.8661         \\
+\begin{tabular}{lcccc}
+\toprule
+N    & 1 & 2 & 3 & 4 \\
+\midrule
+True positive  & 83.2   & 90.0   & 90.0   & 90.0   \\
+True negative  & 93.8   & 91.2   & 91.2   & 91.2   \\
+False positive &  6.2   &  8.8   &  8.8   &  8.8   \\
+False negative & 16.8   & 10.0   & 10.0   & 10.0   \\
+Korelace       & 0.8188 & 0.8363 & 0.8363 & 0.8363 \\
+Precision      & 0.9306 & 0.9109 & 0.9109 & 0.9109 \\
+Recall         & 0.832  & 0.9    & 0.9    & 0.9    \\
+Accuracy       & 0.885  & 0.906  & 0.906  & 0.906  \\
+F1-measure     & 0.8786 & 0.9054 & 0.9054 & 0.9054 \\
+\bottomrule
 \end{tabular}
-\end{scriptsize}
 \end{center}
 
-\subsection{Nìmecký jazyk}
-Pro nìmecký jazyk jsme spou¹tìli obdobné testy jako pro jazyk anglický, tzn. zji¹»ovali jsme optimální délku $N$-tic pro tokenizaci.
-Testovací mno¾ina pro nìmecký jazyk sestává z 25 relevantních tweetù a 191 irelevantních. 
+
+\subsubsection{Èlánky}
+%{'emoticon': 4, 'sentence': 1, 'url': 4, 'tag': 3, 'time': 3, 'date': 1, 'email': 0} best
+Obdobnì jako v pøedchozím pøípadì tweetù budeme testovat anglické èlánky.
+V databázi ruènì anotovaných anglických èlánkù se nachází 194 relevantních a 269 nerelevantních záznamù.
+Jak ji¾ bylo v úvodu této kapitoly zmínìno pro trénování a testování budeme pou¾ívat vyvá¾enou sadu 194 relevantních a 194 nerelevantních èlánkù.
+
+Stejný test jako v pøípadì testu textové tokenizace tweetù.
+Budeme se sna¾it urèit optimální délku délky $N$-tic textových tokenù 
+Výsledky jednotlivých testù jsou zaznamenány v následující tabulce:
+
 \begin{center}
-\begin{scriptsize}
-\begin{tabular}{| c || c | c | c | c | c | c |}
-  N-length       & 1              & 2               & 3               & 4               & 5               & 6               \\
-  Korelace       & 0.2723         & 0.2423          & 0.2433          & 0.2429          & 0.2429          & 0.2429          \\
-  True positive  & 22.0 (10.19\%) & 22.0 (10.19\%)  & 22.0 (10.19\%)  & 22.0 (10.19\%)  & 22.0 (10.19\%)  & 22.0 (10.19\%)  \\
-  True negative  & 103.0 (47.69\%)& 106.0 (49.07\%) & 107.0 (49.54\%) & 107.0 (49.54\%) & 107.0 (49.54\%) & 107.0 (49.54\%) \\
-  False positive & 88.0 (40.74\%) & 85.0 (39.35\%)  & 84.0 (38.89\%)  & 84.0 (38.89\%)  & 84.0 (38.89\%)  & 84.0 (38.89\%)  \\
-  False negative & 3.0 (1.39\%)   & 3.0 (1.39\%)    & 3.0 (1.39\%)    & 3.0 (1.39\%)    & 3.0 (1.39\%)    & 3.0 (1.39\%)    \\
-  Precision      & 0.2            & 0.2056          & 0.2075          & 0.2075          & 0.2075          & 0.2075          \\
-  Recall         & 0.88           & 0.88            & 0.88            & 0.88            & 0.88            & 0.88            \\
-  Accuracy       & 0.5787         & 0.5926          & 0.5972          & 0.5972          & 0.5972          & 0.5972          \\
-  F-measure      & 0.3259         & 0.3333          & 0.3358          & 0.3358          & 0.3358          & 0.3358          \\
+\begin{tabular}{lcccc}
+\toprule
+N    & 1 & 2 & 3 & 4 \\
+\midrule
+True positive  & 21.0   & 21.4   & 21.4   & 21.4   \\
+True negative  & 25.6   & 29.4   & 29.4   & 29.4   \\
+False positive & 11.4   & 7.6    & 7.6    & 7.6    \\
+False negative & 16.0   & 15.6   & 15.6   & 15.6   \\
+Korelace       & 0.3198 & 0.4286 & 0.4286 & 0.4286 \\
+Precision      & 0.6481 & 0.7379 & 0.7379 & 0.7379 \\
+Recall         & 0.5676 & 0.5784 & 0.5784 & 0.5784 \\
+Accuracy       & 0.6297 & 0.6865 & 0.6865 & 0.6865 \\
+F1-measure     & 0.6052 & 0.6485 & 0.6485 & 0.6485 \\
+\bottomrule
 \end{tabular}
-\end{scriptsize}
 \end{center}
+
+
+\subsection{Testy pøíznakù}
+Abychom mohli otestovat vliv jednotlivých typù pøíznakù na klasifikaci Bayesovského klasifikátoru, spustíme nejprve test klasifikátoru pouze vyu¾ívajíce textových tokenù.
+Takto získáme kontrolní výsledek se kterým potom budeme moci porovnávat výsledky klasifikace s jednotlivými speciálními pøíznaky.
+Pro porovnávání byla v implementovaném programu vytvoøena metoda, která vliv v¹ech mo¾ných speciálních pøíznakù porovná a najde nejoptimálnìj¹í kombinaci.
+
+Zde pøedstavíme jakým zpùsobem je mo¾né zlep¹it klasifikaci výbìrem vhodných pøíznakù.
+Pro ka¾dou datovou sadu bude ukázán výsledek bez speciálních pøíznakù a poté výsledek s vhodnì vybranými speciálními pøíznaky.
+
+\subsection{Tweety}
+Následující tabulka popisuje, jakým zpùsobem se zlep¹í klasifikaèní schopnosti klasifikátoru s vyu¾itím výbìru vhodných speciálních pøíznakù pøi trénování a testování na datové sadì tweetù.
+
+\begin{center}
+\begin{tabular}{lcccc}
+\toprule
+               & Bez spec. pøíznakù & S optim. spec. pøíznaky  \\
+\midrule
+True positive  & 83.8               & 83.6   \\
+True negative  & 92.6               & 93.4   \\
+False positive &  7.4               & 6.6    \\
+False negative & 16.2               & 16.4   \\
+Korelace       & 0.8035             & 0.8114 \\
+Precision      & 0.9189             & 0.9268 \\
+Recall         & 0.838              & 0.836  \\
+Accuracy       & 0.882              & 0.885  \\
+F1-measure     & 0.8765             & 0.8791 \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+\subsection{Èlánky}
+Obdobnì jako pro klasifikaci tweetù, následující tabulka popisuje zlep¹ení klasifikaèní schopnosti klasifikátoru díky vhodnému výbìru speciálních pøíznakù.
+V tomto pøípadì ale testy klasifikátoru probìhly nad datovou sadou anglických èlánkù.
+
+\begin{center}
+\begin{tabular}{lcccc}
+\toprule
+               & Bez spec. pøíznakù & S optim. spec. pøíznaky  \\
+\midrule
+True positive  & 21.8               & 21.0   \\
+True negative  & 25.6               & 25.6   \\
+False positive & 11.4               & 11.4   \\
+False negative & 16.0               & 16.0   \\
+Korelace       & 0.2873             & 0.3198 \\
+Precision      & 0.6481             & 0.6481 \\
+Recall         & 0.5676             & 0.5676 \\
+Accuracy       & 0.6297             & 0.6297 \\
+F1-measure     & 0.6052             & 0.6052 \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+
+\subsection{Interpretace výsledkù testù}
+Podíváme-li se na výsledky testù zabývajících se délkou textových tokenù, zjistíme, jak v pøípadì klasifikace èlánkù, tak v pøípadì klasifikace tweetù tokenizace tweetù je nejlep¹ím øe¹ení pou¾ít pro tokenizaci textu alternativní metodu tokenizace slov s maximální délkou $N$-tic rovnou 2.
+Takovéto nastavení klasifikátoru výraznì zlep¹ilo klasifikaèní schopnosti Bayesovského klasifikátoru oproti ostatním variantám.
+Je-li délka $N$-tic vìt¹í ne¾ 2 klasifikátoru to u¾ v klasifikaci nepomáhá a pouze toto nastavení zvy¹uje velikost slovníku klasifikátoru, podle kterého potom klasifikátoru klasifikuje vstupní texty.
+Dùvod pro to, ¾e mo¾nost del¹ích $N$-tic ji¾ nezlep¹uje klasifikaci je zøejmì ten, ¾e tøi za sebou jdoucí slova jsou ji¾ dosti specifickým pøíznakem, který se v textu nevyskytuje pøíli¹ èasto, a tudí¾ nejsou a¾ tak nápomocná.
+Kdyby se výraznì zvìt¹ila trénovací a testovací datová sada, je mo¾nì, ¾e by i del¹í $N$-tice zlep¹ovaly klasifikaèní schopnosti klasifikátoru.
+
+Testy zabývající se tokeny speciálních pøíznakù získávaných z textu ukázaly, ¾e v pøípadì tweetù mírnì zlep¹ují klasifikaèní schopnosti klasifikátoru.
+V pøípadì klasifikace èlánkù ov¹em tak dobrý úspìch nemìly, sice klasifikaèní schopnost klasifikátoru zlep¹ily, ale tak málo, ¾e se to prakticky neprojevilo.
+
+
+\section{Testy SVM klasifikátoru}
+\subsection{Tweety}
+\subsection{Èlánky}
+\subsection{Interpretace výsledkù testù}
+
+
+\section{Porovnání Bayesovského klasifikátoru a SVM klasifikátoru}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 \subsection{Shrnutí výsledkù testù}
 Z výsledkù pro jednotlivé jazyky je zøejmé, ¾e pro anglický jazyk klasifikátor pracuje vcelku spolehlivì a s pomìrnì vysokou pøesností (F--measure = 0.8661).
