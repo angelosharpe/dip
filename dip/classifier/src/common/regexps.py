@@ -60,8 +60,10 @@ emails_re = re.compile(r'\s([\w_\.-]+)(@)([\w\.-]+)(\.)([a-zA-Z]{2,6})')
 
 
 ### tweet tags ###
-tags_re = re.compile(r'(#\w+)|(@\w+)')
+tags_re = re.compile(r'#\w+')
 
+### tweet tags ###
+user_tags_re = re.compile(r'@\w+')
 
 ### time ###
 time_re = re.compile(r'([0-2][0-9])(:)([0-9]{2})(\s*)(am|pm)?', flags=re.IGNORECASE)

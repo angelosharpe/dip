@@ -33,6 +33,9 @@ class Emoticon(Feature):
 class Tag(Feature):
     pass
 
+class UserTag(Feature):
+    pass
+
 class SentenceCount(Feature):
     pass
 

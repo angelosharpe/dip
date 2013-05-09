@@ -61,6 +61,11 @@ class Entry:
                     self._feature_tag_y,
                     self._feature_tag_y_n,
                     None],
+                'user_tag':[
+                    self._feature_user_tag,
+                    self._feature_user_tag_y,
+                    self._feature_user_tag_y_n,
+                    None],
                 'sentence':[
                     self._feature_sentence_count,
                     None],
@@ -224,7 +229,7 @@ class Entry:
             found = 1
             break
         if found:
-            yield Url('YES')
+            yield Url(True)
 
     def _feature_url_y_n(self):
         '''
@@ -236,9 +241,9 @@ class Entry:
             found = 1
             break
         if found:
-            yield Url('YES')
+            yield Url(True)
         else:
-            yield Url('NO')
+            yield Url(False)
 
     def _feature_email_whole(self):
         '''
@@ -258,7 +263,7 @@ class Entry:
             found = 1
             break
         if found:
-            yield Email('YES')
+            yield Email(True)
 
     def _feature_email_y_n(self):
         '''
@@ -270,9 +275,9 @@ class Entry:
             found = 1
             break
         if found:
-            yield Email('YES')
+            yield Email(True)
         else:
-            yield Email('NO')
+            yield Email(False)
 
     def _feature_emoticon(self):
         '''
@@ -292,7 +297,7 @@ class Entry:
             found = True
             break
         if found:
-            yield Emoticon('YES')
+            yield Emoticon(True)
 
     def _feature_emoticon_y_n(self):
         '''
@@ -304,9 +309,9 @@ class Entry:
             found = True
             break
         if found:
-            yield Emoticon('YES')
+            yield Emoticon(True)
         else:
-            yield Emoticon('NO')
+            yield Emoticon(False)
 
     def _feature_emoticon_emotion(self):
         '''
@@ -322,7 +327,6 @@ class Entry:
         for other_emoticon in self._get_re_token(regexps.other_emoticons_re):
             yield Emoticon('OTHER')
             break
-
 
     def _feature_tag(self):
         '''
@@ -342,7 +346,7 @@ class Entry:
             found = True
             break
         if found:
-            yield Tag('YES')
+            yield Tag(True)
 
     def _feature_tag_y_n(self):
         '''
@@ -354,9 +358,43 @@ class Entry:
             found = True
             break
         if found:
-            yield Tag('YES')
+            yield Tag(True)
         else:
-            yield Tag('NO')
+            yield Tag(False)
+
+    def _feature_user_tag(self):
+        '''
+        Yield user tag tokens.
+        @return: yields features
+        '''
+        for tag in self._get_re_token(regexps.user_tags_re):
+            yield UserTag(''.join(list(tag)))
+
+    def _feature_user_tag_y(self):
+        '''
+        Yield user tag tokens.
+        @return: yields features
+        '''
+        found = False
+        for tag in self._get_re_token(regexps.user_tags_re):
+            found = True
+            break
+        if found:
+            yield UserTag(True)
+
+    def _feature_user_tag_y_n(self):
+        '''
+        Yield user tag tokens.
+        @return: yields features
+        '''
+        found = False
+        for tag in self._get_re_token(regexps.user_tags_re):
+            found = True
+            break
+        if found:
+            yield UserTag(True)
+        else:
+            yield UserTag(False)
 
     def _feature_sentence_count(self):
         '''
