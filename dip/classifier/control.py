@@ -28,8 +28,6 @@ def svm_annealing(args):
     Function starts simulated annealing to find out ideal parameters for SVM
     classifier with given data.
     '''
-    # twitter results: ((6.38946460577526, 33388.56022386515), 1.07)
-    # article results:
     t = SVMTest()
     t.run_annealing(n_fold_cv=args.n_fold_cv, kernel=args.kernel)
 
@@ -125,7 +123,7 @@ def _print_results(t,tp, fp, tn, fn, u=None, c=None):
     @param u: unknown results
     @param c: corelation results
     '''
-    precision = tp / ((tp + fn) + 0.0000000000001)
+    precision = tp / ((tp + fp) + 0.0000000000001)
     recall = tp / ((tp + fn) + 0.0000000000001)
     acc = (tp + tn) / ((tp + tn + fn + fn) + 0.0000000000001)
     f_measure = 2 * ((precision * recall)/((precision + recall) + 0.0000000000001))
