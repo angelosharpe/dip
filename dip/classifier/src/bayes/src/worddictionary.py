@@ -4,31 +4,32 @@ import pickle
 class WordDictionary:
     '''Class contains probability values of all allready treined tkoens.'''
 
-    def __init__(self, pickle_filename=None):
+    def __init__(self):
         self._logger = logging.getLogger()
-        self.filename = pickle_filename
         self.words = {}
 
     def wipe(self):
         self.words = {}
 
-    def load(self):
+    def load(self, path):
         '''
         Load word dictionary from pickle file
+        @param path: path to pickle file
         '''
         try:
-            filehandler = open(self.filename,'rb')
+            filehandler = open(path, 'rb')
         except IOError:
             self._logger.warning('Pickle file ' + self.filename + \
                     ' does not exist, no previous word dictionaries loaded')
             return
         self.words = pickle.load(filehandler)
 
-    def store(self):
+    def store(self, path):
         '''
         Store word dictionary to pickle file
+        @param path: path of word dictionary file
         '''
-        filehandler = open(self.filename, 'wb')
+        filehandler = open(path, 'wb')
         pickle.dump(self.words, filehandler)
 
     def to_xml(self, filename):

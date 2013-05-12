@@ -17,7 +17,7 @@ class BayesianClassifier:
 
     HR_PROB = 0.99
 
-    def __init__(self, low=0.5, high=0.5, wordpickle=None):
+    def __init__(self, low=0.5, high=0.5):
         # classification thresholds
         self._low = float(low)
         self._high = float(high)
@@ -25,12 +25,7 @@ class BayesianClassifier:
         self._logger = logging.getLogger()
         logging.basicConfig(level=logging.DEBUG)
         # setup dictionary
-        self._logger.info('Loading word dictionary...')
-        if wordpickle:
-            self.word_dict = WordDictionary(pickle_filename=wordpickle)
-            self.word_dict.load()
-        else:
-            self.word_dict = WordDictionary()
+        self.word_dict = WordDictionary()
 
     def train(self, entry, classification, features):
         '''
@@ -102,4 +97,20 @@ class BayesianClassifier:
             feature_classifier = a_feature / (a_feature + b_feature)
         #return weighted average
         return (feature_classifier + token_classifier) / 2
+
+    def store_word_dict(self, path, features):
+        '''
+        Method storing word dictionary to target path
+        @param path: target path of word dict (model)
+        '''
+        self.word_dict.words['features'] = features
+        self.word_dict.store(path)
+
+    def load_word_dict(self, path):
+        '''
+        Method storing word dictionary to target path
+        @param path: target path of word dict (model)
+        '''
+        self.word_dict.load(path)
+
 

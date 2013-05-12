@@ -78,5 +78,3 @@ date_re = re.compile(
     r'(uary|ruary|ch|il|e|ly|ust|tember|ober|ember)?'
     r'(\s)(\d{1,4})', flags=re.IGNORECASE)
 
-### All kind of numbers ###
-### Embeded apostrophe ###

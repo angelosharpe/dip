@@ -243,10 +243,13 @@ class BayesianTest:
         controll_run = self._cross_validation(used_relevant, used_irelevant,
                     n_fold_cv, count, no_feat)
 
+        # impact of each tested feature
+        impact = {}
         # find best features
         results = {}
         for f in tmp_entry.features_func:
             results[f] = {}
+            impact[f] = {}
             for i in xrange(1, len(tmp_entry.features_func[f])):
                 used_feat = copy.deepcopy(no_feat)
                 used_feat[f] -= i
@@ -254,6 +257,9 @@ class BayesianTest:
                 # calculate n_fold_cv
                 result = self._cross_validation(used_relevant, used_irelevant,
                         n_fold_cv, count, used_feat)
+
+                # save impact on corellation
+                impact[f][used_feat[f]] = result['corelation'] - controll_run['corelation']
 
                 if result['corelation'] > controll_run['corelation']:
                     results[f][i] = result
@@ -266,7 +272,52 @@ class BayesianTest:
                 best_feat[t] -= max(results[t].items(), key=lambda(x): x[1]['corelation'])[0]
 
         self.bcl._logger.info('Best feat: {0}'.format(best_feat))
+        self.bcl._logger.info('Impact of each feat: {}'.format(impact))
         return best_feat
+
+    def create_model(self, path, used_features, count=100):
+        '''
+        Method creates model for future classification
+        '''
+        # connect to database
+        try:
+            conn = sqlite3.connect(self.dbfile)
+            cur = conn.cursor()
+        except:
+            self.bcl._logger.error('DB file {0} was not loaded!'.format(self.dbfile))
+            return
+
+        # load entries from database
+        cur.execute('select distinct lang, text from docs where (annotation=1)')
+        relevant = cur.fetchall()
+        cur.execute('select distinct lang, text from docs where (annotation=0)')
+        irelevant = cur.fetchall()
+
+        # text max amount of entries for running tests
+        if len(relevant) < count:
+            count = len(relevant)
+        if len(irelevant) < count:
+            count = len(irelevant)
+
+        # extract needed entries
+        to_train_relevant = relevant[:count]
+        to_train_irelevant = irelevant[:count]
+
+        # train
+        self.bcl._logger.info('Training starts...')
+        for db_entry in to_train_relevant:
+            entry = Entry(id=None, guid=None, entry=db_entry[1],
+                    language=db_entry[0], max_token_size=self.max_token_size)
+            self.bcl.train(entry, True, used_features)
+        for db_entry in to_train_irelevant:
+            entry = Entry(id=None, guid=None, entry=db_entry[1],
+                    language=db_entry[0], max_token_size=self.max_token_size)
+            self.bcl.train(entry, False, used_features)
+        self.bcl._logger.info('Trained {0} relevant and {1} irelevant entries'.format(
+            len(to_train_relevant), len(to_train_irelevant)))
+
+        self.bcl.store_word_dict(path, used_features)
+        print self.bcl.word_dict.words
 
 
     def run(self, features, count=100, n_fold_cv=10):

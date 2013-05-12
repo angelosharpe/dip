@@ -11,6 +11,7 @@ from src.svm.src.data import *
 from src.svm.src.kernels import *
 
 from src.bayes.bayesian_test import BayesianTest
+from src.bayes.bayesian_classifier import BayesianClassifier
 
 from src.common.entry import Entry
 
@@ -110,6 +111,33 @@ def bayes_features(args):
             max_token_size=args.max_token_size)
     bt.get_best_features(count=args.count, n_fold_cv=args.n_fold_cv)
 
+def bayes_generate_model(args):
+    '''
+    Function creates model for bayesian classifier
+    '''
+    bt = BayesianTest(dbfile=args.db_file, max_token_size=args.max_token_size)
+
+    if args.feats is not None:
+        features = eval(args.feats)
+        if isinstance(features,dict):
+            e = Entry(id=None, guid=None, entry=None, language=None)
+            if not e.check_feats(features):
+                print 'Incorrect format of feature dictionary'
+                return
+    else:
+        features = bt.get_best_features(count=args.count, n_fold_cv=args.n_fold_cv)
+
+    bt.create_model(args.model, used_features=features, count=args.count)
+
+
+def bayes_classify(args):
+    '''
+    Manually classify given text with some bayesian model
+    '''
+    bcl = BayesianClassifier()
+    bcl.load_word_dict(args.model)
+    print bcl.classify(text=args.text, language='en', features=bcl.word_dict.words['features'])
+
 
 # COMMON
 def _print_results(t,tp, fp, tn, fn, u=None, c=None):
@@ -204,138 +232,153 @@ def parse_args():
     '''
     Function for parsing commandline arguments
     '''
-    parser = argparse.ArgumentParser(description='''This project compares two
-            commonly used classifiers - SVM and Bayesian classifier''')
+    parser = argparse.ArgumentParser(description='''Tento program ma za cil porovnat dva casto pouzivane klasifikatory -- SVM a Bayesovsky klasifikator. V obou implementovanych klasifikatorech je kladen duraz na vyber optimalnich priznaku ziskavanych z textu. Jsou ziskavany dva typy priznaku  -- textove priznaky a specialni priznaky.  Program vznikl jako implementacni cast diplomove prace ve ktere taky zkoumame vliv techto priznaku na klasifikacni schopnosti klasifikatoru.''')
     subparsers = parser.add_subparsers()
 
     # SVM
     parser_svm = subparsers.add_parser('svm',
-            help='Operations with SVM classifier')
+            help='Operace s SVM klasifikatorem.')
     subparsers_svm = parser_svm.add_subparsers()
 
     # SVM - data manipulation
     parser_svm_data = subparsers_svm.add_parser('data',
-            help='Regenerate data')
+            help='''Tato operace vygeneruje vnitrni reprezentaci datove sady se kterou klasifikator SVM nasledne pracuje.
+            Tato operace je provadena samostatne kvuli jeji casove narocnosti.''')
     parser_svm_data.add_argument('--db_file', '-d', type=str, required=True,
-            help='Database file with anotated data')
+            help='Cesta k databazovemu souboru s anotovanymi daty')
     parser_svm_data.add_argument('--count', '-c', default=9999, type=int,
-            help='Number of processed entries')
+            help='Pocet pouzitych zaznamu z databazoveho souboru')
     parser_svm_data.add_argument('--max_token_size','-t', default=1, type=int,
-            help='Size of word n-tuples')
+            help='Maximalni delka n-tic textovych priznaku')
     parser_svm_data.set_defaults(func=svm_data)
 
     # SVM - anneailng process
     parser_svm_annealing = subparsers_svm.add_parser('annealing',
-            help='Run simulated annealing to find optimal SVM parameters')
+            help='Spusteni procesu simulovaneho zihani hledajiciho optimalni nastaveni volnych parametru SVM klasifikatoru a jaderne funkce. Pred spustenim tohoto procesu by mela byt vygenerovana data.')
     parser_svm_annealing.add_argument('--n_fold_cv', '-n', type=int, default=5,
-            help='Define number of used fold cross-validations')
+            help='Pocet iteraci n-nasobne krizove validace')
     parser_svm_annealing.add_argument('--kernel', '-k', type=str, default='RBF',
-            choices=['RBF', 'linear', 'polynomial'], help='select used kernel')
+            choices=['RBF', 'linear', 'polynomial'], help='Vyber jaderne funkce')
     parser_svm_annealing.set_defaults(func=svm_annealing)
-
-    # SVM - separate classification
-    parser_svm_classify = subparsers_svm.add_parser('classify',
-            help='Classify text with given SVM classification model')
-    parser_svm_classify.add_argument('--model', '-m', type=str, required=True,
-            help='Path to pickled SVM model')
-    parser_svm_classify.add_argument('--text', '-t', type=str, required=True,
-            help='Input text')
-    parser_svm_classify.set_defaults(func=svm_classify)
 
     # SVM - train svm model from annotated db file and store it to file
     parser_svm_model = subparsers_svm.add_parser('model',
-            help='train SVM model from annotated db file and store it to file')
+            help='Vytvori klasifikacni model pro SVM klasifikator ktery umozni v budoucnosti klasifikovat bez nutnosti opetovneho uceni.')
     parser_svm_model.add_argument('--model', '-m', type=str, required=True,
-            help='Path to pickled SVM model')
+            help='Soubor nove vytvoreneho modelu')
     parser_svm_model.add_argument('--db_file', '-d', type=str, required=True,
-            help='Annotated data file')
+            help='Cesta k databazovemu souboru s anotovanymi daty')
     parser_svm_model.add_argument('--max_token_size','-t', default=1, type=int,
-            help='Size of word n-tuples')
+            help='Maximalni delka n-tic textovych priznaku')
     parser_svm_model.add_argument('--param', '-p', type=float, required=True,
-            help='SVM kernel parameter')
+            help='Parametr jaderne funkce')
     parser_svm_model.add_argument('--c', '-c', type=float, required=True,
-            help='SVM classifier parameter C')
+            help='Parametr C SVM klasifikatoru')
     parser_svm_model.add_argument('--kernel', '-k', type=str, default='RBF',
-            choices=['RBF', 'linear', 'polynomial'], help='select used kernel')
+            choices=['RBF', 'linear', 'polynomial'], help='Vyber jaderne funkce')
     parser_svm_model.set_defaults(func=svm_create_model)
+
+
+    # SVM - separate classification
+    parser_svm_classify = subparsers_svm.add_parser('classify',
+            help='Klasifikuje dany vstupni tex za pouziti modelu.')
+    parser_svm_classify.add_argument('--model', '-m', type=str, required=True,
+            help='Soubor klasifikacniho modelu')
+    parser_svm_classify.add_argument('--text', '-t', type=str, required=True,
+            help='Vstupni text')
+    parser_svm_classify.set_defaults(func=svm_classify)
 
     # SVM - run tests
     parser_svm_test = subparsers_svm.add_parser('test',
-            help='Run tests with given parameters')
+            help='Spusti test SVM klasifikatoru s danymi parametry')
     parser_svm_test.add_argument('--param', '-p', type=float, required=True,
-            help='SVM classifier parameter gamma')
+            help='Parametr jaderne funkce')
     parser_svm_test.add_argument('--c', '-c', type=float, required=True,
-            help='SVM classifier parameter C')
+            help='Parametr C SVM klasifikatoru')
     parser_svm_test.add_argument('--n_fold_cv', '-n', type=int, default=5,
-            help='Defines number of used fold cross-validations')
+            help='Pocet iteraci n-nasobne krizove validace')
     parser_svm_test.add_argument('--kernel', '-k', type=str, default='RBF',
-            choices=['RBF', 'linear', 'polynomial'], help='select used kernel')
+            choices=['RBF', 'linear', 'polynomial'], help='Vyber jaderne funkce')
     parser_svm_test.set_defaults(func=svm_test)
 
 
     # BAYES
     parser_bayes = subparsers.add_parser('bayes',
-            help='Operations with bayesian classifier')
+            help='Operace s Bayesovskym klasifikatorem ')
     subparsers_bayes = parser_bayes.add_subparsers()
 
     # BAYES - run tests
     parser_bayes_test = subparsers_bayes.add_parser('test',
-            help='Run tests with given parameters')
-    parser_bayes_test.add_argument('--low', '-a', type=float, default=0.4,
-            help='Low threshold for classifier')
-    parser_bayes_test.add_argument('--high', '-b', type=float, default=0.6,
-            help='High threshold for classifier')
+            help='Spusti test Bayesovskeho klasifikatoru s danymi parametry.')
     parser_bayes_test.add_argument('--count', '-c', type=int, default=5000,
-            help='Count of processed entries from DB')
+            help='Pocet pouzitych zaznamu z databazoveho souboru')
     parser_bayes_test.add_argument('--db_file', '-d', type=str, required=True,
-            help='Specify input database file for running tests')
+            help='Cesta k databazovemu souboru s anotovanymi daty')
     parser_bayes_test.add_argument('--n_fold_cv', '-n', type=int, default=5,
-            help='Defines number of used fold cross-validations')
+            help='Pocet iteraci n-nasobne krizove validace')
     parser_bayes_test.add_argument('--max_token_size','-t', default=1, type=int,
-            help='Size of word n-tuples')
+            help='Maximalni delka n-tic textovych priznaku')
     parser_bayes_test.add_argument('--feats', '-f', type=str,
             default=None,
-            help='python array of possible features (see src/common/entry.py)')
+            help='Slovnik pythonu definujici uzite spec. priznaky, pokud neni definovan, je spusteno hledani optimalnich spec. priznaku')
     parser_bayes_test.set_defaults(func=bayes_test)
 
     # BAYES - run select features
     parser_bayes_feature = subparsers_bayes.add_parser('features',
-            help='Run process of finding ideal feature combinations')
-    parser_bayes_feature.add_argument('--low', '-a', type=float, default=0.4,
-            help='Low threshold for classifier')
-    parser_bayes_feature.add_argument('--high', '-b', type=float, default=0.6,
-            help='High threshold for classifier')
+            help='Spusti proces vyhledavani optimalnich specialnich priznaku.')
     parser_bayes_feature.add_argument('--count', '-c', type=int, default=5000,
-            help='Count of processed entries from DB')
+            help='Pocet pouzitych zaznamu z databazoveho souboru')
     parser_bayes_feature.add_argument('--db_file', '-d', type=str, required=True,
-            help='Specify input database file for running tests')
+            help='Cesta k databazovemu souboru s anotovanymi daty')
     parser_bayes_feature.add_argument('--n_fold_cv', '-n', type=int, default=5,
-            help='Defines number of used fold cross-validations')
+            help='Pocet iteraci n-nasobne krizove validace')
     parser_bayes_feature.add_argument('--max_token_size','-t', default=1, type=int,
-            help='Size of word n-tuples')
+            help='Maximalni delka n-tic textovych priznaku')
     parser_bayes_feature.set_defaults(func=bayes_features)
+
+    # BAYES - generate model
+    parser_bayes_model = subparsers_bayes.add_parser('model',
+            help='Vytvori klasifikacni model pro Bayesovsky klasifikator')
+    parser_bayes_model.add_argument('--model', '-m', type=str, required=True,
+            help='Soubor nove vytvoreneho modelu')
+    parser_bayes_model.add_argument('--db_file', '-d', type=str, required=True,
+            help='Cesta k databazovemu souboru s anotovanymi daty')
+    parser_bayes_model.add_argument('--count', '-c', type=int, default=5000,
+            help='Pocet pouzitych zaznamu z databazoveho souboru')
+    parser_bayes_model.add_argument('--n_fold_cv', '-n', type=int, default=5,
+            help='Pocet iteraci n-nasobne krizove validace')
+    parser_bayes_model.add_argument('--max_token_size','-t', default=1, type=int,
+            help='Maximalni delka n-tic textovych priznaku')
+    parser_bayes_model.add_argument('--feats', '-f', type=str,
+            default=None,
+            help='Slovnik pythonu definujici uzite spec. priznaky, pokud neni definovan, je spusteno hledani optimalnich spec. priznaku')
+    parser_bayes_model.set_defaults(func=bayes_generate_model)
+
+    # BAYES - classify
+    parser_bayes_classify = subparsers_bayes.add_parser('classify',
+            help='Klasifikuje dany vstupni tex za pouziti modelu.')
+    parser_bayes_classify.add_argument('--model', '-m', type=str, required=True,
+            help='Soubor klasifikacniho modelu')
+    parser_bayes_classify.add_argument('--text', '-t', type=str, required=True,
+            help='Vstupni text')
+
+    parser_bayes_classify.set_defaults(func=bayes_classify)
 
     # COMMON - compare svm and bayesian classifiers
     parser_common = subparsers.add_parser('common',
-            help='''Compare SVM and bayesian classifiers (this may take very
-                long)''')
+            help='''Porovnani Bayesovskeho a SVM klasifikatoru. Tento proces muze v zavislosti na zvolenych parametrech trvat velmi dlouho a zabrat velke mnozstvi pameti.''')
     parser_common.add_argument('--db_file', '-d', type=str, required=True,
-            help='Specify input database file for running tests')
+            help='Cesta k databazovemu souboru s anotovanymi daty')
     parser_common.add_argument('--n_fold_cv', '-n', type=int, default=5,
-            help='Defines number of used fold cross-validations')
+            help='Pocet iteraci n-nasobne krizove validace')
     parser_common.add_argument('--count', '-c', type=int, default=5000,
-            help='Count of processed entries from DB')
+            help='Pocet pouzitych zaznamu z databazoveho souboru')
     parser_common.add_argument('--max_token_size','-t', default=1, type=int,
-            help='Size of word n-tuples')
+            help='Maximalni delka n-tic textovych priznaku')
     # SVM params
     parser_common.add_argument('--kernel', '-k', type=str, default='RBF',
             choices=['RBF', 'linear', 'polynomial'],
-            help='SVM: select used kernel')
-    # Bayes params
-    parser_common.add_argument('--low', '-a', type=float, default=0.4,
-            help='BAYES: Low threshold for classifier')
-    parser_common.add_argument('--high', '-b', type=float, default=0.6,
-            help='BAYES: High threshold for classifier')
+            help='SVM: Vyber jaderne funkce')
     parser_common.set_defaults(func=common_run)
 
     # run argparse
