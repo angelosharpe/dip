@@ -1,6 +1,156 @@
-%\chapter{Obsah CD}
-%\chapter{Manual}
-%\chapter{Konfigraèní soubor}
-%\chapter{RelaxNG Schéma konfiguraèního soboru}
-%\chapter{Plakat}
+\chapter{Obsah CD}
+K diplomové práci je pøilo¾eno CD.
+Toto CD obsahuje:
+\begin{itemize}
+\item Program s implementovaným SVM a Bayesovským klasifikátorem. (adresáø \texttt{/program/})
+\item Ruènì anotované testovací a trénovací datové sady (anglické tweety a anglické èlánky). (adresáø \texttt{/data/})
+\item Dokumentaci k programu vygenerovanou pomocí nástroje Epydoc. (adresáø \texttt{/doc/})
+\item Zdrojové kódy technické zprávy a její verzi ve formátu PDF. (adresáø \texttt{/thesis/})
+\end{itemize}
+
+
+
+\chapter{Manuál}
+V této pøíloze bude popsán zpùsob práce s implementovaným programem a budou zde vypsány texty nápovìdy.
+
+Oba implementované klasifikátory jsou ovládány pomocí spou¹tìcího skriptu nazvaného \texttt{control.py}.
+Tento skript se nachází v adresáøi \texttt{/program/} na pøilo¾eném CD a umo¾ní u¾ivateli s implementovanými klasifikátory jak provádìt testy, tak vytvoøeit klasifikaèní modely a pøímo s tìmito modely provádìt klasifikaci.
+
+Ovládací skript obou klasifikátorù je schopen pracovat buï s jednotlivými klasifikátory samostatnì (\texttt{.-control.py bayes [parametry]}, \texttt{.-control.py svm [parametry]}), nebo oba klasifikátory porovnat (\texttt{.-control.py common [parametry]}).
+V pøípadì práce s jednotlivými klasifikátory je mo¾né s ka¾dým klasifikátorem provést nìkolik mo¾ných operací.
+Tyto operace nyní popí¹eme.
+Následnì popí¹eme volbu \texttt{common} pro porovnání obou implementovaných klasifikátorù.
+
+\section{Bayesovský klasifikátor}
+Seznam techto operaci lze vypsat spustenim následujícího pøíkazu: \texttt{control.py bayes -h}.
+Detailnìj¹í popis jednotlivých operací s Bayesovským klasifikátorem lze vypsat spu¹tìním následujícího pøíkazu: \texttt{control.py bayes [operace] -h}, kde na místo slova \texttt{[operace]} napí¹eme název po¾adované operace.
+Mo¾né operace proveditelné s Bayesovským klasifikátorem jsou:
+
+\begin{itemize}
+\item \texttt{test} -- spustí test Bayesovského klasifikátoru s danými parametry.
+\item \texttt{features} --spustí proces vyhledávání optimálních speciálních pøíznakù.
+\item \texttt{model} -- vytvoøí klasifikaèní model pro Bayesovský klasifikátor.
+\item \texttt{classify} -- klasifikuje daný vstupní text do za pou¾ití modelu pro Bayesovský klasifikátor.
+\end{itemize}
+
+\section{SVM klasifikátor}
+Stejnì jako v pøípadì Bayesovského klaifikátor lze i pro SVM klasifikátor vypsat seznam operací, které lze s SVM klasifikátorem provádìt.
+K tomuto výpisu slou¾í následující pøíkaz:  \texttt{control.py svm -h}.
+Pro detailnìj¹í popis jednotlivých operací SVM klasifikátoru je tøeba spustit pøíkaz (\texttt{.-control.py svm [operace] -h}), kde na místo slova \texttt{[operace]} napí¹eme název po¾adované operace.
+Implementovaný program umo¾òuje s implementovaným SVM klasifikátorem provádìt následující operace:
+
+\begin{itemize}
+\item \texttt{data} -- tato operace vygeneruje vnitøní reprezentaci datové sady, se kterou klasifikátor SVM následnì pracuje. Tato operace je provádìná samostatnì kùli její èasové nároènosti. Pøed prací s SVM klasifikátorem je tøeba tento pøíkaz v¾dy spustit.
+\item \texttt{test} -- spustí test SVM klasifikátoru s danými parametry.
+\item \texttt{annealing} --spusti proces simulovaného ¾íhání, který má za úkol hledat optimální nastavení volných parametrù SVM klasifikátoru a pou¾ité jaderné funkce. Pøed spu¹tìním tohoto procesu by mìla být vygenerována data.
+\item \texttt{model} -- vytvoøí klasifikaèní model pro SVM klasifikátor.
+\item \texttt{classify} -- klasifikuje daný vstupní text do za pou¾ití modelu pro SVM klasifikátor.
+\end{itemize}
+
+\section{Porovnání klasifikátorù}
+Tato volba slou¾í pro porovnání obou implementovaných klasifikátorù pøí testech se stejnýmí podmínkami -- ideální volba pøíznakù, stejná délka pou¾ívaných $n$-tic textových pøíznakù a stejná datová sada.
+Tento proces mù¾e být v závislosti na zvolených parametrech velmi èasovì i pamì»ovì nároèný.
+
+Pro podrobnìj¹í popis parametrù se nachází v nápovìdì progamu, kterou lze zobrazit spu¹tìním pøíkazu \texttt{.-control.py common -h}.
+
+
+
+
+\chapter{Regulární výrazy speciálních pøíznakù} \label{regexp}
+V této pøíloze budou vypsány regulární výrazy, které jsou pou¾ívány pro získávání speciálních pøíznakù z textu.
+Reguulární výrazy budou pro pøehlednost popsány ve formátu v jakém je pøíjmá programovací jazyk Python.
+
+\section{URL}
+Regulární výraz pro vyhledávání URL v textu: \\
+\verb`urls_re = re.compile(`\\ 
+\verb`    r'(https?|s?ftp)(://)(www\.)?([\w\.-]+\.[a-zA-Z]{2,4})(:\d*)?' +`\\
+\verb`    r'(/[-_~$.+!*\'()\[\],;:@&=\?/~#%\w#]*)[^\.\,\)\(\s]' +`\\
+\verb`    r'|' +`\\
+\verb`    r'(www\.)([\w\d\.-]+\.[a-zA-Z]{2,4})(:\d*)?' +`\\
+\verb`    r'(/[-_~$.+!*\'()\[\],;:@&=\?/~#%\w#]*)[^\.\,\)\(\s]'`\\
+\verb`)`
+
+\section{E-mailové adresy}
+Regulární výraz pro vyhledávání e-mailových adres v textu: \\
+\verb`emails_re = re.compile(r'\s([\w_\.-]+)(@)([\w\.-]+)(\.)([a-zA-Z]{2,6})')`
+
+\section{Emotikony}
+V pøípadì emotikonù, není regulární výraz tak jednoduchý jako v ostatních pøípadech, a to z toho dùvodu, ¾e je tøeba rozdìlovat emotikony do tøíd podle nálady.
+Proto jsou definovány základní stavební kameny, ze kterých se emotikony skládají:
+\begin{itemize}
+\item Horní èást emotikonu -- \verb`top = r'[<>O}\]3P]?'`
+\item Oèi emotikonu -- \verb`eyes = r'[:=Xx;]'`
+\item Slzy emotikonu -- \verb`tear = r'\'?'`
+\item Nos emotikonu -- \verb`nose = r'[oO-]?'`
+\item Ústa emotikonu --  \verb`mouths = r'[dD\)\]/S\(\[\\\|pPoOcC@{}3&]'`
+\item Smutná ústa emotikonu -- \verb`sad_mouths = r'[/S\(\[\\\|cC@{]'`
+\item Veselá ústa emotikonu -- \verb`happy_mouths = r'[dD\)\]pP}3]'`
+\item Ostatní ústa emotikonu -- \verb`other_mouths = r'[oO&]'`
+\end{itemize}
+Z tìchto stavebních kamenù jsou potom skládány dohromady jendotlivé typy emotikonù:
+\begin{itemize}
+\item V¹echny emotikony --\verb`faces = ''.join([top, eyes, tear, nose, mouths])`
+\item Smutné emotikony -- \verb`sad_faces = ''.join([top, eyes, tear, nose, sad_mouths])`
+\item Veselé emotikony -- \verb`happy_faces = ''.join([top, eyes, tear, nose, happy_mouths])`
+\item Ostatní emotikony -- \verb`other_faces = ''.join([top, eyes, tear, nose, other_mouths])`
+\end{itemize}
+Mimo tyto klasické emotikony jsou také jako speciální pøíznaky brány ménì standartní (ostatní) emotikony:
+\begin{itemize}
+\item V¹echny ostatní emotikony -- \verb`other_emoticons = [r'\^_+\^', r'o\.O', r'@_+@',`\\
+\verb`r'-_+-', r'\.\.+', r',,+', r'<3']`
+\item Ostatní smutné emotikony -- \verb`other_sad_emoticons = [r'-_+-']`
+\item Ostatní veselé emotikony -- \verb`other_happy_emoticons = [r'\^_+\^', r'<3']`
+\item Ostatní ostatní emotikony -- \verb`other_other_emoticons = [r'o\.O', r'@_+@', r'\.\.+',`\\
+\verb` r',,+']`
+\end{itemize}
+Z tìchto z vý¹e zmínìných slo¾ek jsou potom vytvoøeny regulární výrazy popisující jednotlivé typy emotikonù, které lze nalézt v textu.
+Regulární výrazy jsou slo¾eny následovnì.
+\begin{itemize}
+\item V¹echny emotikony -- \\
+\verb`    emoticons_re = re.compile(` \\
+\verb`        '\s(' + '|'.join(other_emoticons + [faces]) + ')\s'` \\
+\verb`    )`\\
+\item Smutné emotikony -- \\
+\verb`    sad_emoticons_re = re.compile(` \\
+\verb`        '\s(' + '|'.join(other_sad_emoticons + [sad_faces]) + ')\s'` \\
+\verb`    )` \\
+\item Veselé emotikony -- \\
+\verb`    happy_emoticons_re = re.compile(` \\
+\verb`        '\s(' + '|'.join(other_happy_emoticons + [happy_faces]) + ')\s'` \\
+\verb`    )` \\
+\item Ostatní emotikony -- \\
+\verb`    other_emoticons_re = re.compile(` \\
+\verb`        '\s(' + '|'.join(other_other_emoticons + [other_faces]) + ')\s'` \\
+\verb`    )` \\
+\end{itemize}
+
+
+
+\section{Tagy}
+Regulární výraz pro vyhledávání Twitter tagù v textu: \\
+\verb`tags_re = re.compile(r'#\w+')`
+
+
+\section{Tagy u¾ivatelù}
+Regulární výraz pro vyhledávání tagù u¾ivatelù v textu: \\
+\verb`tags_re = re.compile(r'@\w+')`
+
+
+\section{Vìty}
+Speciální pøíznak specifikující poèet vìt daného vstupního textu není získáván za pomocí regulárních výrazù, ale je vytváøen pøi rozdìlování textu na vìty pomocí knihovny \texttt{nltk.punkt}.
+
+\section{Èasy}
+Regulární výraz pro vyhledávání èasových údajù v textu: \\
+\verb`time_re = re.compile(r'([0-2][0-9])(:)([0-9]{2})(\s*)(am|pm)?', flags=re.IGNORECASE)`
+
+\section{Data}
+Regulární výraz pro vyhledávání dat v textu: \\
+\verb`date_re = re.compile(` \\
+\verb`    r'(\d{1,2})([./-])(\d{1,2})([./-])(\d{2,4})' +` \\
+\verb`    r'|' +` \\
+\verb`    r'(\d{1,2})([./\s-])' +` \\
+\verb`    r'(jan|feb|mar|apr|jun|jul|aug|sep|oct|nov|dec)' +` \\
+\verb`    r'(uary|ruary|ch|il|e|ly|ust|tember|ober|ember)?'` \\
+\verb`    r'(\s)(\d{1,4})', flags=re.IGNORECASE` \\
+\verb`)` \\
 

@@ -1,33 +1,32 @@
-make%=========================================================================
+%=========================================================================
 % (c) Michal Bidlo, Bohuslav Køena, 2008
 
 \chapter{Úvod}
-Klasifikace dokumentù podle tématu je jednou z úloh oboru zpracování pøirozeného jazyka (Natural Language Processing - NLP).
+Klasifikace dokumentù podle tématu je jednou z úloh oboru \emph{zpracování pøirozeného jazyka (Natural Language Processing -- NLP)}.
 Zpracování pøirozeného jazyka je oborem aplikace výpoèetních modelù pro øe¹ení úkolù, které se urèitým zpùsobem vztahují k textu libovolného pøirozeného jazyka.
 Historie zpracování pøirozeného jazyka zaèíná v padesátých letech 20. století a od té doby doznal obor zpracování pøirozeného jazyka díky vysokému nárùstu výpoèetního výkonu velkých zmìn.
-V souèasné dobì patøí mezi nejèastìji pou¾ívané metody zpracování pøirozeného jazyka statistické metody a metody strojového uèení (machine learning).
+V souèasné dobì patøí mezi nejèastìji pou¾ívané metody zpracování pøirozeného jazyka statistické metody a metody \emph{strojového uèení (machine learning}).
 
-Významnou úlohou øe¹enou v oboru zpracovávání pøirozeného jazyka je klasifikace textu.
+Významnou úlohou øe¹enou v oboru zpracování pøirozeného jazyka je klasifikace textu.
 Tato úloha spadá do vý¹e zmínìné skupiny statistických metod a metod strojového uèení.
-Metody klasifikace textu lze pou¾ít pro velké mno¾ství úloh, které se týkají zpracovávání pøirozeného jazyka, a to pøedev¹ím díky jejich flexibilitì a ji¾ velmi dobøe zpracované teorii.
+Metody klasifikace textu lze pou¾ít pro velké mno¾ství úloh, které se týkají zpracování pøirozeného jazyka, a to pøedev¹ím díky jejich flexibilitì a ji¾ velmi dobøe zpracované teorii.
 
-V této práci se nejprve zabýváme obecnými pøístupy pou¾ívanými pro øe¹ení úloh zpracovávání pøirozeného jazyka a následnì pøedstavujeme dvì zvolené klasifikaèní metody -- jednu probabilistickou a jednu neprobabilistickou.
+V této práci se nejprve zabýváme obecnými pøístupy, pou¾ívanými pro øe¹ení úloh zpracování pøirozeného jazyka a následnì pøedstavujeme dvì zvolené klasifikaèní metody -- jednu probabilistickou a jednu neprobabilistickou.
 
 Tou první, probabilistickou metodou, která je v této práci podrobnì popsána, je metoda nazývaná \textit{Bayesovský klasifikátor}, vyu¾ívající ke klasifikaci textu Bayesova teorému.
-Bayesovský klasifikátor, nebo také Bayesovský filtr, jak je obèas nazýván, je velmi èasto pou¾íván e-mailovými klienty pro zji¹»ování, zda je e-mailová zpráva vy¾ádanou, èi nevy¾ádanou po¹tou.
+Bayesovský klasifikátor, nebo také Bayesovský filtr, jak je obèas nazýván, je v praxi èasto pou¾íván e-mailovými klienty pro zji¹»ování, zda je e-mailová zpráva vy¾ádanou, èi nevy¾ádanou po¹tou.
 
-Druhou zvolenou metodou je neporobabilistická klasifikaèní metoda \textit{SVM} (support vector machines), je¾ pomocí namapování vstupního textu do $n$-dimenzionálního prostoru a následným rozdìlením tohoto prostoru na dva poloprostory doká¾e vstupní text klasifikovat.
+Druhou zvolenou metodou je neprobabilistická klasifikaèní metoda \textit{SVM (support vector machines)}, je¾ pomocí namapování vstupního textu do $n$-dimenzionálního prostoru a následným rozdìlením tohoto prostoru na dva poloprostory doká¾e vstupní text klasifikovat.
 
-Obì metody jsou v této práci podrobnì rozebrány jak z teoretického, tak praktického hlediska.
+Obì metody jsou v této práci podrobnì rozebrány jak z teoretického, tak z praktického hlediska.
 
 Souèástí této práce je mimo teoretické èásti také èást praktická a èást implementaèní.
-Praktická èást se nachází v druhé polovinì tohoto dokumentu a popisuje implementaci a pøístupy k øe¹ení problémù, které nastaly pøí vytváøení implementaèní èásti.
+Praktická èást se nachází ve druhé polovinì tohoto dokumentu a popisuje implementaci a pøístupy k øe¹ení problémù, které nastaly pøi vytváøení implementaèní èásti.
 Také se v ní nacházejí výsledky testù, které byly nad implementovaným programem provedeny a jejich interpretace.
-Souèástí implementaèní èásti této práce je potom samotný program, v nìm¾ jsou implementovány obì vý¹e zmínìné klasifikaèní metody.
-Souèástí praktické èásti je také mno¾ina trénovacích a testovacích dat, které jsou potom pou¾ívány v testech.
-V této práci je také popsána implementaèní èást, v ní¾ jsou specifikovány ve¹keré problémy a postupy, pou¾ité pøi implementaci praktické èásti.
+V rámci implementaèní èásti byl vytvoøen samotný program, v nìm¾ jsou implementovány obì vý¹e zmínìné klasifikaèní metody.
+Souèástí praktické èásti je také mno¾ina trénovacích a testovacích dat, která jsou potom pou¾ívána v testech.
 
-Na závìr jsou prezentovány výsledky získané z porovnání dvou vý¹e zmínìných implementovaných klasifikátorù.
+V závìru této práce jsou prezentovány výsledky, získané porovnáním obou vý¹e zmínìných implementovaných klasifikátorù a je popsán vliv optimální volby pøíznakù na klasifikaèní schopnosti implementovaných klasifikátorù.
 
 \section{Zadání práce a motivace} \label{UVOD-MOTIVACE}
 Zadáním této práce bylo seznámit se s problematikou klasifikace dokumentù dle tématu a zvolit si dvì metody, kterými se budu podrobnìji zabývat.
@@ -39,65 +38,63 @@ Na tìchto datech následnì porovnám dvì zvolené metody klasifikace pomocí standar
 
 Téma diplomové práce jsem si zvolil, jeliko¾ jsem témìø dva roky pracoval na projektu M-Eco\footnote{\url{http://www.meco-project.eu/}\\
 } ve skupinì NLP na VUT FIT, kde jsem se zabýval klasifikací tweetù\footnote{Tweety -- pøíspìvky zveøejòované na sociální síti Twitter (\url{http://twitter.com/})}.
-Reálné vyu¾ití Bayesovského klasifikiátoru pøi této práci mne motivovalo k tomu, abych se klasifikaèními metodami zabýval dále.
+Praktické vyu¾ití Bayesovského klasifikátoru pøi této práci mne motivovalo k tomu, abych se klasifikaèními metodami zabýval dále.
 Této práce bych proto chtìl vyu¾ít k tomu, abych prohloubil své znalosti o problematice klasifikace dokumentù a porozumìní klasifikaèním metodám.
 V rámci klasifikaèních metod se chci zamìøit pøedev¹ím na klasifikátor zalo¾ený na SVM, jeliko¾ metoda SVM je velmi dobøe variabilní a lze ji pou¾ít pro øe¹ení velkého mno¾ství rùzných klasifikaèních, ale napøíklad i regresních úkolù.
 
-Bayesovský klasifikátor implementovaný v této práci byl nasazen do reálného provozu v projektu M-Eco.
-
 \section{Návaznost práce na semestrální projekt} \label{UVOD-NAVAZNOST}
-Základ této práce byl rozpracován v semestrálním projektu \cite{sep}, jen¾ byl vytvoøen pro stejnojmenný pøedmìt.
+Základ této práce byl rozpracován v semestrálním projektu \cite{sep}, jen¾ byl vytvoøen v rámci stejnojmennéhoo pøedmìtu na FIT VUT.
 
-Semestrální projekt obsahoval úvodní kapitolu o problematice zpracování pøirozeného jazyka a popis problematiky naivního Bayesovského klasifikátoru, jen¾ byl pro tuto práci také implementován (viz \ref{BAYES}).
+Semestrální projekt obsahoval úvodní kapitolu o problematice zpracování pøirozeného jazyka a popis problematiky Bayesovského klasifikátoru, jen¾ byl pro tuto práci také implementován (viz \ref{BAYES}).
 Byla vytvoøena malá testovací sada pro trénování a testování tohoto klasifikátoru.
-Na této datové sadì a klasifikátorem byly následnì provedeny testy, v nich¾ byl zhodnocen vliv zvolených pøíznakù (viz \ref{TOKENIZACE}) na klasifikaèní schopnosti implementovaného Bayesovského klasifikátoru.
-V odevzdané práci je¹tì nebyly implementovány speciální pøíznaky (viz \ref{TOKENIZACE-SPEC}).
+Na této datové sadì byly pro Bayesovský klasifikátor následnì provedeny testy, v nich¾ byl zhodnocen vliv zvolených pøíznakù (viz \ref{TOKENIZACE}) na klasifikaèní schopnosti implementovaného Bayesovského klasifikátoru.
+V semestrálním projektu je¹tì nebyly implementovány speciální pøíznaky (viz \ref{TOKENIZACE-SPEC}).
 
 
 
-\chapter{Úvod do klasifikace textù}
-V této kapitole se budeme struènì zabývat historií (viz \ref{NLP-H}) oboru zpracovávání pøirozeného jazyka (natural language processing, dále té¾ NLP), poté hlavními úkoly, které se v oboru zpracovávání pøirozeného jazyka øe¹í (\ref{NLP-HU}) a nakonec podrobnìji i klasifikaèními úlohami (viz \ref{NLP-KU}), které jsou hlavním tématem této práce.
+\chapter{Úvod do klasifikace dokumentù}
+V této kapitole se budeme struènì zabývat historií (viz \ref{NLP-H}) oboru \emph{zpracování pøirozeného jazyka (natural language processing, dále té¾ NLP)}, poté hlavními úkoly, které se v oboru zpracování pøirozeného jazyka øe¹í (\ref{NLP-HU}), dále popí¹eme typické klasifikaèní úlohy (viz \ref{NLP-KU}) a na závìr se budeme vìnovat problematice klasifikace dokumentù, je¾ je hlavním tématem této práce.
 
 \section{Historie} \label{NLP-H}
-Obor zpracovávání pøirozeného jazyka se vyvíjí soubì¾nì s historií vývoje výpoèetní techniky.
-Po roce 1945, kdy spoleèensko politická situace ve svìtì umo¾nila zmìnu hlavních dosavadních smìrù výzkumu v oblasti výpoèetní techniky od pùvodnì pøevá¾nì vojenského vyu¾ití (napø. kryptografie, kryptoanalýza, atd.) k dal¹ím vìdním oborùm.
-Díky tomu se zaèal rozvíjet také obor zpracovávání pøirozeného jazyka.
+Obor zpracování pøirozeného jazyka se vyvíjí soubì¾nì s historií vývoje výpoèetní techniky.
+Po roce 1945, kdy spoleèensko-politická situace ve svìtì umo¾nila zmìnu hlavních dosavadních smìrù výzkumu v oblasti výpoèetní techniky od pùvodnì pøevá¾nì vojenského vyu¾ití (napø. kryptografie, kryptoanalýza, atd.) k dal¹ím vìdním oborùm.
+Díky tomu se zaèal rozvíjet také obor zpracování pøirozeného jazyka.
 
-Jedním z prvních významných mílníkù v historii zpracovávání pøirozeného jazyka byl èlánek Alana Turinga s názvem \uv{Computing Machinery and Intelligence} \cite{turing_50}, v nìm¾ Turing publikoval takzvaný \textit{Turingùv test} jako¾to kritérium inteligence.
+Jedním z prvních významných milníkù v historii zpracování pøirozeného jazyka byl èlánek Alana Turinga s názvem \uv{Computing Machinery and Intelligence} \cite{turing_50}, v nìm¾ Turing publikoval takzvaný \textit{Turingùv test} jako¾to kritérium inteligence poèítaèových programù.
 Aby poèítaèový program pro¹el \textit{Turingovým testem}, nesmí nestranný soudce poznat z obsahu konverzace mezi programem a èlovìkem (konverzace probíhá v reálném èase), která strana je která.
 
 Jednou z prvních øe¹ených úloh v oboru zpracování pøirozeného jazyka bylo vytvoøení automatických pøekladaèù, tedy programù, které bez lidského pøispìní doká¾ou pøelo¾it vstupní text z jednoho pøirozeného jazyka do druhého.
 Uspokojivé øe¹ení tohoto úkolu v¹ak v té dobì nebylo nalezeno, a ani v roce 1966 je¹tì výzkumníci nebyli nikterak blízko k vyvinutí takového softwaru.
-V roce 1966 proto vydal americký vládní výbor \uv{The Automatic Language Processing Advisory Committee} (ALPAC) zprávu shrnující dosavadní výsledky výzkumu a konstatující, ¾e \uv{Nebyl vyvinut ¾ádný strojový pøekladaè obecných vìdeckých textù a ¾ádný takový pøekladaè nebude vyvinut ani v blízké budoucnosti}.
-Takto formulovaný závìr zprávy zapøíèinil výrazné ¹krty v rozpoètech vìdeckých týmù, zabývajících se výzkumem zpracovávání pøirozeného jazyka a pøekladaèù.
+V roce 1966 proto vydal americký vládní výbor \uv{The Automatic Language Processing Advisory Committee} (ALPAC) zprávu shrnující dosavadní výsledky výzkumu a konstatující, ¾e: \uv{Nebyl vyvinut ¾ádný strojový pøekladaè obecných vìdeckých textù a ¾ádný takový pøekladaè nebude vyvinut ani v blízké budoucnosti}.
+Takto formulovaný závìr zprávy zapøíèinil výrazné ¹krty v rozpoètech vìdeckých týmù, zabývajících se výzkumem zpracování pøirozeného jazyka a pøekladaèù.
 
-Do 80. let 20. století pou¾ívala drtivá vìt¹ina systémù pro zpracovávání pøirozeného jazyka velmi slo¾itá ruènì zadávaná pravidla.
-V 80. letech v¹ak byly poprvé pøedstaveny metody strojového uèení, které díky stále rostoucímu výkonu výpoèetní techniky umo¾òovaly generovat tato pravidla automaticky a dosahovat tak pøi zpracovávání pøirozeného jazyka stále lep¹ích výsledkù.
-S nástupem strojového uèení se odvìtví zpracovávání pøirozeného jazyka zaèalo zamìøovat na statistické metody, je¾ k øe¹ení problémù pøistupovaly jinak ne¾ metody dosavadní.
+Do 80. let 20. století pou¾ívala drtivá vìt¹ina systémù pro zpracování pøirozeného jazyka velmi slo¾itá ruènì zadávaná pravidla.
+V 80. letech v¹ak byly poprvé pøedstaveny metody strojového uèení, které díky stále rostoucímu výkonu výpoèetní techniky umo¾òovaly generovat tato pravidla automaticky a dosahovat tak pøi zpracování pøirozeného jazyka stále lep¹ích výsledkù.
+S nástupem strojového uèení se odvìtví zpracování pøirozeného jazyka zaèalo zamìøovat na statistické metody, je¾ k øe¹ení problémù pøistupovaly jinak, ne¾ metody dosavadní.
 Jejich hlavním principem byla práce s pravdìpodobnostními modely a váhami jednotlivých rozhodnutí.
 Tímto zpùsobem bylo mo¾né efektivnìji øe¹it vìt¹inu NLP úkolù.
-Vzhledem k tomu, ¾e obor zpracovávání pøirozeného jazyka pracuje s daty vytvoøenými èlovìkem, je¾ mohou obsahovat rùzné chyby, pracují statistické metody znaènì spolehlivìji ne¾ døívìj¹í ruènì psaná pravidla.
+Vzhledem k tomu, ¾e obor zpracování pøirozeného jazyka pracuje s daty vytvoøenými èlovìkem, je¾ mohou obsahovat rùzné chyby, pracují statistické metody znaènì spolehlivìji ne¾ døívìj¹í ruènì psaná pravidla.
 
-V souèasné dobì je výzkum zpracovávání pøirozeného jazyka orientován pøedev¹ím na vytvoøení autonomních a semiautonomních uèících algoritmù, tedy algoritmù, schopných uèit se z dat, která pøedtím nebyla ruènì anotována, a nebo z kombinace anotovaných a neanotovaných dat.
+V souèasné dobì je výzkum zpracování pøirozeného jazyka orientován pøedev¹ím na vytvoøení autonomních a semiautonomních uèících algoritmù, tedy algoritmù, schopných uèit se z dat, která pøedtím nebyla ruènì anotována, a nebo z kombinace anotovaných a neanotovaných dat.
 
 \section{Hlavní úkoly øe¹ené v NLP} \label{NLP-HU}
-Obor zpracovávání pøirozeného jazyka je velmi rozsáhlý a existuje v nìm mimo klasifikace textu velké mno¾ství dal¹ích úloh k øe¹ení.
-Nyní velmi struènì popí¹eme nìkolik halvních úkolù øe¹ených v oboru zpracování pøirozeného jazyka:
+Obor zpracování pøirozeného jazyka je velmi rozsáhlý a existuje v nìm mimo klasifikace textu velké mno¾ství dal¹ích úloh k øe¹ení.
+Nyní velmi struènì popí¹eme nìkolik hlavních úkolù, øe¹ených v oboru zpracování pøirozeného jazyka:
 
 \begin{itemize}
-\item \emph{Automatická sumarizace} -- úkolem automatické sumarizace je redukovat vstupní text nebo sadu textù do nìkolika slov, nebo krátkého odstavce, popisujícího sémantický obsah vstupního textu.
+\item \emph{Automatická sumarizace} -- úkolem automatické sumarizace je redukovat vstupní text nebo sadu textù do nìkolika slov nebo krátkého odstavce, popisujícího sémantický obsah vstupního textu.
 \item \emph{Generování pøirozeného jazyka} -- generování pøirozeného jazyka má vytvoøit výstup v pøirozeném jazyce z interní reprezentace v poèítaèi.
 \item \emph{Odpovídání na otázky} -- v oblasti odpovídání na otázky se programátoøi pokou¹ejí vytvoøit program, který by dokázal korektnì odpovìdìt na u¾ivatelem zadanou vstupní otázku formulovanou v pøirozeném jazyce.
-\item \emph{Odstraòování víceznaènosti slov v textu} -- odstraòování víceznaènosti slov v textu je významnou úlohou napomáhající správnému porozumìní textu.
+\item \emph{Odstraòování víceznaènosti slov v textu} -- odstraòování víceznaènosti slov v textu je významnou úlohou, napomáhající správnému porozumìní textu.
 Víceznaèná slova jsou v textu identifikována a poté je vyhledáván jejich správný význam v kontextu vstupního textu.
 \item \emph{Strojový pøeklad} -- je úloha zpracování pøirozeného jazyka, která pøevádí vstupní text v urèitém vstupním jazyce na výstupní text v jazyce jiném.
 \item \emph{Klasifikaèní úlohy} -- mají za úkol libovolné vstupy pøiøadit do pøedem urèených tøíd.
-Tyto tøídy mohou být buï 2 (takzvané binární klasifikace), nebo více (takzvaná multilabel klasifikace).
+Tyto tøídy mohou být buï dvì (takzvaná binární klasifikace), nebo jich mù¾e být více (takzvaná multilabel klasifikace).
 \end{itemize}
 
 
 \section{Klasifikaèní úlohy} \label{NLP-KU}
-V této èásti kapitoly se podrobnìji podíváme na následující dvì klasifikaèní úlohy:
+V této èásti kapitoly se budeme podrobnìji zabývat následujícími dvìma klasifikaèními úlohami:
 \begin{itemize}
  \item Klasifikace tématu
  \item Filtrování spamu
@@ -107,33 +104,33 @@ V této èásti kapitoly se podrobnìji podíváme na následující dvì klasifikaèní úlo
 Klasifikace tématu je úloha pøiøazování názvù témat ke vstupním textovým dokumentùm.
 Typicky daný vstupní text pokrývá vìt¹í mno¾ství témat.
 Metody pro klasifikaci tématu mohou být zalo¾eny napøíklad na skrytých Markovových modelech.
-Výstupem klasifikátoru tématu pro vstupní text bývá velmi èasto kromì seznamu tøíd témat, kterých se zøejmì vstupní text týká, také seznam pravdìpodobností definující míru nále¾itosti do jednotlivých tìchto tøíd.
+Výstupem klasifikátoru tématu pro vstupní text bývá velmi èasto kromì seznamu tøíd témat, kterých se zøejmì vstupní text týká, také seznam pravdìpodobností definujících míru nále¾itosti do tìchto jednotlivých tøíd.
 
 \subsection{Filtrování spamu}\label{NLP-KU-spam_filt}
 Zájem o klasifikaèní problém filtrování spamu v posledních letech velmi výraznì vzrostl, a to pøedev¹ím kvùli mno¾ství nevy¾ádané po¹ty (spamu), kterou u¾ivatelé dostávají do svých e-mailových schránek.
 Jsou dvì mo¾nosti jak úloha filtrování spamu mù¾e fungovat.
-Buï jsou zprávy filtrovány na základì obsahu (a» u¾ textového, nebo jiného) nebo na základì metainformací v hlavièce zprávy.
+Buï jsou zprávy filtrovány na základì obsahu (a» u¾ textového nebo jiného), nebo na základì metainformací v hlavièce zprávy.
 Metody zabývající se filtrováním na základì obsahu e-mailu velmi èasto vyu¾ívají toho, ¾e vìt¹ina zpráv obsahuje nìjakou textovou informaci.
 Podle ní potom klasifikují, zda je zpráva nevy¾ádanou po¹tou.
-Klasifikátory urèující, zda je zpráva spam nebo ne mají pro klasifikaci e-mailù velmi èasto asymetrické ohodnocení pøi klasifikaci.
-Chybné oznaèení vy¾ádané po¹ty jako spamu, vedoucí k následnému odstranìní zprávy, je toti¾ vìt¹í problém, ne¾ oznaèení spamu jako vy¾ádané po¹ty.
 
-V této práci se budeme zabývat právì pøedev¹ím metodami filtrování spamu, a to nejen pro pou¾ití pøi jeho odfiltrovávání z e-mailové po¹ty, ale také pro oznaèování relevantních textových vstupù vzhledem k danému tématu.
+V této práci se budeme zabývat metodami klasifikace textových dokumentù, které tím, ¾e oznaèují relevantní a nerelevantní textové vstupy vzhledem k danému tématu, mohou být s výhodou vyu¾ity i pro filtrování spamu.
 
-\chapter{Klasifikace dokumentù}
+\section{Klasifikace dokumentù}
 Jedním z úkolù této práce je získat pøehled o klasifikaci textových dokumentù, seznámit se s metodami klasifikace a aplikovat je na vytvoøenou datovou sadu.
-\section{Definice klasifikace} \label{CLASS-DEF}
+V této èásti textu bude podrobnì popsána problematika klasifikace dokumentù.
+
+\subsection{Definice klasifikace} \label{CLASS-DEF}
 
 \begin{definition}
  Klasifikace je èinnost, která rozdìluje objekty do tøíd (kategorií) podle jejich spoleèných vlastností.
 \end{definition}
 
-Tøída v kontextu zpracovávání pøirozeného jazyka je mno¾ina objektù, vyznaèujících se urèitou spoleènou vlastností nebo vlastnostmi, která/ré danou tøídu popisuje/jí.
+Tøída v kontextu zpracování pøirozeného jazyka je mno¾ina objektù, vyznaèujících se urèitou spoleènou vlastností nebo vlastnostmi, která/-ré danou tøídu popisuje/-jí.
 Klasifikace je potom èinnost, která pøiøazuje objekty do daných tøíd.
 Nadále se v této práci budeme zabývat klasifikací textu.
 
 Obecnì mìjme tedy prostor objektù $X$ a mno¾inu tøíd $Y$.
-Operaci klasifikace potom odpovídá funkci $f$:
+Operace klasifikace potom odpovídá klasifikaèní funkci $f$:
 
 \begin{equation}
 f: X \rightarrow Y
@@ -158,64 +155,66 @@ Tomuto se také øíká \textit{soft klasifikace}.
 Naproti tomu, kdy¾ je pøi klasifikaci pøiøazen objekt do tøídy \uv{napevno} (ano, patøí tam / ne, nepatøí tam), pak tento zpùsob klasifikace nazýváme \textit{hard klasifikace}.
 
 
-\section{Klasifikaèní pøístupy}
+\subsection{Klasifikaèní pøístupy}
 Existují dva hlavní pøístupy pøi øe¹ení klasifikaèních úloh:
 \begin{itemize}
  \item Probabilistické
  \item Neprobabilistické
 \end{itemize}
 
-\subsection{Probabilistické klasifikátory}
-Jedním ze zpùsobù jakým lze vytvoøit funkèní klasifikátor je vyu¾ít teorie pravdìpodobnosti.
+\subsubsection{Probabilistické klasifikátory}
+Jedním ze zpùsobù, jakým lze vytvoøit funkèní klasifikátor, je vyu¾ít teorie pravdìpodobnosti.
 Klasifikátory fungující na bázi pravdìpodobnostních výpoètù urèují pravdìpodobnosti, se kterými daný objekt spadá do nìkteré tøídy.
-Do které tøídy respektive kterých tøíd objekt spadá, je následnì urèeno pomocí pøedem definovaného prahu (threshold).
+Do které tøídy respektive kterých tøíd objekt spadá, je následnì urèeno pomocí pøedem definovaného \emph{prahu (threshold)}.
 
 Mezi probabilistické klasifikaèní metody patøí napøíklad metoda zalo¾ená na Bayesovì teorému -- Bayesovský klasifikátor.
 Bayesùv teorém a jeho pou¾ití pro klasifikaci je podrobnì popsán v kapitole \ref{BAYES}.
 
 Mimo Bayesovského klasifikátoru samozøejmì existují dal¹í probabilistické klasifikátory, napøíklad Fuzzy klasifikátory \cite{fuzzy}, nebo klasifikaèní stromy \cite{dec_trees}, jimi¾ se v této práci ale nebudeme zabývat. 
 
-\subsection{Neprobabilistické klasifikátory}
+\subsubsection{Neprobabilistické klasifikátory}
 Kromì probabilistických metod existují také neprobabilistické metody klasifikace.
-Neprobabilistické klasifikátory se vìt¹inou sna¾í pøímo vymodelovat klasifikaèní funkci a nevyu¾ívají pro zaøazení objektù do tøíd pravdìpodobnostní výpoèty.
-Asi nejznámìj¹í neprobabilistickou metodou je metoda SVM (support vector machines), která se sna¾í nalézt takovou nadrovinu v prostoru pøíznakù, která bude rozdìlovat trénovací data.
+Neprobabilistické klasifikátory vìt¹inou pracují tak, ¾e vymodelují klasifikaèní funkci a nevyu¾ívají pro zaøazení objektù do tøíd pravdìpodobnostní výpoèty.
+Asi nejznámìj¹í neprobabilistickou metodou je metoda SVM (support vector machines), která vytváøí takovou nadrovinu v prostoru pøíznakù, která bude rozdìlovat trénovací data.
 Ideální nadrovina rozdìluje data z trénovací mno¾iny tak, ¾e body v prostoru le¾í v opaèných poloprostorech a vzdálenosti v¹ech bodù od roviny jsou co nejvìt¹í.
 Mimo SVM klasifikátoru existují dal¹í neprobabilistické klasifikátory, jako napøíklad klasifikátory zalo¾ené na neuronových sítích -- perceptron \cite{perceptron}, èi back propagation \cite{bp}. 
 V této práci se v¹ak budeme podrobnìji zabývat pouze metodou SVM, která bude dále podrobnìji popsána (viz \ref{SVM}).
 
-\section{Klasifikace a shlukování}\label{CLASS-APPROACHES-CLUSTERING}
+\subsection{Klasifikace a shlukování}\label{CLASS-APPROACHES-CLUSTERING}
 Je¹tì relativnì nedávno byla klasifikace chápána jako podmno¾ina úlohy nazývané shlukování.
-Je sice pravda, ¾e klasifikace a shlukování k sobì mají velmi blízko, a také mnoho technik pou¾ívaných v klasifikaci je mo¾né pou¾ít i ve shlukování, nicménì rozdíl mezi tìmito dvìma úlohami je v tom, ¾e pøi klasifikaci známe pøedem tøídy, do kterých budeme vstup klasifikovat.
+Je sice pravda, ¾e klasifikace a shlukování k sobì mají velmi blízko a také mnoho technik pou¾ívaných v klasifikaci je mo¾né pou¾ít i ve shlukování, nicménì rozdíl mezi tìmito dvìma úlohami je v tom, ¾e pøi klasifikaci známe pøedem tøídy, do kterých budeme vstup klasifikovat.
 U shlukování tomu tak není.
 Shlukování dìlí vstupní text podle významných spoleèných pøíznakù ve vstupních datech.
-Z definice klasifikace (viz \ref{CLASS-DEF}) víme, ¾e klasifikaèní úloha je definována klasifikaèní funkcí $f$,  která vstupnímu vzorku $x$ podle jeho pøíznakù pøiøadí oznaèení tøídy $y$, do ní¾ vzorek spadá.
-Klasifikaèní úlohy v NLP se sna¾í tuto funkci $f$ co nejpøesnìji aproximovat, aby simulovaly její výsledek.
+Z definice klasifikace (viz \ref{CLASS-DEF}) víme, ¾e klasifikaèní úloha je definována klasifikaèní funkcí $f$, která vstupnímu vzorku $x$ podle jeho pøíznakù pøiøadí oznaèení tøídy $y$, do ní¾ vzorek spadá.
+Klasifikaèní úlohy v NLP se sna¾í tuto klasifikaèní funkci $f$ co nejpøesnìji aproximovat, aby simulovaly její výsledek.
 Naproti tomu shlukování nemá podobnou funkci jako klasifikace, která by urèovala, jak má vypadat výsledek.
 Výsledná struktura tøíd shlukování je vytvoøena za bìhu metody na základì znakù podobnosti vzorkù z mno¾iny vstupù $x$.
 
-\subsection{Strojové uèení}
-Jeliko¾ pro vytvoøení funkèního klasifikátoru je nutné, aby klasifikátor byl nauèen pomocí správné trénovací mno¾iny, je strojové uèení s tématem klasifikace velmi úzce spojeno.
+\subsubsection{Strojové uèení}
+Jeliko¾ pro vytvoøení funkèního klasifikátoru je nutné, aby klasifikátor byl nauèen pomocí správné trénovací mno¾iny dat, je strojové uèení s tématem klasifikace velmi úzce spojeno.
 Strojové uèení je jedním z podtémat oboru umìlé inteligence, zabývající se vytvoøením algoritmù, umo¾òujících poèítaèovým programùm se uèit.
 Algoritmy strojového uèení se dìlí do následujících tøí kategorií:
 \begin{itemize}
  \item \textit{Uèení s uèitelem (supervised learning)} -- nejjednodu¹¹í zpùsob uèení. Problematiènost tohoto pøístupu spoèívá v tom, ¾e ve¹kerá data, která se program nauèí, musejí být ruènì anotována èlovìkem, z èeho¾ vyplývá jeho velká èasová nároènost.
- \item \textit{Uèení bez uèitele (unsupervised learning)} -- pøi uèení bez uèitele je uèenému programu pøedána sada trénovacích dat, ve které si uèící se program sám hledá význaèné vlastnosti, na jejich¾ základì poté vytvoøí vlastní klasifikaèní funkci. Jedním z mo¾ných pøístupù k øe¹ení této metody je metoda shlukování (viz \ref{CLASS-APPROACHES-CLUSTERING}).
- \item \textit{Pøístup na pomezí mezi uèením s uèitelem a uèením bez uèitele (semi-supervised learning)} --  je metoda zalo¾ená na uèení pomocí vstupních trénovacích dat, kterých následnì metoda vyu¾ije k automatickému vytvoøení dal¹ích trénovacích dat.
+ \item \textit{Uèení bez uèitele (unsupervised learning)} -- pøi uèení bez uèitele je uèícímu se programu pøedána sada trénovacích dat, ve které si uèící se program sám hledá význaèné vlastnosti, na jejich¾ základì poté vytvoøí vlastní klasifikaèní funkci. Jedním z mo¾ných pøístupù k øe¹ení této metody je metoda shlukování (viz \ref{CLASS-APPROACHES-CLUSTERING}).
+ \item \textit{Pøístup na pomezí metod uèení s uèitelem a uèení bez uèitele (semi-supervised learning)} --  je metoda zalo¾ená na uèení pomocí vstupních trénovacích dat, kterých následnì metoda vyu¾ije k automatickému vytvoøení dal¹ích trénovacích dat.
 \end{itemize}
 
-\subsection{Boosting}
-V roce 1988 vyslovil Michael Kearns s názvem \uv{Thoughts on hypothesis boosting} \cite{Kearns1988} otázku, zda lze z mno¾iny slabých klasifikátorù (takových, které mají nízké hodnoty korelace testovacích a výstupních dat) vytvoøit jeden klasifikátor, který by mìl výraznì lep¹í výsledky.
+\subsubsection{Boosting} \label{boosting}
+V roce 1988 vyslovil Michael Kearns v práci s názvem \uv{Thoughts on hypothesis boosting} \cite{Kearns1988} otázku, zda lze z mno¾iny slabých klasifikátorù (takových, které mají nízké hodnoty korelace testovacích a výstupních dat) vytvoøit jeden klasifikátor, který by mìl výraznì lep¹í výsledky.
 Ve své práci \cite{Kearns1988} dokázal, ¾e tomu tak opravdu mù¾e být.
 Od té doby bylo vyvinuto více algoritmù pro boosting klasifikace, nicménì vìt¹ina z nich se zakládá na iterativním uèení mno¾iny slabých klasifikátorù a jejich následném sdru¾ení do jednoho pøesného klasifikátoru.
-Historicky nejvýznamnìj¹ím boostingovým algoritmem je zøejmì algoritmus \textit{AdaBoost} (adaptive boosting), vytvoøený Yoavem Freundem a Robertem Schapirem, který publikovali v práci \uv{A Decision-Theoretic Generalization of on-Line Learning and an Application to Boosting}\cite{boosting}.
+Historicky nejvýznamnìj¹ím boostingovým algoritmem je zøejmì algoritmus \textit{AdaBoost (adaptive boosting)}, vytvoøený Yoavem Freundem a Robertem Schapirem, který publikovali v práci \uv{A Decision-Theoretic Generalization of on-Line Learning and an Application to Boosting}\cite{boosting}.
 
 \chapter{Bayesovský klasifikátor} \label{BAYES}
-Bayesovský klasifikátor (naivní Bayesovský klasifikátor) je klasifikátor postavený na zjednodu¹eném Bayesoì teorému.
+Bayesovský klasifikátor (naivní Bayesovský klasifikátor) je klasifikátor zalo¾ený na zjednodu¹eném Bayesovì teorému.
 Zjednodu¹ení spoèívá v tom, ¾e existence nebo naopak neexistence jednoho pøíznaku (textového nebo speciálního -- viz \ref{TOKENIZACE}) není závislá na existenci nebo neexistenci jiného pøíznaku.
-Tudí¾, i kdy¾ existence nìkolika pøíznakù na sobì záviseí, Bayesovský klasifikátor s tìmito pøíznaky pracuje jako se zcela nezávislými událostmi.
-Tato vlastnost naivního Bayesovského filtrování je nevýhodou pro klasifikování pøirozeného jazyka pøedev¹ím proto, ¾e slova se v jazyce vyskytují ve slovních spojeních, je¾ stejnì jako samotná slova napomáhají klasifikaci.
-Aèkoliv tato vlastnost Bayesovský klasifikátor omezuje, jeho vyu¾ití na reálných textech se osvìdèilo a je hojnì pou¾íván.
-V posledních letech ale ji¾ existují jiné a lep¹í metody pro klasifikaci, napøíklad metoda \textit{support vector machines}, která je v této práci podrobnì popsána (viz \ref{SVM}).
+Tudí¾, i kdy¾ existence nìkolika pøíznakù na sobì závisí, Bayesovský klasifikátor s tìmito pøíznaky pracuje jako se zcela nezávislými událostmi.
+Tato vlastnost Bayesovského klasifikátoru je nevýhodou pro klasifikování pøirozeného jazyka pøedev¹ím proto, ¾e nedoká¾e pracovat se slovními spojeními a kontextem slov, co¾ by mohlo napomoci klasifikaci.
+Aèkoliv neschopnost pracovat s kontextem slov Bayesovský klasifikátor omezuje, jeho vyu¾ití na reálných textech se osvìdèilo a je hojnì pou¾íván.
+V posledních letech ale ji¾ existují jiné a lep¹í metody pro klasifikaci, napøíklad metoda \textit{support vector machines (SVM)}, která je v této práci podrobnì popsána (viz \ref{SVM}).
+
+V následujícím textu bude pøedstavena teorie Bayesovského klasifikátoru pro binární klasifikaci textu, tedy pro klasifikaci do pozitivní a negativní tøídy.
 
 \section{Matematický model}
 Bayesovský klasifikátor vyu¾ívá Bayesova teorému, který zní následovnì:
@@ -230,7 +229,7 @@ Bayesovský klasifikátor vyu¾ívá Bayesova teorému, který zní následovnì:
   \begin{equation}
     P(P(A \cap B)) = P(A) \cdot P(B|A)
   \end{equation}  
-  Dále také platí, ¾e pravdìpodobnost $A$ a $B$ se rovná pravdìpodobnosti $B$ krát pravdìpodobnost $A$ za pøedpokladu ¾e nastalo $B$:
+  Dále také platí, ¾e pravdìpodobnost $A$ a $B$ se rovná pravdìpodobnosti $B$ krát pravdìpodobnost $A$ za pøedpokladu, ¾e nastalo $B$:
   \begin{equation}
     P(P(A \cap B)) = P(B) \cdot P(A|B)
   \end{equation}
@@ -246,37 +245,37 @@ Bayesovský klasifikátor vyu¾ívá Bayesova teorému, který zní následovnì:
   \hfill \textbf{Q.E.D}.
 \end{proof}
 
-Pro klasifikaci textu není vhodné pou¾ít pøímo rovnici z Bayesova teorému, jeliko¾ by bylo tøeba zapamatovat si pro ka¾dý pøíznak tøi hodnoty a bylo by nutné provádìt velké mno¾ství výpoètù, nicménì je mo¾né rovnici upravit do tvaru, v nìm¾ je tøeba si pro ka¾dý pøíznaku pamatovat pouze jednu hodnotu pravdìpodobnosti a také není tøeba provádìt tolik výpoètù.
+Pro klasifikaci textu není vhodné pou¾ít pøímo rovnici z Bayesova teorému, jeliko¾ by bylo tøeba zapamatovat si pro ka¾dý pøíznak tøi hodnoty a bylo by nutné provádìt vìt¹í mno¾ství výpoètù, nicménì je mo¾né rovnici upravit do tvaru, v nìm¾ je tøeba si pro ka¾dý pøíznak pamatovat pouze jednu hodnotu pravdìpodobnosti a také není tøeba provádìt tolik výpoètù.
 Upravená rovnice má následující tvar:
 
 \begin{equation}
 P = \frac{p_1 p_2 p_3 \ldots p_N}{p_1 p_2 p_3 \ldots p_N + (1 - p_1) (1 - p_2) (1 - p_3) \ldots (1 - p_N)} \label{equation_used} \\
 \end{equation}
-kde $P$ je pravdìpodobnost urèující míru nále¾itostí klasifikované zprávy do tøídy spam a $p_i, i=1 \ldots N$ udává tuto míru pro jednotlivé pøíznaky $i$.
-Výsledné $P$ je potom porovnáno s urèitým prahem, který definuje, zda je oklasifikovaná zpráva spam nebo ham.
+kde $P$ je pravdìpodobnost urèující míru nále¾itosti klasifikovaného textu do negativní tøídy a $p_i, i=1 \ldots N$ udává tuto míru pro jednotlivé pøíznaky $i$.
+Výsledné $P$ je potom porovnáno s urèitým prahem, který definuje, zda oklasifikovaný text patøí do negativní, nebo pozitivní tøídy.
 
 
 \subsection{Odvození rovnice pro klasifikaci} \label{SF-BAYES-MAT-bayes_theorem-deriv}
 Nyní pøejdìme k odvození rovnice \ref{equation_used} z Bayesova teorému \ref{SF-BAYES-MAT-bayes_theorem}.
  
-Mìjme $X$ a $Y$, pøedstavující dva pøíznaky, $S$ znamenající \uv{je to spam} a $\neg S$ znamenající \uv{je to ham} (=není to spam).
+Mìjme $X$ a $Y$, pøedstavující dva pøíznaky, $S$ znamenající \uv{patøí do negativní tøídy} a $\neg S$ znamenající \uv{patøí do pozitivní tøídy} (=nepatøí do negativní tøídy).
 Pro zjednodu¹ení budeme pou¾ívat pøípad se dvìma pøíznaky.
 
 $$
  P(S | X \cap Y) = \frac{P(X \cap Y | S) \cdot P(S)}{P(X \cap Y)}
 $$
 
-Nyní vyu¾ijeme toho, ¾e platí
+Nyní vyu¾ijeme toho, ¾e platí:
 
 $$
-P(B) = P(B|A) \cdot P(A) + P(B|\neg A) \cdot P(\neg A)
+P(B) = P(B|A) \cdot P(A) + P(B|\neg A) \cdot P(\neg A),
 $$
 
-Tudí¾:
+tudí¾:
 \begin{equation}
  P(S | X \cap Y) = \frac{P(X \cap Y | S) \cdot P(S)}{(P(S)*P(X \cap Y | S) + P(\neg S) \cdot P(X \cap Y | \neg S))} \label{SF-BAYES-MAT-bayes_theorem-deriv-eq1}
 \end{equation}
-Nyní aplikujeme onu naivitu, kterou jsme zmiòovali vý¹e \ref{BAYES}.
+Nyní aplikujeme onu naivitu, kterou jsme zmiòovali vý¹e (viz \ref{BAYES}).
 
 To znamená, ¾e budeme pøedpokládat, ¾e pravdìpodobnost $X$ je nezávislá na pravdìpodobnosti $Y$, tak¾e mù¾eme pou¾ít vztah:
   $$P(A \cap B) = P(A) \cdot P(B)$$
@@ -298,73 +297,73 @@ Po zjednodu¹ení dostaneme:
 \begin{equation}
   P(S | X \cap Y) = \frac{\frac{P(S|X) \cdot P(S|Y)}{P(S)}}{\frac{P(S|X) \cdot P(S|Y)}{P(S)} + \frac{P(\neg S|X) \cdot P(\neg S|Y)}{P(\neg S)}} \label{SF-BAYES-MAT-bayes_theorem-deriv-eq4}
 \end{equation}
-Nyní mù¾eme pøistoupit k závìreèné úpravì, která ov¹em pøedpokládá, ¾e zprávy v uèící mno¾inì jsou rovnomìrnì rozlo¾eny, tzn. ¾e zhruba 50\% nauèených zpráv je spam a zhruba 50\% je ham.
+Nyní mù¾eme pøistoupit k závìreèné úpravì, která ov¹em pøedpokládá, ¾e záznamy v trénovací mno¾inì jsou rovnomìrnì rozlo¾eny, tzn. ¾e zhruba 50\% nauèených záznamù patøí do negativní tøídy a zhruba 50\% do pozitivní tøídy.
 Potom  platí, ¾e $P(S) \approx P(\neg S)$, a tak dostaneme z rovnice \ref{SF-BAYES-MAT-bayes_theorem-deriv-eq4} rovnici následující:
 \begin{equation}
-  P(S | X \cap Y) = \frac{P(S|X) \cdot P(S|Y)}{P(S|X) \cdot P(S|Y) + P(\neg S|X) \cdot P(\neg S|Y)} 
+  P(S | X \cap Y) = \frac{P(S|X) \cdot P(S|Y)}{P(S|X) \cdot P(S|Y) + P(\neg S|X) \cdot P(\neg S|Y)},
 \end{equation}
-kde $P(\neg A) = 1 - P(A)$ tudí¾ $P(\neg A|B)$ mù¾eme pøepsat na $1-P(A|B)$.
+kde $P(\neg A) = 1 - P(A)$, tudí¾ $P(\neg A|B)$ mù¾eme pøepsat na $1-P(A|B)$.
 Z toho získáme rovnici \ref{SF-BAYES-MAT-bayes_theorem-deriv-eq5} ekvivalentní s rovnicí \ref{equation_used}.
 \begin{equation}
   P(S | X \cap Y) = \frac{P(S|X) \cdot P(S|Y)}{P(S|X) \cdot P(S|Y) + (1 - P(S|X)) \cdot (1- P(S|Y))} \label{SF-BAYES-MAT-bayes_theorem-deriv-eq5}
 \end{equation}
-Jestli¾e není uèící mno¾ina vyvá¾ená (podobné mno¾ství spamu a hamu), je vhodné pro klasifikaci pou¾ít rovnici \ref{SF-BAYES-MAT-bayes_theorem-deriv-eq4}, proto¾e pøi pou¾ití rovnice \ref{SF-BAYES-MAT-bayes_theorem-deriv-eq5} mù¾e docházet ke zkreslení klasifikace.
+Jestli¾e není trénovací mno¾ina vyvá¾ená (mno¾ství záznamù nále¾ících do pozitivní tøídy a mno¾ství záznamù nále¾ící do negativní tøídy není rovnomìrné), je vhodné pro klasifikaci pou¾ít rovnici \ref{SF-BAYES-MAT-bayes_theorem-deriv-eq4}, proto¾e pøi pou¾ití rovnice \ref{SF-BAYES-MAT-bayes_theorem-deriv-eq5} mù¾e docházet ke zkreslení klasifikace.
 
 \section{Princip Bayesovského klasifikátoru} \label{SF-BAYES-PRINCIP}
-Bayesovský klasifikátor si do databáze pøi uèení ukládá pravdìpodobnosti zda jsou jednotlivé pøíznaky ze vstupních vìt spam, tzn. ukládá si hodnotu  $P(S|X)$.
-Po nauèení dostateènì velkého objemu trénovacích dat potom vyu¾ívá tyto pravdìpodobnosti pro výpoèet, zda je klasifikovaný vstupní text spam, nebo ham.
+Bayesovský klasifikátor si do databáze pøi uèení ukládá pravdìpodobnosti s jakými jednotlivé pøíznaky získané ze vstupních textù nále¾ejí do negativní tøídy, tzn. ukládá si hodnotu  $P(S|X)$.
+Po nauèení dostateènì velkého objemu trénovacích dat potom vyu¾ívá tyto pravdìpodobnosti pro výpoèet, zda klasifikovaný vstupní text nále¾í do pozitivní, nebo negativní tøídy.
 
 Klasifikace tedy probíhá tak, ¾e vstupní text $X$ se rozdìlí na pøíznaky $X_i$.
-Klasifikátor se podívá do databáze a zjistí pravdìpodobnost $P(S|X_i)$ se kterou jednotlivé pøíznaky nále¾í do tøídy spamu.
-Jestli¾e klasifikátor pøi klasifikaci textu narazí na pøíznak, který dosud není v jeho databázi, pak je mu pøiøazena hodnota 0,5 (tzn. klasifikátor neumí urèit s jakou pravdìpodobností je tento pøíznak spam èi ham).
-Pravdìpodobnost $P(X)$ ¾e vstupní text je spam je potom vypoèten pomocí dosazení $P(S|X_i)$ do rovnice \ref{SF-BAYES-MAT-bayes_theorem-deriv-eq5}.
+Klasifikátor se podívá do databáze a zjistí pravdìpodobnost $P(S|X_i)$ se kterou jednotlivé pøíznaky nále¾ejí do negativní tøídy.
+Jestli¾e klasifikátor pøi klasifikaci textu narazí na pøíznak, který dosud není v jeho databázi, pak je mu pøiøazena hodnota 0,5 (tzn. klasifikátor neumí urèit s jakou pravdìpodobností tento pøíznak nále¾í do pozitivní èi negativní tøídy).
+Pravdìpodobnost $P(X)$ ¾e vstupní text nále¾í do negativní tøídy je potom vypoètena pomocí dosazení $P(S|X_i)$ do rovnice \ref{SF-BAYES-MAT-bayes_theorem-deriv-eq5}.
 
 \section{Pøíklad klasifikace}
 Uveïme si nyní jednoduchý pøíklad klasifikace textu:
 mìjme vstupní vìtu \textit{'Aaaa, my stomach hurts.'}.
-Tuto vìtu si klasifikátor rozdìlí podle zadaného pravidla na seznam pøíznakù (v tomto pøípadì pouzze slov).
+Tuto vìtu si klasifikátor rozdìlí podle zadaného pravidla na seznam pøíznakù (v tomto pøípadì pouze slov).
 $$['Aaaa', 'my', 'stomach', 'hurts']$$
 V databázi klasifikátoru máme napøíklad:
 $$\{'my':0.6, 'stomach':0.2, 'hurts':0.2\},$$
-kde èísla za jednotlivými pøíznaky urèují pravdìpodobnost nále¾itosti odpovídajících pøíznakù do tøídy spamu.
+kde èísla za jednotlivými pøíznaky urèují pravdìpodobnost nále¾itosti odpovídajících pøíznakù do negativní tøídy.
 
 V¹imnìme si, ¾e v databázi pøíznakù klasifikátoru se nevyskytuje slovo \texttt{'Aaaa'}.
 To znamená, ¾e klasifikátor se pøi svém uèení s tímto slovem doposud nesetkal, a tak mu pøiøadí pravdìpodobnost 0,5.
 Jeho databáze pøíznakù pro klasifikaci vstupní vìty \textit{'Aaaa, my stomach hurts.'} bude tedy vypadat následovnì:
 $$\{'my':0.6, 'stomach':0.2, 'hurts':0.2, 'Aaaa':0.5\}$$
-Nyní u¾ má klasifikátor v¹e potøebné k tomu, aby vypoèítal pravdìpodobnost, zda je vstupní text spam èi nikoliv.
+Nyní u¾ má klasifikátor v¹e potøebné k tomu, aby vypoèítal pravdìpodobnost, zda vstupní text nále¾í do relevantní, nebo do nerelevantní tøídy.
 Bude postupovat podle rovnice \ref{equation_used}.
 \begin{align*}
 P &= \frac{p_1 p_2 p_3 \ldots p_N}{p_1 p_2 p_3 \ldots p_N + (1 - p_1) (1 - p_2) (1 - p_3) \ldots (1 - p_N)} \\
 P &= \frac{0.2 \cdot 0.6 \cdot 0.2 \cdot 0.5}{0.2 \cdot 0.6 \cdot 0.2 \cdot 0.5 + (1 - 0.2) \cdot (1 - 0.6) \cdot (1 - 0.2) \cdot (1 - 0.5)} \\
 P &= 0.0857
 \end{align*}
-Dle tohoto výpoètu se tedy pravdìpodobnost, ¾e vìta \textit{'Aaaa, my stomach hurts.'} je spam, rovná 0,0857.
-Co¾ znamená, ¾e vìta je rozhodnì ham.
+Dle tohoto výpoètu se tedy pravdìpodobnost, ¾e vìta \textit{'Aaaa, my stomach hurts.'} patøí do negativní tøídy, rovná 0,0857.
+Co¾ znamená, ¾e vìta rozhodnì nále¾í do pozitivní tøídy.
 
 \chapter{SVM klasifikátor} \label{SVM}
-Klasifikaèní metoda pomocí SVM (support vector machines) je spoleènì s vý¹e popsaným Bayesovským klasifikátorem dal¹í klasifikaèní metodou, kterou sev této práci zabýváme.
+Klasifikaèní metoda pomocí \textit{SVM (support vector machines)} je spoleènì s vý¹e popsaným Bayesovským klasifikátorem dal¹í klasifikaèní metodou, kterou se v této práci zabýváme.
 Jedná se o metodu uèení s uèitelem, která je v souèasné dobì nejvíce pou¾ívanou metodou v NLP.
-Mimo NLP má v¹ak také velkou ¹kálu vyu¾ití, a» u¾ pro klasifikaèní úèely, nebo kupøíkladu pro úèely regresní analýzy (pro pøedvídání chování finanèních trhù, atd.).
+Mimo NLP má v¹ak také velkou ¹kálu vyu¾ití, a» u¾ pro klasifikaèní úèely, nebo kupøíkladu pro úèely regresní analýzy (napø. pro pøedvídání chování finanèních trhù, atd.).
 
 V této práci nebude mo¾né popsat problematiku klasifikátoru support vector machines do úplných detailù, nicménì zde budou popsány základní principy jeho fungování v rozsahu potøebném pro pozdìj¹í implementaci této metody.
 Pro podrobnìj¹í popis SVM doporuèuji knihu Vladimira N. Vapnika z roku 1998 s názvem \uv{Statistical Learning Theory} \cite{Vapnik1998} a èlánek \uv{Support-Vector Networks} \cite{Vapnik1995}.
 
 \section{Základy SVM klasifikátoru}
-SVM klasifikátor je metoda dosahující velmi dobrých výsledkù ve velkém mno¾ství odvìtví a aplikací.
-Poprvé byl tento algoritmus pøedstaven v roce 1995 ve èlánku Vladimira N. Vapnika a kolektivu s názvem \uv{Support-Vector Networks} \cite{Vapnik1995}.
+SVM klasifikátor je algoritmus dosahující velmi dobrých výsledkù v mnoha odvìtvích.
+Poprvé byl tento klasifikaèní algoritmus pøedstaven v roce 1995 ve èlánku Vladimira N. Vapnika a kolektivu s názvem \uv{Support-Vector Networks} \cite{Vapnik1995}.
 Metoda SVM byla navrhnuta jako klasifikaèní algoritmus.
 Aby bylo mo¾né metodu SVM vyu¾ít pro klasifikaci, musíme ji nejprve nauèit pomocí urèité sady dat, která je rozdìlena na trénovací a testovací data.
-Ka¾dý jeden záznam v trénovacích a testovacích datech má definovanou tøídu (\emph{label}), do které záznam spadá.
+Ka¾dý jeden záznam v trénovacích a testovacích datech má definovanou \emph{tøídu (label)} do které záznam spadá.
 Ka¾dý záznam se skládá z nìkolika pøíznakù, pomocí kterých se SVM uèí a následnì klasifikuje.
 Napøíklad klasifikujeme-li pomocí SVM klasifikátoru text, tìmito pøíznaky mohou být mimo jiné jednotlivá slova, $n$-tice slov, délka textu, e-mailové adresy, Twitter tagy atd.
 
 Nyní pøejdìme k matematickému popisu problematiky SVM.
-Pøedpokládejme urèitý klasifikaèní problém a jistou datovou sadu, ve které je mno¾ství záznamù, které patøí buï do pozitivní (ham), nebo negativní (spam) tøídy. 
+Pøedpokládejme urèitý klasifikaèní problém a jistou datovou sadu, ve které je mno¾ství záznamù, které patøí buï do pozitivní, nebo negativní tøídy. 
 Trénovací sada $X$ pro tento problém obsahuje $l$ záznamù.
 Jeden záznam v této sadì je tedy definován jako vektor $x_i \in \mathbb{R}^n$ kde $1 \leq i \leq l$.
 Ka¾dý tento vektor $x_i$ se skládá z mno¾iny pøíznakù $[x_1, x_2,\ldots,x_n] \in x_i$, kde $x_1,\ldots,x_n$ jsou jednotlivé atributy daného záznamu.
-Ozanaèení tøídy $y$ ka¾dého záznamu z dat je definován jako $y \in \{1,-1\}$ v závislosti na tom, do které tøídy daný záznam spadá.
+Oznaèení tøídy $y$ ka¾dého záznamu z dat je definováno jako $y \in \{1,-1\}$ v závislosti na tom, do které tøídy daný záznam spadá.
 Trénovací sadu dat lze tedy zapsat jako:
 
 \begin{equation}
@@ -382,11 +381,11 @@ Rozhodovací hranice je definována jako \emph{hyperplocha (nadrovina)}, co¾ je pr
 Libovolnou hyperplochu lze definovat jako \emph{diskriminaèní funkci (discriminant function)}\footnote{diskriminaèní funkce je funkce, která optimálnì dìlí prostor pøíznakù. \cite{Seong-Wook}} v následující formì:
 
 \begin{equation}
-  f(x) = w^T x + b
+  f(x) = w^T x + b,
 \end{equation}
 
 
-$b$ je takzvaný \emph{bias} a $w^T x$ definuje skalární souèin mezi váhovým vektorem $w$ a vektorem pøíznakù $x$.
+kde $b$ je takzvaný \emph{bias} a $w^T x$ definuje skalární souèin mezi váhovým vektorem $w$ a vektorem pøíznakù $x$.
 Tento skalární souèin je definován jako:
 
 \begin{equation}
@@ -404,10 +403,10 @@ Tento skalární souèin je definován jako:
 
 \section{Nelineární SVM a jádra}
 Jeliko¾ je u základního klasifikátoru SVM hyperplocha dìlící prostor pøíznakù lineární, pova¾ujeme tento klasifikátor za lineární.
-Proto¾e je lineární dìlicí hyperplocha základního SVM klasifikátoru omezující, je mo¾né pou¾it nelineární dìlící hyperplochu, její¾ pomocí mù¾e klasifikátor dosahovat daleko lep¹ích výsledkù.
+Proto¾e je lineární dìlicí hyperplocha základního SVM klasifikátoru omezující, je mo¾né pou¾ít nelineární dìlící hyperplochu, její¾ pomocí mù¾e klasifikátor dosahovat daleko lep¹ích výsledkù.
 Problémem takto nelineárních klasifikátorù ale je zvy¹ování komplexicity výpoètù pøi uèení vìt¹ích poètù pøíznakù (vysoká dimenzionalita dat).
 Pro vyøe¹ení vý¹e zmínìného problému byly klasické lineární SVM klasifikátory roz¹íøeny o podporu takzvaných \emph{jaderných funkcí (kernel functions)} za pomocí nich¾ jsou lineární klasifikátory schopny vytvoøit nelineární dìlící hyperplochy.
-Pro vysvìtlení zpùsobu, jakým se této nelinearity dosáhne pøedpokládejme klasický lineární klasifikátor.
+Pro vysvìtlení zpùsobu, jakým se této nelinearity dosáhne, pøedpokládejme klasický lineární klasifikátor.
 
 \begin{figure}[H]
     \begin{center}
@@ -417,7 +416,7 @@ Pro vysvìtlení zpùsobu, jakým se této nelinearity dosáhne pøedpokládejme klasick
     \end{center}
 \end{figure}
 
-Nyní pøevedeme trénovací sadu $X$, také známou jako \emph{vstupní prostor (input space)} do vysoce dimenzionálního prostoru pøíznakù $F$ za pomocí nelineární mapovací funkce $\varphi : X \rightarrow F$ viz. obrázek \ref{SVM-KERNEL-TRANSFORMACE}.
+Nyní pøevedeme trénovací sadu $X$, také známou jako \emph{vstupní prostor (input space)}, do vysoce dimenzionálního prostoru pøíznakù $F$ za pomoci nelineární mapovací funkce $\varphi : X \rightarrow F$ (viz. obrázek \ref{SVM-KERNEL-TRANSFORMACE}).
 Pro prostor pøíznakù tedy budeme mít následující diskriminaèní funkci:
 
 \begin{equation}
@@ -441,7 +440,7 @@ Je zcela zøejmé, ¾e tento zpùsob výpoètu je neúnosný.
 Museli bychom toti¾ pro výpoèet transformovat celý vstupní prostor do prostoru pøíznakù, co¾ by zvý¹ilo èasovou a pamì»ovou nároènost klasifikátoru.
 Tento zpùsob tedy není vhodný.
 Existuje v¹ak øe¹ení, kterým lze spoèítat diskriminaèní funkci $f(x)$, ani¾ bychom museli znát, chápat a poèítat mapovací funkci do prostoru $F$.
-Pro toto øe¹ení je tøeba si vyjádøit váhový vektor $w$ jako lineární kombinaci jednotlivých záznamù z tréninkové sady.
+Pro toto øe¹ení je tøeba vyjádøit váhový vektor $w$ jako lineární kombinaci jednotlivých záznamù z tréninkové sady.
 
 \begin{equation}
   w = \sum^{n}_{i=1}\alpha_i x_i
@@ -470,15 +469,15 @@ Jaderná funkce je tedy definována jako:
 
 Jeliko¾ jadernou funkci lze vypoèítat pouze pomocí pøíznakù ve vstupním prostoru, je mo¾né vypoèítat diskriminaèní funkci, ani¾ bychom znali potøebnou mapovací funkci.
 Díky této vlastnosti jaderných funkcí nemusíme transformovat celý vstupní prostor do nového prostoru pøíznakù $F$, ale spoèítáme pouze jadernou funkci pro jednotlivé pøíznaky.
-Tudí¾ nám poèet dimenzí prostoru $F$ neovlivní komplexnost výpoètu.
-Vý¹e zmínìná operace, kdy vyu¾ijeme pouze kartézský souèin bodù v daném prostoru, bývá èasto v literatuøe nazývána jako takzvaný \emph{Kernel trick}.
+Tudí¾ poèet dimenzí prostoru $F$ neovlivní komplexnost výpoètu.
+Vý¹e zmínìná operace, kdy vyu¾ijeme pouze kartézský souèin bodù v daném prostoru, bývá èasto v literatuøe nazývána jako takzvaný \emph{kernel trick}.
 Pro výpoèet diskriminaèní funkce $f(x) = w^T \varphi(x) + b$ tedy pou¾ijeme jadernou funkci $k(x,z) = \varphi(x)^T \varphi(z)$ a dostaneme $f(x) = k(x,z) + b$.
 
-Nyní si nejprve si znázorníme na pøíkladu nároènost pøi pøevádìní v¹ech souøadnic do prostoru $F$.
-Pøedpokládejme prostor $X \in \mathbb{R}^2$ (tzn. $x = (x_1, x_2)$) dále pak polynomiální mapovací funkci druhého øádu
+Nyní si na pøíkladu nejprve znázorníme nároènost pøevádìní v¹ech souøadnic do prostoru $F$.
+Pøedpokládejme prostor $X \in \mathbb{R}^2$ (tzn. $x = (x_1, x_2)$) a dále pak polynomiální mapovací funkci druhého øádu
 
 \begin{equation}
-\varphi(x) = (1, x_1, x_2, x^2_1, x^2_2, x_1 x_2)
+\varphi(x) = (1, x_1, x_2, x^2_1, x^2_2, x_1 x_2),
 \end{equation}
 
 která pøevede vektor pøíznakù ze vstupního prostoru $X$ do prostoru $F$.
@@ -494,38 +493,37 @@ Tudí¾:
 
 Nyní si pøedstavme, ¾e nemáme dvoudimenzionální prostor, ale velmi vysoce dimenzionální prostor.
 Pøevádìní $x$ a $z$ do prostoru $F$ by bylo velmi výpoèetnì nároèné.
-
-Nyní si na pøíkladu pøedvedeme pou¾ití vý¹e zmínìné metody \emph{kernel trick}, která nám umo¾ní vypoèíst jadernou funkci, ani¾ bychom potøebovali spoèítat transformace do prostoru pøíznakù $F$.
+Proto na následujícím pøíkladu pøedvedeme pou¾ití vý¹e zmínìné metody \emph{kernel trick}, která umo¾ní vypoèíst jadernou funkci, ani¾ bychom potøebovali spoèítat transformace do prostoru pøíznakù $F$.
 Pøedpokládejme jadernou funkci:
 
 \begin{equation}
-  K(x, z) = (1 + x^T z)^2
+  K(x, z) = (1 + x^T z)^2,
   \label{SVM-KERNEL-2POLYNOMIAL}
 \end{equation}
 
 kterou roznásobíme a dostaneme:
 
 \begin{equation}
-  K(x, z) = 1 + x^2_1 z^2_1 + x^2_2 z^2_2 + 2 x_1 z_1 + 2 x_2 z_2 + 2 x_1 z_1 x_2 z_2
+  K(x, z) = 1 + x^2_1 z^2_1 + x^2_2 z^2_2 + 2 x_1 z_1 + 2 x_2 z_2 + 2 x_1 z_1 x_2 z_2,
 \end{equation}
 
-Co¾ je skuteènì skalární souèin definovaný v prostoru pøíznakù s mapovací funkcí 
+co¾ je skuteènì skalární souèin definovaný v prostoru pøíznakù s mapovací funkcí 
 
 \begin{equation}
 \varphi(x) = (1, x^2_1, x^2_2, \sqrt{2} x_1, \sqrt{2} x_2, \sqrt{2} x_1 x_2)
 \end{equation}
 
-Tím jsme dokázali, ¾e opravdu není tøeba pøevádìt celý prostor pøíznakù, ale staèí nám vypoèítat jednoduchou funkci $K(x, z) = (1 + x^T z)^2$, a tím dosáhnout daleko jednodu¹eji ký¾eného výsledku.
+Tím jsme dokázali, ¾e opravdu není tøeba pøevádìt celý prostor pøíznakù, ale staèí pouze vypoèítat jednoduchou funkci $K(x, z) = (1 + x^T z)^2$, a tím dosáhnout daleko jednodu¹eji ký¾eného výsledku.
 
 \subsection{Jádra} \label{SVM-KERNELS}
 \label{SVM-THEORY-KERNELS}
 Jádra, nebo také jaderné funkce, jsou tedy funkce, pomocí nich¾ je klasifikátor SVM  schopen vypoèítat diskriminaèní rovnici pro optimální rozdìlení prostoru pøíznakù.
-V závislosti na tom jaké jádro je pøi trénování klasifikátoru pou¾ito, je klasifikátor lineární nebo nelineární a dosahuje rozdílných výsledkù na stejných datech.
+V závislosti na tom, jaké jádro je pøi trénování klasifikátoru pou¾ito, je klasifikátor lineární nebo nelineární a mù¾e pak dosahovat na stejných datech rozdílných výsledkù.
 
-V praxi je pou¾íváno nìkolik rùzných jader, nejèastìji \emph{RBF (radial basis function)}, \emph{polynomiální jaderná funkce} a nìkdy je pou¾ívána i základní \emph{lineární jaderná funkce}.
+V praxi je pou¾íváno nìkolik rùzných jader, nejèastìji \emph{RBF (radial basis function)}, dále \emph{polynomiální jaderná funkce} a nìkdy je pou¾ívána i základní \emph{lineární jaderná funkce}.
 
 \subsubsection{Lineární jaderná funkce}
-Lineární jaderná funkce je nejzákladnìj¹í ze v¹ech jaderných funkcí.
+Lineární jaderná funkce je nejjednodu¹¹í ze v¹ech jaderných funkcí.
 Poèítá toti¾ skalární souèin z bodù ve vstupním prostoru, tudí¾ je schopna pouze lineární klasifikace.
 Lineární jaderná funkce je definována následovnì:
 
@@ -537,16 +535,16 @@ Lineární jaderná funkce je definována následovnì:
 Rovnice \ref{SVM-KERNEL-2POLYNOMIAL} popisuje tedy polynomiální jadernou funkci druhého øádu, nicménì v praxi jsou èasto pou¾ívány polynomiální jaderné funkce vy¹¹ích øádù $Q$, obecnì definované jako:
 
 \begin{equation}
-  K(x, z) = (x^T z + c)^Q
+  K(x, z) = (x^T z + c)^Q,
 \end{equation}
 kde $c \geq 0$ urèuje vliv vy¹¹ích a ni¾¹ích øádù polynomu.
 
 Polynomiální jaderné funkce jsou v NLP pomìrnì hodnì pou¾ívané \cite{ACLShort}.
-Pøi pou¾ití jaderné funkce vy¹¹ích øádù, ale mù¾e nastat takzvaný overfitting (pøeuèení), kdy se SVM klasifikátor nauèí na velmi specifické pøíznaky, které nejsou pro korektní klasifikaci smìrodatné, co¾ zpùsobí markantní zhor¹ení schopností SVM klasifikátoru.
+Pøi pou¾ití jaderné funkce vy¹¹ích øádù ale mù¾e nastat takzvaný \emph{overfitting (pøeuèení)}, kdy se SVM klasifikátor nauèí na velmi specifické pøíznaky, které nejsou pro korektní klasifikaci smìrodatné, co¾ zpùsobí markantní zhor¹ení schopností SVM klasifikátoru.
 Z tohoto dùvodu je nejèastìji pou¾ívána polynomiální jaderná funkce 2. a 3. øádu, která není schopna tak dokonale kopírovat tvar kolem pøíznakù.
 
 \subsubsection{Radiální jaderná funkce}
-Radiální jaderná funkce, èasto oznaèovaná jako \emph{RBF jaderná funkce}, nebo \emph{RBF kernel} je dal¹í velmi pou¾ívanou jadernou funkcí, zalo¾enou na radiální bázové funkci \emph{RBF (radial basis function)}
+Radiální jaderná funkce, èasto oznaèovaná jako \emph{RBF jaderná funkce}, nebo \emph{RBF kernel} je dal¹í velmi pou¾ívanou jadernou funkcí, zalo¾enou na radiální bázové funkci \emph{RBF (radial basis function)}.
 Je definována jako:
  
 \begin{equation}
@@ -582,7 +580,7 @@ Existují tøi pøístupy, pomocí kterých se mù¾eme ujistit, ¾e námi vytvoøená jader
 \end{itemize}
 
 \section{Vytvoøení rozhodovací hranice}
-Jak ji¾ bylo vý¹e zmínìno, SVM klasifikátor se pøi uèení sna¾í vytvoøit optimální rozhodovací hranici, tedy hyperplochu, tak, aby dìlila prostor pøíznakù na dva podprostory, kde ka¾dý obsahuje objekty v¾dy pouze z jedné tøídy a v¾dy se sna¾í maximalizovat vzdálenost rozhodovací hranice ode v¹ech bodù v prostoru.
+Jak ji¾ bylo vý¹e zmínìno, SVM klasifikátor se pøi uèení sna¾í vytvoøit optimální rozhodovací hranici, tedy hyperplochu, tak, aby dìlila prostor pøíznakù na dva podprostory, kde ka¾dý obsahuje objekty v¾dy pouze z jedné tøídy a v¾dy se sna¾í maximalizovat vzdálenost rozhodovací hranice ode v¹ech bodù v prostoru (margin).
 
 
 \begin{figure}[H]
@@ -594,16 +592,16 @@ Jak ji¾ bylo vý¹e zmínìno, SVM klasifikátor se pøi uèení sna¾í vytvoøit optimáln
 \end{figure}
 
 
-Nyní definujme maximální ¹íøku (margin) volnìho prostoru mezi rozdìlovací hyperplochou $f$ a nejbli¾¹ími body v prostoru $X$ (viz obrázek \ref{SVM-THEORY-MARGINS}).
+Nyní definujme maximální ¹íøku volného prostoru mezi rozdìlovací hyperplochou $f$ a nejbli¾¹ími body v prostoru $X$ (margin) -- viz obrázek \ref{SVM-THEORY-MARGINS}.
 Maximální ¹íøka je definována jako:
 
 \begin{equation}
   m_X(f) = \frac{1}{||w||}
 \end{equation}
 
-Abychom tedy dostali optimální rozdìlovací hranici s maximální ¹íøkou, budeme muset maximalizovat hodnotu maximální ¹íøky.
+Abychom tedy dostali optimální rozdìlovací hranici s maximální ¹íøkou (marginem), budeme muset maximalizovat hodnotu ¹íøky (marginu).
 Tato operace je ov¹em ekvivalentní s minimalizací $\frac{1}{2}||w||^2$.
-Nalezení specifické diskriminaèní funkce s maximální ¹íøkou je tedy ekvivalentní s následujícím optimalizaèním problémem:
+Nalezení specifické diskriminaèní funkce s maximální ¹íøkou (marginem) je tedy ekvivalentní s následujícím optimalizaèním problémem:
 
 \begin{equation}
 \begin{aligned}
@@ -619,7 +617,7 @@ Podmínka $y_n(w^T x_n + b) \geq 1$ potom zaji¹»uje, ¾e diskriminaèní funkce okla
 
 Nicménì mù¾e nastat problém, ¾e trénovací mno¾ina $X$ nemusí být lineárnì separovatelná.
 Aby byl klasifikátor schopný nauèit se i na takové trénovací mno¾inì, musíme jej upravit tak, aby mohl nekorektnì oklasifikovat nìjaké záznamy z trénovací mno¾iny a tím, i za cenu chyb, diskriminaèní funkci najít.
-Toto opatøení mù¾e nìkdy pomoci nalézt vìt¹í maximální ¹íøku, a tím zlep¹it výsledky klasifikátoru oproti pøedchozí, men¹í maximální ¹íøce.
+Toto opatøení mù¾e nìkdy pomoci nalézt vìt¹í maximální ¹íøku (margin), a tím zlep¹it výsledky klasifikátoru oproti pøedchozí, men¹í maximální ¹íøce (marginu).
 Tuto úpravu udìláme za pomocí takzvané \emph{chybové promìnné (slack variable)} $\xi_i$, kterou odeèteme od pravé strany optimalizaèní podmínky -- tzn. umo¾níme chybu.
 Takto upravený problém nyní vypadá následovnì:
 
@@ -644,7 +642,7 @@ Z tohoto vyplývá, ¾e suma v¹ech chybových promìnných reprezentuje míru chybovost
   X = \{(x_i,y_i)\}^l_{i=1}
 \end{equation}
 
-Abychom byli schopni minimalizovat míru chybovosti (penalizaci za ¹patnou klasifikaci a ¹íøkove (marginové) chyby -- body le¾í uvnitø maximální ¹íøky) vzhledem k maximalizaci maximální ¹íøky, zavedeme konstantu $C > 0$, kterou budeme míru chybovosti pøenásobovat.
+Abychom byli schopni minimalizovat míru chybovosti (penalizaci za ¹patnou klasifikaci a ¹íøkové (marginové) chyby -- pøípad kdy záznamy le¾í uvnitø maximální ¹íøky) vzhledem k maximalizaci ¹íøky (marginu), zavedeme konstantu $C > 0$, kterou budeme míru chybovosti pøenásobovat.
 Tato konstanta se nazývá \emph{konstanta mìkké maximální ¹íøky (soft-margin constant)}.
 Na¹e optimalizaèní úloha tedy s touto konstantou mìkké maximální ¹íøky vypadá následovnì:
 
@@ -670,13 +668,13 @@ Nyní pro vyøe¹ení tohoto optimalizaèního problému pou¾ijeme metodu Lagrangeových
 \end{equation}
 
 
-Skalární souèin $x^T_i x_j$ v maximalizaèní rovnici mù¾eme nahradit libovolnou jadernou funkcí a dosáhnout tím nelineární transformace, a tedy i velké maximální ¹íøky ve vysoce dimenzionálních prostorech pøíznakù. (viz \ref{SVM-THEORY-KERNELS}).
+Skalární souèin $x^T_i x_j$ v maximalizaèní rovnici mù¾eme nahradit libovolnou jadernou funkcí a dosáhnout tím nelineární transformace, a tedy i velké maximální ¹íøky ve vysoce dimenzionálních prostorech pøíznakù (viz \ref{SVM-THEORY-KERNELS}).
 
 Díky vyu¾ití Lagrangeovy funkce má výsledek øe¹ení optimalizaèního problému zajímavé vlastnosti.
 Bylo napøíklad dokázáno, ¾e takto získané øe¹ení je v¾dy globální díky tomu, ¾e formulace problému je konvexní \cite{Burges1988}.
 
-Zajímavou vlastností support vector machines je, ¾e ne v¹echny vektory z tréninkové mno¾iny se podílejí na výsledném øe¹ení.
-Pou¾ijme rovnici pro výpoèet váhového vektoru $w$ získaného derivací pøi øe¹ení Lagrangeovy funkce, a to:
+Zajímavou vlastností klasifikátoru support vector machines je, ¾e ne v¹echny vektory z tréninkové mno¾iny se podílejí na výsledném øe¹ení.
+Pou¾ijme rovnici pro výpoèet váhového vektoru $w$, získaného derivací pøi øe¹ení Lagrangeovy funkce, a to:
 
 \begin{equation}
   w = \sum^{n}_{i=1}y_i \alpha_i x_i
@@ -684,9 +682,123 @@ Pou¾ijme rovnici pro výpoèet váhového vektoru $w$ získaného derivací pøi øe¹ení 
 
 V¹echny vektory $x_i$, pro které tedy platí, ¾e  $\alpha_i > 0$, jsou vektory, které le¾í na pomezí maximální ¹íøky, uvnitø maximální ¹íøky, nebo jsou ¹patnì klasifikovány.
 Tyto vektory jsou nazývány \emph{support vektory (support vectors)}.
-Vektory, které v¹ak mají hodnotu $\alpha_i \leq 0$ nejsou vùbec do øe¹ení zahrnuty. 
+Vektory, které v¹ak mají hodnotu $\alpha_i \leq 0$, nejsou vùbec do øe¹ení zahrnuty. 
 Tudí¾ tyto vektory by mohly být zcela odstranìny z tréninkové sady a nemìlo by to ¾ádný vliv na výsledné øe¹ení.
 Díky této vlastnosti jsou SVM ménì náchylné k overfittingu a také klasifikaèní model, který tyto vektory tvoøí, je díky tomu velmi malý a rychlý.
+
+
+\section{Výbìr volných parametrù klasifikátoru a jaderných funkcí}
+Vhodný výbìr volných parametrù klasifikátoru a jaderných funkcí je velmi dùle¾itým faktorem pøi pou¾ívání klasifikátoru zalo¾eného na metodì SVM.
+Nejsou-li vybrány vhodné parametry, mù¾e klasifikátor dosahovat vskutku výraznì hor¹ích výsledkù, ne¾ jsou-li vybrány tyto parametry optimálnì.
+Obecnì je tøeba optimálnì urèit parametr $C$ (míru chybovosti vzhledem k maximalizaci ¹íøky (marginu) -- viz \ref{SVM_C}) a parametr pou¾ité jaderné funkce (urèující vlastnosti pou¾ité jaderné funkce -- viz \ref{SVM-KERNELS}), jen¾ budeme nadále nazývat $\gamma$.
+
+Nastává ov¹em problém, jakým zpùsobem tyto volné parametry volit tak, aby byly výsledky klasifikace co nejpøesnìj¹í.
+Ve své knize \uv{The Nature of Statistical Learning Theory} \cite{vapnik2000nature} Vladimir Vapnik doporuèil nastavovat volné parametry v závislosti na znalosti mno¾iny trénovacích dat.
+
+Jestli¾e takovými znalostmi o datech nedisponujeme, mù¾eme vyu¾ít velmi èasto pou¾ívanou metodu hledání hodnot optimálních parametrù v møí¾ce.
+Tato metoda sice funguje, ale aby byla pøesná, je tøeba ji poèítat pro dostateènou hustotu bodù v møí¾ce, co¾ mù¾e být velmi výpoèetnì nároèné.
+
+V této práci byla pro hledání optimálních metod pou¾ita metoda \emph{simulovaného ¾íhání (simulated annealing}).
+Simulované ¾íhání je pravdìpodobnostní optimalizaèní metoda pro nalezení globální minimální nebo maximální energie, odpovídající souøadnicím ve stavovém prostoru.
+Tato metoda je inspirovaná fyzikou procesu ¾íhání oceli, pøi kterém se materiál pøedehøeje na urèitou teplotu a postupnì se nechá ochlazovat, èím¾ se odstraní napìtí v materiálu, který se takto homogenizuje.
+U optimalizaèního procesu simulovaného ¾íhání se nastaví poèáteèní souøadnice ve stavovém prostoru a poèáteèní teplota, která se postupnì po krocích sni¾uje a¾ do úplného vychladnutí.
+
+Pøi ka¾dém kroku se vygenerují náhodné souøadnice ve stavovém prostoru (stav) a spoèítá se k nim odpovídající energie.
+Jestli¾e je tato energie ni¾¹í, ne¾ energie pøedchozího stavu, pak je tento stav pou¾it pro dal¹í iteraci.
+Pokud v¹ak energie ni¾¹í nebyla, spoèítá se pravdìpodobnost skoku do daného stavu s vy¹¹í energií.
+Tato pravdìpodobnost závisí na teplotì -- èím vy¹¹í teplota, tím více umo¾òuje algoritmus skoèit do stavu s vy¹¹ími hodnotami energie.
+Tímto se významnì eliminuje riziko uváznutí v lokálním minimu.
+Ekvivalentnì lze algoritmus pou¾ít pro maximalizaci energie.
+
+\subsection{Popis algoritmu simulovaného ¾íhání}
+Pro co nejjasnìj¹í pøedvedení pou¾itého algoritmu simulovaného ¾íhání pøedstavíme jeho pseudokód:
+
+\begin{algorithm}
+\caption{Pseudokód algoritmu simulovaného ¾íhání -- minimalizace energie}
+\label{IMP-ANNEALING-PSEUDOCODE}
+\begin{algorithmic}[1]
+\STATE $state \leftarrow STATE0$
+\STATE $energy \leftarrow calculate\_energy(s)$
+\STATE $state\_best \leftarrow state$, $energy\_best \leftarrow energy$
+\STATE $temp \leftarrow INIT\_TEMP$
+\WHILE{$temp > STOP\_TEMP$}
+	\STATE $temp \leftarrow temp \cdot COOLING\_FACTOR$
+	\STATE $state\_new \leftarrow generate\_neighbors(state)$
+	\STATE $energy\_new \leftarrow calculate\_energy(state\_new)$
+	\IF{$P(energy, energy\_new, temp) > random()$}
+		 \STATE $state \leftarrow state\_new$, $energy \leftarrow energy\_new$
+	\ENDIF
+	\IF{$energy\_new < energy\_best$}
+		 \STATE $state\_best \leftarrow state\_new$, $energy\_best \leftarrow energy\_new$
+	\ENDIF
+\ENDWHILE
+\RETURN $state\_best$
+\end{algorithmic}
+\end{algorithm}
+
+Promìnné $STATE0$ -- poèáteèní stav (za stav budeme nadále pova¾ovat bod v prostoru souøadnic volných parametrù SVM klasifikátoru), $INIT\_TEMP$ -- poèáteèní teplota, $STOP\_TEMP$ -- koneèná teplota a $COOLING\_FACTOR$ -- faktor chládnutí jsou parametry, které jsou pøi spu¹tìní algoritmu simulovaného ¾íhání zadány.
+Funkce $calculate\_energy(stav)$ potom poèítá energii stavu $stav$ a funkce $generate\_neighbor(stav)$ vygeneruje mo¾ný sousední stav ke stavu $stav$.
+V pseudokódu je také pou¾ita funkce $random()$, která generuje náhodná èísla v rozmezí $<0,1>$.
+
+Na následujících øádcích se podrobnìji podíváme na nìkteré zajímavé souèásti tohoto algoritmu.
+
+
+\subsubsection{Výpoèet energie stavu}
+Abychom byli schopni najít minimální energii systému v souøadnicích, musíme být schopni vypoèítat energii libovolného vygenerovaného stavu.
+Pro tuto optimalizaci volných parametrù klasifikátoru SVM jsme vycházeli ze dvou po¾adavkù, které na SVM klasifikátor máme, a sice:
+
+\begin{itemize}
+\item sna¾íme se maximalizovat pøesnost klasifikátoru
+\item sna¾íme se minimalizovat poèet support vektorù klasifikátoru.
+\end{itemize}
+
+Výsledná energie potom bude záviset na míøe naplnìní tìchto dvou vý¹e zmínìných po¾adavkù.
+
+Vzhledem k tomu, ¾e implementovaná metoda simulovaného ¾íhání je minimalizaèní, musíme pøevést reprezentaci tìchto po¾adavkù tak, aby vytvoøily metriku umo¾òující vyu¾ití v procesu minimalizace.
+
+V pøípadì prvního po¾adavku (snaha o maximalizaci pøesnosti klasifikátoru), je zøejmé, ¾e maximalizaci je tøeba pøevést na minimalizaci.
+Místo o maximalizaci pøesnosti klasifikátoru tedy usilujeme o minimalizaci chybovosti klasifikátoru.
+Takto tedy dostaneme vzorec pro výpoèet energie pøesnosti $E_p$ klasifikátoru:
+
+\begin{equation}
+E_p = 1 - (\frac{spravne\_klasifikovane\_vstupy}{vsechny\_vstupy}), \hspace{5em} E_p \in <0,1>
+\end{equation}
+
+Pomocí tohoto vzorce vypoèteme energii chybovosti klasifikátoru, kterou se budeme sna¾it minimalizovat.
+
+Pokud jde o druhý po¾adavek (snaha o minimalizaci poètu support vektorù klasifikátoru), tento po¾adavek ji¾ má minimalizaèní charakter, a proto jej nemusíme nijak pøevádìt.
+Pro výpoèet energie tototo po¾adavku $E_{SV}$ dostaneme následující vzorec:
+
+\begin{equation}
+E_{SV} = \frac{pocet\_pouzitych\_SV}{vsechny\_SV}, \hspace{5em} E_{SV} \in <0,1>
+\end{equation}
+
+Výpoèet celkové energie $E$ stavu se tudí¾ bude rovnat souètu energie pøesnosti a energie support vektorù, tedy:
+
+\begin{equation}
+E =  E_p + E_{SV} , \hspace{5em} E \in <0,2>
+\end{equation}
+
+\subsubsection{Generování mo¾ného sousedního stavu}
+Pro generování mo¾ného sousedního stavu byla pou¾ita metoda navrhnutá v èlánku \uv{Parameter determination of support vector machine and feature selection using simulated annealing approach} \cite{annealing}.
+Tato metoda je zalo¾ena na vygenerování smìrového vektoru s poèátkem v aktuálním stavu.
+Na tomto vektoru je pak náhodnì zvolen mo¾ný sousední stav. 
+
+\subsubsection{Pravdìpodobnost pøijetí nového stavu}
+Pøi vy¹¹ích teplotách na poèátku bìhu algoritmu je mo¾né, ¾e algoritmus simulovaného ¾íhání pou¾ije jako svùj následující stav stav, který má vy¹¹í energii, ne¾ stav pùvodní.
+Tímto postupem se zamezí uváznutí v lokálních minimech a umo¾ní se tak nalezení globálního minima.
+S postupným sni¾ováním teploty se pravdìpodobnost skoku na takovéto stavy s vy¹¹í energií sni¾uje.
+
+Pro výpoèet této pravdìpodobnosti je pou¾it následující vzorec:
+
+\begin{equation}
+P_{skoku} = e^{\frac{\Delta E}{T}},
+\end{equation}
+
+kde $\Delta E$ je rozdíl mezi energií sousedního stavu a pùvodního stavu a $T$ je aktuální teplota v iteraci simulovaného ¾íhání.
+Pro urèení, zda se má do nového stavu skoèit èi ne, je vygenerováno náhodné èíslo $X \in <0,1>$.
+Pokud je $P_{skoku} > X$, pak je pro dal¹í iteraci pou¾it sousední stav jako stav základní.
+
 
 
 \chapter{Výbìr vhodných pøíznakù} \label{TOKENIZACE}
@@ -695,30 +807,31 @@ Následující kapitoly jsou tedy na rozdíl od pøedchozích kapitol zamìøeny praktiè
 
 V této kapitole popí¹eme tvorbou pøíznakù, které klasifikátory pou¾ívají pro trénovaní a klasifikaci textu.
 
-Pro potøeby implementovaného klasifikátoru rozdìlujeme pøíznaky na dvì skupiny:
+Pro potøeby implementovaných klasifikátorù rozdìlujeme pøíznaky na dvì skupiny:
 \begin{itemize}
-	\item Speciální pøíznaky -- v textu se mohou nacházet skryté znaky, které vìt¹inou nejsou klasifikátory bìhem klasifikace schopny zachytit a které mohou výrazným podílem napomoct pøesnosti klasifikace.
-Ka¾dý druh klasifikovaného textu ale mù¾e mít citlivost k rùzným znakùm zcela jinou.
-Proto je nutné dbát na to, jak vybrat optimální znaky pro daný vstupní text a pou¾itou klasifikaèní metodu.
+	\item Speciální pøíznaky -- v textu se mohou nacházet skryté znaky, které vìt¹inou nejsou klasifikátory bìhem klasifikace schopny zachytit a které mohou výrazným podílem napomoci pøesnosti klasifikace.
+Ka¾dý druh klasifikovaného textu ale mù¾e mít citlivost k rùzným pøíznakùm zcela jinou.
+Proto je nutné dbát na to, jak vybrat optimální pøíznaky pro daný vstupní text a pou¾itou klasifikaèní metodu.
 	\item Textové pøíznaky -- mimo vý¹e zmínìných speciálních pøíznakù se v textu nacházejí pøíznaky jednotlivých slov, které jsou pro klasifikaci nejdùle¾itìj¹ími nositeli informace.
-Proto také velmi zále¾í na výbìru, popøípadì úpravì, vstupních slov a zpùsobu jejich zpracování.
+Proto také velmi zále¾í na výbìru, popøípadì úpravì, vstupních slov a zpùsobu jejich pøevodu na textové pøíznaky.
 \end{itemize}
 
 Nyní pøistoupíme k detailnìj¹ímu popisu vý¹e popsaných skupin pøíznakù tak, jak je k nim pøistupováno v praktické èásti této práce.
-Následnì popí¹eme práci naivního Bayesovského klasifikátoru a klasifikátoru SVM s vytvoøenými pøíznaky.
+Následnì popí¹eme práci Bayesovského klasifikátoru a klasifikátoru SVM s vytvoøenými pøíznaky.
 
-\section{Speciální pøíznaky v textu} \label{TOKENIZACE-SPEC}
+\section{Speciální pøíznaky} \label{TOKENIZACE-SPEC}
 V této èásti práce budeme popisovat jednotlivé druhy speciálních pøíznakù, které jsou z textu extrahovány a které jsou následnì pøedávány klasifikátorùm, je¾ s nimi dále pracují.
-Tyto speciální pøíznaky jsou rovnì¾ implementovány ve programu vytvoøeném jako souèást této práce.
+Tyto speciální pøíznaky jsou rovnì¾ implementovány v programu vytvoøeném jako souèást této práce.
 
-Speciální pøíznaky v textu jsou mnohdy v textu skryté a klasickými pøístupy pro získávání textových pøíznakù z textu (=tokenizací) je èasto nejsme schopni z textu získat.
-Tyto speciální pøíznaky jsou nositeli dùle¾ité informace proto, ¾e mohou z textu napøíklad urèovat náladu pisatele, zobecòovat informace obsa¾né v textu atd., a tím umo¾nit zpøesnìní klasifikace.
+Speciální pøíznaky jsou mnohdy v textu skryté a klasickými pøístupy pro získávání textových pøíznakù z textu (=tokenizací) je èasto nejsme schopni získat.
+Tyto speciální pøíznaky jsou nositeli dùle¾itých informací proto, ¾e mohou z textu napøíklad urèovat náladu pisatele, zobecòovat informace obsa¾né v textu atd., a tím umo¾nit zpøesnìní klasifikace.
 Vzhledem k tomu, ¾e takovýchto speciálních pøíznakù je jistì mo¾né definovat velké mno¾ství, je nereálné je popsat a implementovat v¹echny.
 V implementovaném programu proto bylo zvoleno nìkolik typù tìchto speciálních pøíznakù, které byly implementovány a budou zde tedy popsány.
 
-V následujícím popisu pøíznaky dìlíme do skupin podle typu informace, kterou se pomocí nich sna¾íme z textu z
-ískat.
-Tyto skupiny jsou potom dìleny na typy pøíznakù ze skupiny, které popisují jednotlivé varianty implementace této varianty, které jsou v programu vytvoøeném pro tuto práci pou¾ity.
+V následujícím popisu pøíznaky dìlíme do skupin podle typu informace, kterou se pomocí nich sna¾íme z textu získat.
+Tyto skupiny jsou potom dále dìleny na typy pøíznakù, popisující jednotlivé varianty pøíznakù v dané skupinì .
+
+V dodatku \ref{regexp} této práce jsou podrobnì popsány regulární výrazy, jejich¾ pomocí jsou speciální pøíznaky z textu získávány.
 
 \subsection{URL}
 Skupina pøíznakù s názvem URL je skupinou, hledající v klasifikovaném textu internetové odkazy (\url{http://adresa.com}, \url{ftp://adresa.cz}, \url{adresa.cz/odkaz.html}, atd.) a sna¾ící se z tìchto odkazù vytvoøit pøíznaky co nejvhodnìj¹í pro klasifikaci.
@@ -729,22 +842,23 @@ Skupina URL má v praktické èásti práce následující mo¾né varianty speciálních pø
   \item \emph{Celé URL} -- celé URL nalezené v textu je bráno jako pøíznak.
   \item \emph{Doména URL} -- doména daného URL je brána jako pøíznak (napø. \url{http://healthland.time.com/2013/04/02/.../index.html} $\longrightarrow$ \url{time.com}).
   \item \emph{Existence URL ANO/NE} -- existuje-li v textu URL, pak se vytvoøí pro daný text pøíznak definující, ¾e se v textu URL vyskytovalo.
-  Pokud se v textu ale URL nenachází vytvoøí se namísto pøíznaku \emph{ANO} pøíznak \emph{NE}, definující neexistenci URL v textu.
+  Pokud se v textu URL nenachází,
+   vytvoøí se namísto pøíznaku \emph{ANO} pøíznak \emph{NE}, definující neexistenci URL v textu.
   \item \emph{Existence URL ANO} -- tento typ pøíznaku URL je variací na pøedchozí pøíznak \emph{Existence URL ANO/NE}.
   Pøíznak se vytvoøí pouze tehdy, pokud se v textu URL nachází.
   Jestli¾e se v textu URL nenachází, pøíznak vytvoøen není. 
 \end{itemize}
 
 \subsection{E-mailové adresy}
-Skupina pøíznakù E-mailové adresy sdru¾uje dohromady varianty pøíznakù, pracující s nalezenými e-mailovými adresami v textu.
+Skupina pøíznakù e-mailové adresy sdru¾uje dohromady varianty pøíznakù, pracující s nalezenými e-mailovými adresami v textu.
 
 Mo¾né varianty pøíznakù v této skupinì jsou:
 \begin{itemize}
   \item \emph{Celý e-mail} -- celý e-mail nalezený v textu je brán jako pøíznak.
   \item \emph{Existence e-mailu ANO/NE} -- pøíznak definuje, zda se v textu nachází nìjaká e-mailová adresa.
   Pokud ano, je vytvoøen pøíznak \emph{ANO} a pokud ne, je vytvoøen pøíznak \emph{NE}.
-  \item \emph{Existence emailu ANO} -- nachází-li se v textu e-mailová adresa, vytvoøí se pøíznak definující existenci této e-mailové adresy.
-  Na rozdíl od pøedchozí varianty \emph{Existence e-mailu ANO/NE} se nevytváøí pøíznak NE v pøípadì nenalezení e-mailové adresy v textu.
+  \item \emph{Existence e-mailu ANO} -- nachází-li se v textu e-mailová adresa, vytvoøí se pøíznak definující existenci této e-mailové adresy.
+  Na rozdíl od pøedchozí varianty \emph{Existence e-mailu ANO/NE} se nevytváøí pøíznak \emph{NE} v pøípadì nenalezení e-mailové adresy v textu.
 \end{itemize}
 
 \subsection{Emotikony}
@@ -754,18 +868,18 @@ Tuto skupinu pøíznakù pro potøeby na¹í implementace dìlíme na následující typy:
 \begin{itemize}
   \item \emph{Existence jednotlivých emotikonù} -- pro ka¾dý nalezený emotikon je vytvoøen pøíznak.
   \item \emph{Existence emotikonù obecnì ANO/NE} -- jestli¾e se v textu nachází nìjaké emotikony, je vytvoøen pøíznak \emph{ANO}, jestli¾e se nenacházejí, je vytvoøen pøíznak \emph{NE}.
-  \item \emph{Existence emotikonù obecnì ANO} -- obdobnì jako \emph{Existence emotikonù obecnì ANO/NE}, pouze s tím rozdílem, ¾e jestli¾e se v textu nenacházejí ¾ádné emotikony, ¾ádný pøíznak se nevytvoøí.
+  \item \emph{Existence emotikonù obecnì ANO} -- obdobnì jako \emph{Existence emotikonù obecnì ANO/NE}, pouze s tím rozdílem, ¾e jestli¾e se v textu nenacházejí ¾ádné emotikony, tento pøíznak se nevytvoøí.
   \item \emph{Nálada emotikonù} -- v textu jsou vyhledávány emotikony a zji¹»uje se jejich nálada. 
   Typy emotikonù jsou rozdìleny do tøech tøíd -- smutné(":-(", ":'(", \ldots), veselé(":-)", ":-P", \ldots ) a ostatní ("o.O", ":-O", \ldots).
   Jestli¾e je v textu nalezen emotikon z vý¹e zmínìných tøíd, pak je vytvoøen odpovídající pøíznak \emph{SAD}, \emph{HAPPY}, nebo \emph{OTHER}.
-  Nachází-li se v textu více typù emotikonù, je samozøejmì vytvoøeno více odpovídajících pøíznakù (tzn. napøíklad pokud se v textu nachází následující mno¾ina emotikonù: ":-)", ":-P", ":(", jsou pro daný text vytvoøeny dva pøíznaky \emph{HAPPY} a \emph{SAD}).
+  Nachází-li se v textu více typù emotikonù, je samozøejmì vytvoøeno více odpovídajících pøíznakù (tzn. napøíklad pokud se v textu nachází následující mno¾ina emotikonù: ":-)", ":-P", ":(", jsou pro daný text vytvoøeny dva pøíznaky -- \emph{HAPPY} a \emph{SAD}).
 \end{itemize}
 
 \subsection{Tagy}
 Takzvané tagy jsou textové znaèky (klíèová slova), které autoøi pøipisují k textu, aby daný text pøiøadili k nìjakému tématu a umo¾nili tak ostatním u¾ivatelùm snáze nalézt pøíspìvky k jimi hledanému tématu.
 Tyto tagy bývají ve tvaru \#TAG (napø: "\#influenza", "\#sick", \ldots).
 
-V této práci rozli¹ujeme v pøípadì této skupiny následující typy:
+V této práci rozli¹ujeme v pøípadì této skupiny pøíznakù následující typy:
 \begin{itemize}
   \item \emph{Celý tag} -- celý tag nalezený v textu je pou¾it jako pøíznak pro klasifikaci.
   \item \emph{Existence tagù ANO/NE} -- jestli¾e se v textu nacházejí nìjaké tagy, je vytvoøen pøíznak \emph{ANO}, jestli¾e se nenacházejí, je vytvoøen pøíznak \emph{NE}.
@@ -778,17 +892,17 @@ Tagy u¾ivatelù jsou pou¾ívané ve formátu @JMÉNO\_U®IVATELE (napø. @Rick\_Astley,
 
 V této práci rozli¹ujeme následující typy tagù u¾ivatelù:
 \begin{itemize}
-  \item \emph{Celý tag} -- celý tag nalezený v textu je pou¾it jako pøíznak pro klasifikaci.
-  \item \emph{Existence tagù ANO/NE} -- jestli¾e se v textu nacházejí nìjaké tagy u¾ivatelù, je vytvoøen pøíznak \emph{ANO}, jestli¾e se nenacházejí, je vytvoøen pøíznak \emph{NE}.
-  \item \emph{Existence tagù ANO} -- obdobnì jako v pøípadì typu \emph{Existence tagù ANO/NE}, ale pokud ¾ádný tag nebyl nalezen, pøíznak NE není vytvoøen.
+  \item \emph{Celý tag u¾ivatelù} -- celý tag nalezený v textu je pou¾it jako pøíznak pro klasifikaci.
+  \item \emph{Existence tagù u¾ivatelù ANO/NE} -- jestli¾e se v textu nacházejí nìjaké tagy u¾ivatelù, je vytvoøen pøíznak \emph{ANO}, jestli¾e se nenacházejí, je vytvoøen pøíznak \emph{NE}.
+  \item \emph{Existence tagù u¾ivatelù ANO} -- obdobnì jako v pøípadì typu \emph{Existence tagù u¾ivatelù ANO/NE}, ale pokud ¾ádný tag u¾ivatelù nebyl nalezen, pøíznak NE není vytvoøen.
 \end{itemize}
 
 \subsection{Vìty}
 V pøípadì této skupiny se jedná pouze o jediný typ pøíznaku.
-V celém vstupním textu se spoèítá poèet napsaných vìt, ketrý je následnì pou¾it jako pøíznak pro klasifikaci.
+V celém vstupním textu se spoèítá poèet napsaných vìt, který je následnì pou¾it jako pøíznak pro klasifikaci.
 
 \subsection{Èasy}
-V textu se velmi èasto nacházejí rùzné èasové údaje, které by mohly velkou mìrou pøispìt lep¹ím výsledkùm na¹eho klasifikátoru.
+V textu se velmi èasto nacházejí rùzné èasové údaje, které by mohly velkou mìrou pøispìt k lep¹ím výsledkùm klasifikace.
 Proto byla vytvoøena skupina pøíznakù nazvaná \emph{Èasy}, která vytváøí pøíznaky z nalezených èasových informací v textu.
 
 Obsahuje tyto typy:
@@ -808,16 +922,16 @@ Obsahuje tyto mo¾né typy pøíznakù:
   \item \emph{Celé datum} -- jako pøíznak je v pøípadì tohoto typu pøíznakù pou¾ito datum nalezené v textu.
   \item \emph{Datum ve formátu DMY} --v pøípadì tohoto typu je datum nalezené v textu pøevedeno do formátu DMY a v tomto formátu je pou¾ito jako pøíznak (tzn. DMY).
   \item \emph{Datum ve formátu MY} -- podobnì jako v pøedchozím typu je datum pøevedeno do formátu DMY, ale jako pøíznak jsou pou¾ity pouze informace o mìsíci a roku (tzn. MY).
-  \item \emph{Datum ve formátu Y} -- opìt podobné jako \emph{Datum ve formátu DMY} ale pro vytvoøení pøíznaku je pou¾it pouze rok z data nalezeného v textu (tzn. Y).
+  \item \emph{Datum ve formátu Y} -- opìt podobné jako \emph{Datum ve formátu DMY}, ale pro vytvoøení pøíznaku je pou¾it pouze rok z data nalezeného v textu (tzn. Y).
 \end{itemize}
 
 \section{Textové pøíznaky} \label{Textove_tokeny}
 Pro získávání textových pøíznakù z textu obecnì existuje velmi mnoho pøístupù a zpùsobù, zde v¹ak popí¹eme pouze dva --  první budeme nazývat základní pøístup k získávání textových pøíznakù a druhý budeme nazývat alternativní pøístup k získávání textových pøíznakù z textu.
 Oba tyto pøístupy je mo¾né je¹tì roz¹íøit o vyu¾ití stematizátorù (pøevedení textových pøíznakù na koøeny).
-Pro pøevedení slov do obecnìj¹ího tvaru lze kromì stematizace pou¾ítaké takzvané lematizace, která na rozdíl od stematizace nepøevede slova na koøeny, ale do jejich základního tvaru. 
-Pro tuto práci v¹ak byla zvolena metoda stematizace.
+Pro pøevedení slov do obecnìj¹ího tvaru lze kromì \emph{stematizace} pou¾ítaké takzvané \emph{lematizace}, která na rozdíl od stematizace nepøevede slova na koøeny, ale do jejich základního tvaru. 
+Pro potøeby této práce v¹ak byla zvolena metoda stematizace.
 
-\subsubsection{Základní pøístup k získávání texových pøíznakù}
+\subsection{Základní pøístup k získávání textových pøíznakù}
 Základní pøístup pro získávání textových pøíznakù dìlí vstupní vìtu pouze na jednotlivá slova, která jsou posléze pou¾ita jako textové pøíznaky. 
 
 To znamená:
@@ -827,46 +941,43 @@ Takovýto text se rozdìlí na slova, tzn. vznikne následující seznam slov:
 
 $['Damned', 'headache', 'I', 'should', 'be', 'sleeping']$.
 
-Takto vytvoøená slova jsou tedy textové pøíznaky, s nimi¾ se klasifikátor uèí, nebo které klasifikuje.
+Takto vytvoøená slova jsou tedy textové pøíznaky, s nimi¾ se klasifikátor uèí nebo které klasifikuje.
 
-\subsubsection{Základní pøístup se stematizací}
+\subsection{Základní pøístup s vyu¾itím stematizace}
 Tento pøístup je velmi podobný pøedchozímu.
 Li¹í se od nìj pouze tím, ¾e slova, která jsou vytvoøena rozdìlením pomocí stematizaèního algoritmu pøevede na koøeny (=stematizace).
 Tímto krokem se sní¾í poèet slov ve slovníku klasifikátoru.
 To zpùsobí, ¾e u Bayesovského klasifikátoru dojde k výraznému zmen¹ení velikosti slovníku vytvoøeného pøi uèení a u klasifikátoru SVM se sní¾í poèet dimenzí pøíznakù a zjednodu¹í se tak nalezení optimální nadroviny.
-
 To znamená:
 
 Mìjme vstupní text \textit{'Damned headache. I have to sleep.'}.
 Takovýto text se rozdìlí na slova, tzn. vznikne následující seznam slov:
 
 $['Damned', 'headache', 'I', 'should', 'be', 'sleeping']$.
-
 Nyní v¹echna tato slova pøevedeme na tvar koøene (stematizace), èím¾ získáme seznam následujících slov:
-
 $['Damn', 'headache', 'I', 'should', 'be', 'sleep']$.
 
 Takto vytvoøené koøeny slov se ji¾ pou¾ijí jako textové pøíznaky pro uèení klasifikátorù, a nebo mù¾e být vstupní text rozdìlený na tyto textové pøíznaky klasifikátory klasifikován do daných tøíd.
 
 
-\subsubsection{Alternativní pøístup k získávání texových pøíznakù}
-Pøi vyu¾ití základního pøístupu k získávání texových pøíznakù je problémem skuteènost, ¾e vytvoøené pøíznaky jsou zcela samostatné bloky, které se pou¾ité klasifikátor (a» u¾ Bayesovský klasifikátor, nebo klasifikátor SVM), uèí ani¾ by byly schopny z tìchto textových pøíznakù urèit kontext.
-V¾dy» jak bylo ji¾ bylo vý¹e zmínìno, Bayesovský klasifikátor je oznaèován jako naivní právì proto, ¾e nebere v potaz závislosti jednotlivých textových pøíznakù na sobì (co¾ vychází z odvození rovnice \ref{equation_used} pou¾ívané pro klasifikaci -- viz. \ref{SF-BAYES-MAT-bayes_theorem-deriv}).
-Proto jsem se sna¾il tuto nevýhodu kompenzovat tím, ¾e jsem pou¾il alternativní pøístup k získávání texových pøíznakù zachovávající nejbli¾¹í kontext textových pøíznakù.
-Ten na rozdíl od základního pøístupu k získávání textových tokenù nevytváøí pøíznaky pouze z jednotlivých slov, ale také z $N$ za sebou jdoucích slov, èím¾ bere v potaz jejich kontext ve vìtì.
-Nevýhodou tohoto pøístupu je, ¾e pro velké uèící mno¾iny výraznì roste velikost slovníku u Bayesovského klasifikátoru a u SVM klasifikátoru se zvìt¹uje poèet dimenzí pøíznakù, co¾ vede k obtí¾nìj¹ímu nalezení optimální dìlící nadroviny.
-Tato vlastnost ale opìt mù¾e být alespoò èásteènì kompenzována stematizací jednotlivých slov, a tím i sní¾ením celkového poètu rùzných textových pøíznaku.
-Uka¾me si alternativní pøístup k získávání texových pøíznakù na pøíkladu:
+\subsection{Alternativní pøístup k získávání textových pøíznakù}
+Pøi vyu¾ití základního pøístupu k získávání texových pøíznakù je problémem skuteènost, ¾e vytvoøené pøíznaky jsou zcela samostatné bloky, které se pou¾ité klasifikátory (a» u¾ Bayesovský klasifikátor, nebo klasifikátor SVM), uèí ani¾ by byly schopny z tìchto textových pøíznakù urèit kontext.
+Bayesovský klasifikátor nebere v potaz závislosti jednotlivých textových pøíznakù na sobì (co¾ vychází z odvození rovnice \ref{equation_used} pou¾ívané pro klasifikaci -- viz. \ref{SF-BAYES-MAT-bayes_theorem-deriv}), proto nìkdy bývá oznaèován jako naivní.
+Tuto nevýhodu jsme se sna¾ili kompenzovat tím, ¾e jsem pou¾ili alternativní pøístup k získávání textových pøíznakù, zachovávající nejbli¾¹í kontext textových pøíznakù.
+Ten na rozdíl od základního pøístupu k získávání textových pøíznakù nevytváøí pøíznaky pouze z jednotlivých slov, ale také z $n$ za sebou jdoucích slov, èím¾ bere v potaz jejich kontext ve vìtì.
+Nevýhodou tohoto pøístupu je, ¾e pro velké uèící mno¾iny výraznì roste velikost slovníku u Bayesovského klasifikátoru a u SVM klasifikátoru se zvìt¹uje poèet dimenzí pøíznakù, co¾ vede k obtí¾nìj¹ímu nalezení optimální dìlící nadroviny a mù¾e vést i k overfittingu.
+Tato vlastnost ale opìt mù¾e být alespoò èásteènì kompenzována stematizací jednotlivých slov, a tím i sní¾ením celkového poètu rùzných textových pøíznakù.
+Uka¾me si alternativní pøístup k získávání textových pøíznakù na pøíkladu:
 
-Mìjme opìt zprávu \textit{'Damned headache. I have to sleep.'}.
-Prvním krokem pøi zpracování této zprávy je její rozdìlení na vìty, proto¾e kontext za sebou jdoucích slov funguje v¾dy v rámci jedné vìty.
-Pro rozdìlení vstupního textu na jednotlivé vìty knihovna NLTK (viz. \ref{IMP-NLTK}).
+Mìjme opìt text \textit{'Damned headache. I should be sleeping.'}.
+Prvním krokem pøi zpracování tohoto textu je jeho rozdìlení na vìty, proto¾e kontext za sebou jdoucích slov funguje v¾dy v rámci jedné vìty.
+Pro rozdìlení vstupního textu na jednotlivé vìty vyu¾íváme knihovnu NLTK (viz. \ref{IMP-NLTK}).
 Vstupní text je nyní v tomto tvaru
 $$['Damned\ headache.', 'I\ should\ be\ sleeping']$$\\
-Na rozdíl od základního pøístupu, který vytváøí textové pøíznaky pouze z jednotlivých slov, vytváøíme textové pøíznaky z libovolných za sebou jdoucích $N$-tic o maximální délce $N$ v¾dy tak, ¾e $N$-tice se skládají v¾dy jen ze slov dané vìty.
-Hodnota $N$ je nastavena na optimální hodnotu urèenou experimentálnì za pomocí testù tak, aby stále je¹tì vylep¹ovala výslednou pøesnost klasifikátoru a pøitom aby velikost slovníku nepøesáhla pøijatelnou mez.
-Pøed tím, ne¾ se samozøejmì ze slov vytvoøí textové pøíznaky, pøevedou se v¹echna slova na koøeny.
-Textové pøíznaky pro vstupní text a $N = 3$ budou tedy pro první vìtu vypadat následovnì:
+Na rozdíl od základního pøístupu, který vytváøí textové pøíznaky pouze z jednotlivých slov, vytváøíme textové pøíznaky z libovolných za sebou jdoucích $n$-tic o maximální délce $n$ v¾dy tak, ¾e $n$-tice se skládají v¾dy jen ze slov dané vìty.
+Hodnota $n$ je nastavena na optimální hodnotu urèenou experimentálnì za pomocí testù tak, aby stále je¹tì vylep¹ovala výslednou pøesnost klasifikátoru a pøitom aby velikost slovníku nepøesáhla pøijatelnou mez.
+Pøed tím, ne¾ se ze slov vytvoøí textové pøíznaky, pøevedou se v¹echna slova na koøeny.
+Textové pøíznaky pro vstupní text a $n = 3$ budou tedy pro první vìtu vypadat následovnì:
 $$['Damn', 'headache', ('Damn', 'headache')]$$
 a pro druhou vìtu:
 $$['I', 'should', 'be', 'sleep', ['I', 'should'], ['should', 'be'], ['be', 'sleep'], ['I', 'should', 'be'], ['should', 'be', 'sleep']]$$
@@ -874,7 +985,7 @@ S tìmito textovými pøíznaky pak klasifikátor pracuje stejnì jako s jakýmikoliv j
 
 \section{Pøíznaky v Bayesovském klasifikátoru}
 
-Bayesovský klasifikátor bere postupnì v¹echny textové a speciální pøíznaky z trénovací mno¾iny a v závisosti na manuálnì pøiøazených tøídách trénovacích dat poèítá pravdìpodobnosti s jakými dané textové a speciální pøíznaky nále¾ejí do tøídy spamu.
+Bayesovský klasifikátor bere postupnì v¹echny textové a speciální pøíznaky z trénovací mno¾iny a v závislosti na manuálnì pøiøazených tøídách trénovacích dat poèítá pravdìpodobnosti s jakými dané textové a speciální pøíznaky nále¾ejí do negativní tøídy.
 Takto vypoèítané pravdìpodobnosti pro jednotlivé textové a speciální pøíznaky si ukládá do svého slovníku, pomocí nìho¾ následnì klasifikuje nové vstupní texty.
 
 V Bayesovském klasifikátoru je velmi dùle¾ité vybrat pro danou trénovací mno¾inu dat vhodné pøíznaky, které se z textu budou extrahovat a pou¾ívat pro klasifikaci.
@@ -882,13 +993,13 @@ Proto je v této práci klasifikátor trénován se v¹emi mo¾nými kombinacemi pou¾itý
 
 \section{Pøíznaky v SVM klasifikátoru}
 
-Na rozdíl od Bayesovského klasifikátoru, problém volby vhodných textových a speciálních pøíznaky u SVM klasifikátoru odpadá.
+Na rozdíl od Bayesovského klasifikátoru, problém volby vhodných textových a speciálních pøíznakù u SVM klasifikátoru èásteènì odpadá.
 Jeliko¾ si klasifikátor pøi uèení vytváøí váhový vektor, který urèuje míru dùle¾itosti jednotlivých pøíznakù v prostoru pøíznakù pro výsledek klasifikace, je jasné, ¾e klasifikátor doká¾e irelevantní pøíznaky ignorovat a øídit se hlavnì pøíznaky, které na výslednou klasifikaci budou mít nejlep¹í vliv.
 
 Pokud ov¹em bude pou¾ito pøíli¹ velké mno¾ství pøíznakù, klasifikátoru výraznì naroste poèet dimenzí, co¾ se mù¾e markantnì projevit ve zhor¹ení klasifikaèních schopností SVM klasifikátoru.
-Jeliko¾ speciálních pøíznaky generují jen malé mno¾ství pøíznakù, tento problém by nemìl nastat.
-Naproti tomu ale generování $N$-tic textových pøíznakù tento problém zpùsobit mù¾e.
-Proto je vhodné volit zvolit optimální velikost generovaných N-tic tak, aby se nezhor¹ovaly klasifikaèní schopnosti klasifikátoru.
+Jeliko¾ speciálních pøíznakù je jen velmi málo, tento problém by nemìl nastat.
+Naproti tomu ale generování $n$-tic textových pøíznakù tento problém zpùsobit mù¾e.
+Proto je vhodné volit zvolit optimální velikost generovaných $n$-tic tak, aby se nezhor¹ovaly klasifikaèní schopnosti klasifikátoru.
 
 
 
@@ -907,7 +1018,7 @@ Tyto knihovny budou mimo jiné také podrobnìji popsány dále v této kapitole.
 
 \section{Pou¾ité knihovny} \label{IMPL_LIB}
 \subsection{NLTK} \label{IMP-NLTK}
-\texttt{NLTK}, neboli Natural Language ToolKit je balík knihoven pro skriptovací jazyk Python 2.7, urèený pro symbolické a statistické zpracovávání pøirozeného jazyka.
+\texttt{NLTK}, neboli Natural Language ToolKit je balík knihoven pro skriptovací jazyk Python 2.7, urèený pro symbolické a statistické zpracování pøirozeného jazyka.
 Nabízí jednoduché rozhraní pro velké mno¾ství rùzných nástrojù pro zpracování textu, ale také velké mno¾ství ukázkových dat, která lze pou¾ít jako testovací a trénovací data pøi vyvíjení softwaru pracujícího s pøirozeným jazykem.
 Díky vynikající dokumentaci je \texttt{NLTK} skvìlou knihovnou výraznì zjednodu¹ující implementaci softwaru pracujícího nìjakým zpùsobem s pøirozeným jazykem.
 
@@ -930,11 +1041,7 @@ Mezi tyto dal¹í knihovny patøí i balík knihoven \texttt{CVXOPT} (viz \ref{IMP-CV
 \texttt{CVXOPT} je volnì dostupný balík knihoven pro øe¹ení konvexních optimalizaèních problémù (mimo jiné do této skupiny problémù patøí i kvadratické programování, je¾ je pou¾ito pro implementaci SVM klasifikátoru) v programovacím jazyce Python 2.7.
 Hlavním úkolem tohoto balíku knihoven je zjednodu¹it vývoj softwaru, jen¾ potøebuje pro svùj bìh øe¹it konvexní optimalizaèní úlohy, ani¾ by bylo potøeba implementovat slo¾ité optimalizaèní algoritmy.
 
-
-\section{Architektura a implementace programu}
-V této èásti kapitoly struènì pøedstavíme architekturu, tedy návrh struktury implementovaného programu a implementaci klasifikaèních algoritmù z popsaných v teoretické èásti této práce.
-
-\subsection{Architektura programu}
+\section{Architektura programu}
 V této èásti práce bude popsána architekturu programu a krátký popis tøíd.
 Tato kapitolá má za cíl pøiblí¾it architekturu a funkènost programu.
 
@@ -1015,11 +1122,10 @@ Proto v implementovaném programu Bayesovský klasifikátor pracuje s obìma typy pø
 
 \subsection{Implementace SVM klasifikátoru}\label{IMPLEMENTATION-SVM}
 Pøi implementaci programu jsme se rozhodli ze studijních dùvodù vytvoøit vlastní implementaci SVM klasifikátoru na místo pou¾ití ji¾ hotových implementací tohoto algoritmu.
-Podobnì jako pøi implementaci Bayesovského klasifikátoru nastly i pøi implementaci klasifikátoru, zalo¾eného na support vector machines urèité problémy, z nich¾ zmíníme následující tøi:
+Podobnì jako pøi implementaci Bayesovského klasifikátoru nastly i pøi implementaci klasifikátoru, zalo¾eného na support vector machines urèité problémy, z nich¾ zmíníme následující dva:
 
 \begin{itemize}
 \item Jaké parametry pøedat balíèku kvadratického programování.
-\item Jak optimálnì zvolit parametr $C$ (viz. \ref{SVM_C}) a parametry jaderných funkcí.
 \item Jak optimalizovat výpoèet skalárního souèinu v prostoru pøíznakù klasifikátoru SVM.
 \end{itemize}
 
@@ -1187,118 +1293,6 @@ Pokud tyto parametry tedy poskytneme modulu kvadratického programování, získáme 
 S tìmito Lagrangeovými multiplikátory pak dále pracujeme a vytvoøíme z nich klasifikaèní model (viz \ref{SVM-THEORY-MARGINS}).
 
 
-\subsubsection{Volba vhodných volných parametrù klasifikátoru a jaderných funkcí}
-Vhodný výbìr volných parametrù klasifikátoru a jaderných funkcí je velmi dùle¾itou souèástí pøi implementaci klasifikátoru zalo¾eného na metodì SVM.
-Nejsou-li vybrány vhodné parametry, mù¾e klasifikátor dosahovat vskutku výraznì hor¹ích výsledkù, ne¾ jsou-li vybrány tyto parametry optimálnì.
-V implementovaném programu bylo tøeba optimálnì urèit parametr $C$ (míru chybovosti vzhledem k maximalizaci marginu -- viz \ref{SVM_C}) a parametr pou¾ité jaderné funkce (urèující vlastnosti pou¾ité jaderné funkce -- viz \ref{SVM-KERNELS}), jen¾ budeme nadále nazývat $\gamma$.
-
-Nastává ov¹em problém, jakým zpùsobem tyto volné parametry volit tak, aby byly výsledky klasifikace co nejpøesnìj¹í.
-Ve své knize \uv{The Nature of Statistical Learning Theory} \cite{vapnik2000nature} Vladimir Vapnik doporuèil nastavovat volné parametry v závislosti na znalosti mno¾iny trénovacích dat.
-
-Jestli¾e takovými znalostmi o datech nedisponujeme, mù¾eme vyu¾ít velmi èasto pou¾ívanou metodu hledání hodnot optimálních parametrù v møí¾ce.
-Tato metoda je sice funguje, ale aby byla dostateènì pøesná, je tøeba ji poèítat pro dostateènou hustotu bodù v møí¾ce, co¾ mù¾e být velmi výpoèetnì nároèné.
-
-V této práci byla pro hledání optimálních metod pou¾ita metoda simulovaného ¾íhání (\emph{simulated annealing}).
-Simulované ¾íhání je pravdìpodobnostní optimalizaèní metoda pro nalezení globální minimální nebo maximální energie, odpovídající souøadnicím ve stavovém prostoru.
-Tato metoda je inspirovaná fyzikou procesu ¾íhání oceli, pøi kterém se materiál pøedehøeje na urèitou teplotu a postupnì se nechá ochlazovat, èím¾ se odstraní napìtí v materiálu, který se takto homogenizuje.
-U optimalizaèního procesu simulovaného ¾íhání se nastaví poèáteèní souøadnice ve stavovém prostoru a poèáteèní teplota, která se postupnì po krocích sni¾uje a¾ do úplného vychladnutí.
-
-Pøi ka¾dém kroku se vygenerují náhodné souøadnice ve stavovém prostoru (stav) a spoèítá se k nim odpovídající energie.
-Jestli¾e je tato energie ni¾¹í, ne¾ energie pøedchozího stavu, pak je tento stav pou¾it pro dal¹í iteraci.
-Pokud v¹ak energie ni¾¹í nebyla, spoèítá se pravdìpodobnost skoku do daného stavu s vy¹¹í energií.
-Tato pravdìpodobnost závisí na teplotì -- èím vy¹¹í teplota, tím více umo¾òuje algoritmus skoèit do stavu s vy¹¹ími hodnotami energie.
-Tímto se významnì eliminuje riziko uváznutí v lokálním minimu.
-Ekvivalentnì lze algoritmus pou¾ít pro maximalizaci energie.
-
-\paragraph{Popis algoritmu simulovaného ¾íhání}
-Pro co nejjasnìj¹í pøedvedení pou¾itého algoritmu simulovaného ¾íhání pøedstavíme jeho pseudokód:
-
-\begin{algorithm}
-\caption{Pseudokód algoritmu simulovaného ¾íhání -- minimalizace energie}
-\label{IMP-ANNEALING-PSEUDOCODE}
-\begin{algorithmic}[1]
-\STATE $state \leftarrow STATE0$
-\STATE $energy \leftarrow calculate\_energy(s)$
-\STATE $state\_best \leftarrow state$, $energy\_best \leftarrow energy$
-\STATE $temp \leftarrow INIT\_TEMP$
-\WHILE{$temp > STOP\_TEMP$}
-	\STATE $temp \leftarrow temp \cdot COOLING\_FACTOR$
-	\STATE $state\_new \leftarrow generate\_neighbors(state)$
-	\STATE $energy\_new \leftarrow calculate\_energy(state\_new)$
-	\IF{$P(energy, energy\_new, temp) > random()$}
-		 \STATE $state \leftarrow state\_new$, $energy \leftarrow energy\_new$
-	\ENDIF
-	\IF{$energy\_new < energy\_best$}
-		 \STATE $state\_best \leftarrow state\_new$, $energy\_best \leftarrow energy\_new$
-	\ENDIF
-\ENDWHILE
-\RETURN $state\_best$
-\end{algorithmic}
-\end{algorithm}
-
-Promìnné $STATE0$ -- poèáteèní stav (za stav budeme nadále pova¾ovat bod v prostoru souøadnic volných parametrù SVM klasifikátoru), $INIT\_TEMP$ -- poèáteèní teplota, $STOP\_TEMP$ -- koneèná teplota a $COOLING\_FACTOR$ -- faktor chládnutí jsou parametry, které jsou pøi spu¹tìní algoritmu simulovaného ¾íhání zadány.
-Funkce $calculate\_energy(stav)$ potom poèítá energii stavu $stav$ a funkce $generate_neighbor(stav)$ vygeneruje mo¾ný sousední stav ke stavu $stav$.
-V pseudokódu je také pou¾ita funkce $random()$, která generuje náhodná èísla v rozmezí $<0,1>$.
-
-Na následujících øádcích se podrobnìji podíváme na nìkteré zajímavé souèásti tohoto algoritmu.
-
-
-\subparagraph{Výpoèet energie stavu}
-Abychom byli schopni najít minimální energii systému v souøadnicích, musíme být schopni vypoèítat energii libovolného vygenerovaného stavu.
-Pro tuto optimalizaci volných parametrù klasifikátoru SVM jsme vycházeli ze dvou po¾adavkù, které na SVM klasifikátor máme, a sice:
-
-\begin{itemize}
-\item sna¾íme se maximalizovat pøesnost klasifikátoru
-\item sna¾íme se minimalizovat poèet support vektorù klasifikátoru.
-\end{itemize}
-
-Výsledná energie potom bude záviset na míøe naplnìní tìchto dvou vý¹e zmínìných po¾adavkù.
-
-Vzhledem k tomu, ¾e implementovaná metoda simulovaného ¾íhání je minimalizaèní, musíme pøevést reprezentaci tìchto po¾adavkù tak, aby vytvoøily metriku umo¾òující vyu¾ití v procesu minimalizace.
-
-V pøípadì prvního po¾adavku (snaha o maximalizaci pøesnosti klasifikátoru), je zøejmé, ¾e maximalizaci je tøeba pøevést na minimalizaci.
-Místo o maximalizaci pøesnosti klasifikátoru tedy usilujeme o minimalizaci chybovosti klasifikátoru.
-Takto tedy dostaneme vzorec pro výpoèet energie pøesnosti $E_p$ klasifikátoru:
-
-\begin{equation}
-E_p = 1 - (\frac{spravne\_klasifikovane\_vstupy}{vsechny\_vstupy}), \hspace{5em} E_p \in <0,1>
-\end{equation}
-
-Pomocí tohoto vzorce vypoèteme energii pøesnosti klasifikátoru, kterou se budeme sna¾it minimalizovat.
-
-Pokud jde o druhý po¾adavek (snaha o minimalizaci poètu support vektorù klasifikátoru), tento po¾adavek ji¾ má minimalizaèní charakter, a proto jej nemusíme nijak pøevádìt.
-Pro výpoèet energie tototo po¾adavku $E_{SV}$ dostaneme následující vzorec:
-
-\begin{equation}
-E_{SV} = \frac{pocet\_pouzitych\_SV}{vsechny\_SV}, \hspace{5em} E_{SV} \in <0,1>
-\end{equation}
-
-Výpoèet celkové energie $E$ stavu se tudí¾ bude rovnat souètu energie pøesnosti a energie support vektorù, tedy:
-
-\begin{equation}
-E =  E_p + E_{SV} , \hspace{5em} E \in <0,2>
-\end{equation}
-
-\subparagraph{Generování mo¾ného sousedního stavu}
-Pro generování mo¾ného sousedního stavu byla pou¾ita metoda navrhnutá v èlánku \uv{Parameter determination of support vector machine and feature selection using simulated annealing approach} \cite{annealing}.
-Tato metoda je zalo¾ena na vygenerování smìrového vektoru s poèátkem v aktuálním stavu.
-Na tomto vektoru je pak náhodnì zvolen mo¾ný sousední stav. 
-
-\subparagraph{Pravdìpodobnost pøijetí nového stavu}
-Pøi vy¹¹ích teplotách na poèátku bìhu algoritmu je mo¾né, ¾e algoritmus simulovaného ¾íhání pou¾ije jako svùj následující stav stav, který má vy¹¹í energii, ne¾ stav pùvodní.
-Tímto postupem se zamezí uváznutí v lokálních minimech a umo¾ní se tak nalezení globálního minima.
-S postupným sni¾ováním teploty se pravdìpodobnost skoku na takovéto stavy s vy¹¹í energií sni¾uje.
-
-Pro výpoèet této pravdìpodobnosti je pou¾it následující vzorec:
-
-\begin{equation}
-P_{skoku} = e^{\frac{\Delta E}{T}}
-\end{equation}
-
-kde $\Delta E$ je rozdíl mezi energií sousedního stavu a pùvodního stavu a $T$ je aktuální teplota v iteraci simulovaného ¾íhání.
-Pro urèení, zda se má do nového stavu skoèit, èi ne je vygenerováno náhodné èíslo $X \in <0,1>$.
-Pokud je $P_{skoku} > X$, pak je pro dal¹í iteraci pou¾it sousední stav jako stav základní.
-
 
 \subsubsection{Optimalizace skalárních souèinù v prostoru pøíznakù} \label{IMP-GRAM}
 Abychom docílili zrychlení uèení SVM klasifikátoru, pøistoupili jsme k výpoètu takzvané Gramovy matice.
@@ -1335,7 +1329,7 @@ K(x_N, x_1) & K(x_N, x_2) & K(x_N, x_3) & \cdots & K(x_N, x_N)\\
 V praktické èásti této práce je Gramova matice implementována ve tvaru $G_{nonlinear}$ a v závislosti na pou¾ité jaderné funkci (jaderná funkce mù¾e být i obyèejným kartézským souèinem v prostoru pøíznakù $X$) je matice pøedpoèítána pro pozdìj¹í pou¾ití pøi trénování klasifikátoru.
 
 
-\chapter{Vyhodnocení systému} \label{TESTY}
+\chapter{Testy a vyhodnocení implementovaných klasifikátorù} \label{TESTY}
 
 V této kapitole bude vyhodnocen námi implementovaný program.
 Nejprve popí¹eme datové sady, které byly pou¾ity pro testování a porovnávání implementovaných klasifikátorù a 
@@ -1424,7 +1418,7 @@ Tato metrika definuje pomìr, jakým jsou ve výsledcích zastoupeny správnì klasifi
 
 Lze ji jednodu¹e vypoèítat následovnì:
 $$
-  Accuracy = \frac{spravne\_pozitivni + spravne\_negativni}{spravne\_pozitivni + spravne\_negativni + falesne\_pozitivni + falesne\_negativni}
+  Celkova\_presnost = \frac{spravne\_pozitivni + spravne\_negativni}{spravne\_pozitivni + spravne\_negativni + falesne\_pozitivni + falesne\_negativni}
 $$
 
 Nevýhodou této metriky v¹ak je, ¾e nebere v potaz poèty záznamù v jednotlivých tøídách.
@@ -1530,15 +1524,52 @@ Pro ka¾dou datovou sadu bude prezentován výsledek bez speciálních pøíznakù a pot
 \subsubsection{Tweety}
 % no-features:{'emoticon': 4, 'sentence': 1, 'url': 4, 'tag': 3, 'time': 3, 'date': 4, 'user_tag': 3, 'email': 3}
 % best-features: {'emoticon': 3, 'sentence': 1, 'url': 4, 'tag': 3, 'time': 3, 'date': 4, 'user_tag': 1, 'email': 3}
-Pro datovou sadu anglických tweetù byly implementovaným algoritmem pro hledání optimálních speciálních pøíznakù nalezeny následující speciální pøíznaky (viz \ref{TOKENIZACE-SPEC}):
+Pro datovou sadu anglických tweetù byl otestován vliv jednotlivých speciálních pøíznakù (viz \ref{TOKENIZACE-SPEC}) na výsledek klasifikace Bayesovského klasifikátoru.
+Následující tabulka popisuje jak moc jednotlivé pøíznaky zlep¹ovaly, nebo zhor¹ovaly výsledek klasifikace oproti kontrolnímu výsledku.
+Porovnáváme hodnoty korelace (kladná hodnota znamená zlep¹ení a záporná zhor¹ení klasifikaèních schopností testovaného Bayesovského klasifikátoru).
+
+\begin{center}
+\begin{tabular}{lc}
+\toprule
+spec pøíznaky (viz \ref{TOKENIZACE-SPEC}) & Zmìna korelace \\
+\midrule
+URL -- celé                      & -0.0014 \\
+URL -- doména                    & -0.0203 \\
+URL -- existence A/N             & -0.0148 \\
+URL -- existence A               & -0.0236 \\
+E-mail -- celý                   &  0 \\
+E-mail -- existence A/N          &  0 \\
+E-mail -- existence A            &  0 \\
+Emotikony -- nalezené            &  -0.0029 \\
+Emotikony -- existence A/N       &  -0.0025 \\
+Emotikony -- existence A         &  -0.0028 \\
+Emotikony -- nálada              &  0.0001 \\
+Tagy -- celé                     &  -0.0046 \\
+Tagy -- existence A/N            &  -0.0002 \\
+Tagy -- existence A              &  -0.0002 \\
+Tagy u¾ivatelù -- celé           &  -0.0021 \\
+Tagy u¾ivatelù -- existence A/N  &  0.0045 \\
+Tagy u¾ivatelù -- existence A    &  -0.0001 \\
+Vìty -- poèet vìt                &  -0.0049 \\
+Èasy -- celý èas                 &  0 \\
+Èasy -- ve 24h formátu           &  0 \\
+Èasy -- hodiny ve 24h formátu    &  0 \\
+Data -- celé datum               &  0 \\
+Data -- ve formátu DMY           &  0 \\
+Data -- ve formátu MY            &  0 \\
+Data -- ve formátu Y             &  0 \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+Z tabulky vyplývá, ¾e optimální speciální tokeny pro datovou sadu anglických tweetù jsou následující:
 
 \begin{itemize}
-\item \emph{E-mailové adresy} -- jsou vytvoøeny speciální pøíznaky \emph{ANO} respektive \emph{NE}, pokud se ve vstupním textu nachází, respektive nenachází e-mailová adresa.
 \item \emph{Emotikony} -- jako speciální pøíznaky jsou brány emoce vyplývající z emotikonù nalezených v textu.
 \item \emph{Tagy u¾ivatelù} -- je vytvoøen speciální pøíznak \emph{ANO}, jestli¾e je ve vstupním textu nalezen tag u¾ivatele.
 \end{itemize}
 
-Ostatní skupiny speciálních pøíznakù, které zde nebyly zmínìny (URL, tagy, vìty, èasy a data) výsledky klasifikace Bayesovského klaisfikátoru nad datovou sadou tweetù nezlep¹ily, a proto nebyly pou¾ity.
+Ostatní skupiny speciálních pøíznaky (URL, e-mailové adresy, tagy, vìty, èasy a data) výsledky klasifikace Bayesovského klaisfikátoru nad datovou sadou tweetù nezlep¹ily, a proto nebyly pou¾ity.
 
 Následující tabulka popisuje, jak se zlep¹í klasifikaèní schopnosti Bayesovského klasifikátoru  pøi pou¾ití vý¹e zmínìných optimálních speciálních pøíznakù pøi trénování a testování na datové sadì tweetù.
 
@@ -1560,7 +1591,7 @@ F1-measure            & 0.9038             & 0.9065 \\
 \end{tabular}
 \end{center}
 
-Z tabulky vyplývá, ¾e otpimálnì zvolené speciální pøíznaky mouhou mírnì vylep¹it klasifikaèní schopnosti Bayesovského klasifikátoru pøi klasifikaci anglických tweetù.
+Z tabulky vyplývá, ¾e otpimálnì zvolené speciální pøíznaky mohou mírnì vylep¹it klasifikaèní schopnosti Bayesovského klasifikátoru pøi klasifikaci anglických tweetù.
 
 
 \subsubsection{Èlánky}
@@ -1568,8 +1599,44 @@ Z tabulky vyplývá, ¾e otpimálnì zvolené speciální pøíznaky mouhou mírnì vylep¹it
 % best-fatures: {'emoticon': 4, 'sentence': 1, 'url': 4, 'tag': 3, 'time': 3, 'date': 1, 'user_tag': 0, 'email': 0}
 Obdobnì jako pro klasifikaci tweetù, následující tabulka popisuje zlep¹ení klasifikaèní schopnosti klasifikátoru díky vhodnému výbìru speciálních pøíznakù.
 V tomto pøípadì ale testy klasifikátoru probìhly nad datovou sadou anglických èlánkù.
+Následující tabulka, stejnì jako v pøípadì anglických tweetù, popisuje jak moc jednotlivé pøíznaky zlep¹ovaly, nebo zhor¹ovaly výsledek klasifikace oproti kontrolnímu výsledku.
+Opìt porovnáváme hodnoty korelace (kladná hodnota znamená zlep¹ení a záporná zhor¹ení klasifikaèních schopností testovaného Bayesovského klasifikátoru).
 
-Byly nalezeny následující optimální speciální pøíznaky, které nejlépe napomáhají zlep¹ení klasifikaèních schopností Bayesovského klasifikátoru pøi klasifikaci datové sady anglických èlánkù:
+\begin{center}
+\begin{tabular}{lc}
+\toprule
+spec pøíznaky (viz \ref{TOKENIZACE-SPEC}) & Zmìna korelace \\
+\midrule
+URL -- celé                      & 0 \\
+URL -- doména                    & -0.0142 \\
+URL -- existence A/N             & -0.002 \\
+URL -- existence A               & -0.0022 \\
+E-mail -- celý                   &  0.0026 \\
+E-mail -- existence A/N          &  -0.0042 \\
+E-mail -- existence A            &  -0.0044 \\
+Emotikony -- nalezené            &  -0.0026 \\
+Emotikony -- existence A/N       &  -0.0015 \\
+Emotikony -- existence A         &  -0.0016 \\
+Emotikony -- nálada              &  -0.0021 \\
+Tagy -- celé                     &  -0.0039 \\
+Tagy -- existence A/N            &  -0.0051 \\
+Tagy -- existence A              &  -0.0053 \\
+Tagy u¾ivatelù -- celé           &  0.0026 \\
+Tagy u¾ivatelù -- existence A/N  &  0.0008 \\
+Tagy u¾ivatelù -- existence A    &  0.0008 \\
+Vìty -- poèet vìt                &  -0.0364 \\
+Èasy -- celý èas                 &  0 \\
+Èasy -- ve 24h formátu           &  -0.0103 \\
+Èasy -- hodiny ve 24h formátu    &  -0.0150 \\
+Data -- celé datum               &  0.0180 \\
+Data -- ve formátu DMY           &  0.024 \\
+Data -- ve formátu MY            &  -0.0063 \\
+Data -- ve formátu Y             &  0.0116 \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+Z tabulky vyplývá, ¾e byly zvoleny následující optimální speciální pøíznaky, které nejlépe napomáhají zlep¹ení klasifikaèních schopností Bayesovského klasifikátoru pøi klasifikaci datové sady anglických èlánkù:
 
 \begin{itemize}
 \item \emph{E-mailové adresy} -- celé e-mailové adresy nalezené ve vstupním textu byly brány jako speciální pøíznaky.
@@ -1657,12 +1724,12 @@ F1-measure            & 0.8232 & 0.8012 & -- \\
 \end{tabular}
 \end{center}
 
-Pro maximální délku $n$-tic rovnou tøem ji¾ test klasifikátoru nedobìhl, jeliko¾ test byl pøíli¹ nároèný na RAM pamì» poèítaèe, na kterém testy bì¾ely.
+Pro maximální délku $n$-tic rovnou tøem ji¾ test klasifikátoru nedobìhl, jeliko¾ test byl pøíli¹ nároèný na RAM pamì» poèítaèe, na kterém testy bì¾ely (potøeboval asi 25GB pamìti).
 Nicménì vzhledem k výsledkùm testù na datové sadì tweetù mù¾eme pøedpokládat, ¾e vliv maximální délky $n$-tic textových pøíznakù na klasifikaèní schopnosti SVM klasifikátoru bude v pøípadì èlánkù stejný, jako v pøípadì datové sady obsahující tweety.
 Z tabulky vý¹e je, stejnì jako pøi klasifikace tweetù, jasné, ¾e nejlep¹ích klasifikaèních výsledkù dosahuje SVM klasifikátor kdy¾ jsou pou¾ívány pouze základní jednoslovní textové pøíznaky.
 
 
-\section{Porovnání Bayesovského klasifikátoru a SVM klasifikátoru}
+\section{Porovnání Bayesovského klasifikátoru a SVM klasifikátoru} \label{porovnani}
 V této èásti kapitoly pøistoupíme k porovnání obou implementovaných klasifikátorù.
 Pro oba klasifikátory vybereme optimální nastavení pøíznakù, které jsme získali pomocí testù vý¹e a porovnáme vysledky klasifikátorù na obou vytvoøenýchtestových sadách, tedy jak na datové sadì anglických tweetù, tak na datové sadì anglických èlánkù.
 
@@ -1712,12 +1779,52 @@ F1-measure            & 0.6485                   & 0.8232             \\
 \end{tabular}
 \end{center}
 
+Stejnì jako pøi testech provádìných na datové sadì tweetù Bayesovsky klasifikátor pou¾íval $n$-tice textových pøíznakù o maximální délce rovné dvìma a vhodnì zvolené speciální pøíznaky.
+SVM klasifikátor pou¾íval v¹echny mo¾né speciální pøíznaky a $n$-tice textových pøíznakù o maximální délce rovné jedné -- tzn. pouze jednotlivá slova z textu.
 
-\subsection{Shrnutí výsledkù testù}
+Stejnì jako v pøípadì klasifikace datové sady tweetù jsou pøi klasifikaci anglických èlánkù klasifikaèní schopnosti SVM klaisfikátoru lep¹í, ne¾ klasifikaèní schopnosti Bayesovského klasifikátoru.
+V pøíladì anglických èlánkù je ale rozdíl mezi výsledky klasifikace Bayesovského klasifikátoru a SVM klasifikátoru propastný -- Bayesovský klasifikátor dosáhl ohodnocení pomocí metriky F1-measure rovné 0.6485 a SVM klasifikátor dosáhl ohodnocení 0.8232, co¾ je velmi velký rozdíl ve prospìch SVM klasifikátoru.
+
+\section{Shrnutí výsledkù testù}
+Pro Bayesovský klasifikátor bylo na¹ím cílem v pøípadì textových pøíznakù experimentálnì nalézt optimální délku $n$-tic textových pøíznakù a v pøípadì speciálních pøíznakù zvolit takové speciální pøíznaky, které co nejvíce napomáhají zlep¹ení klasifikaèních schopnstí implementovaného Bayesovského klasifikátoru pøi klasifikaci datových sad vytvoøených pro testování.
+U obou datových sad jsme zjistili, ¾e optimální délka $n$-tic textových pøíznakù je rovna dvìma a ¾e textové pøíznaky mají pøí vhodné volbì délky $n$-tic textových pøíznakù pomìrnì velký vliv na zlep¹ení klasifikaèních schopností Bayesovského klaisfikátoru.
+Speciální pøíznaky u¾ takový vliv na zlep¹ení klasifikaèních schopností Bayesovského klasifikátoru nemìly, nicménì v pøípadì klasifikace tweetù klasifikaèní schopnosti klasifikátoru mírnì vylep¹ily.
+Pøi klasifikaci anglických èlánkù nemìly na klasifikaci prakticky ¾ádný vliv.
+
+V testech provádìných s klasifikátorem SVM bylo na¹ím cílem, podobnì jako v pøípadì Bayesovského klasifikátoru, optimálnì zvolit maximální délku $n$-tic textových pøíznakù, která by napomáhala zlep¹it klasifikaèní schopnosti SVM klasifikátoru. 
+Z výsledkù testù vyplývá, ¾e s rostoucí délkou $n$-tic textových pøíznakù klasifikaèní schopnosti SVM klasifikátoru klesají.
+Z toho dùvodu je optimální pro SVM klasifikátor pou¾ívat jako textové pøíznaky pouze jednotlivá slova, nikoliv v¹ak $n$-tice za sebou jdoucích slov.
+
+V poslední, tøetí èásti této kapitoly bylo pøedstaveno porovnání klasifikaèních schopností obou implementovaných klasifikátorù pøi klasifikaci obou vytvoøených testovacích datových sad.
+Pro porovnávání klasifikátorù bylo pou¾ito optimálních parametrù pro pøíslu¹né datové sady k nastavení obou klasifikátorù, vycházející z pøedchozích testù v této kapitole.
+Z provedených porovnání SVM a Bayesovského klasifikátoru je jasnì patrné, ¾e SVM klasifikátor je silnìj¹í metodou pro klasifikaci, která pøi testování na dvou velmi odli¹ných testovacích sadách dává v pøípadì klasifikace anglických tweetù lep¹í a v pøípadì klasifikace anglických èlánkù výraznì lep¹í výsledky, ne¾ Bayesovský klasifikátor.
 
 
 \chapter{Závìr} 
+V této diplomové práci jsme se zamìøili na porovnání dvou klasifikaèních metod pro klasifikaci textu -- SVM klasifikátoru a Bayesovského klasifikátoru.
+Obì tyto metody jsme podrobnì analyzovali a popsali jejich matematický model.
 
+V celé diplomové práci jsme kladli velký dùraz  na praktickou vyu¾itelnost implementovaných klasifikátorù.
+
+Abychom co nejvìt¹í mìrou pozitivné ovlivnili klasifikaèní schopnosti obou implementovaných klasifikátorù, tak jsme dbali na výbìr vhodných pøíznakù extrahovaných z klasifikovaného textu.
+Tyto pøíznaky jsme rozdìlili do dvou skupin -- na textové a speciální pøíznaky.
+Textové pøíznaky byly vytváøeny ze slov nacházejících se v klasifikovaném textu.
+Do speciálnich pøíznakù potom patøily ostatní netextové pøíznaky, které byly z textu získány -- napø. emotikony, poèet slov ve vìtì, e-mailové adresy atd. (viz \ref{TOKENIZACE}).
+Pøíznaky jsme volili tak, aby jejich následné zpracování klasifikátory mìlo co nejlep¹í vliv na výsledné klasifikaèní schopnosti implementovaných klasifikátorù.
+
+Mimo výbìru optimálních pøíznakù bylo tøeba pro SVM klasifikátor urèit optimální nastavení volných parametrù klasifikátoru a pou¾ité jaderné funkce (viz \ref{SVM}, \ref{SVM-KERNELS}).
+Pro jejich zji¹tìní jsme pou¾ili algoritmu simulovaného ¾íhání.
+
+Pro testování jsme anotovali dvì testovací datové sady (datová sada obsahující tweet -- zprávy ze sociální sítì twitter a datová sada anglických èlánkù), na kterých jsme následnì oba implementované klasifikátory testovali a pro ne¾ jsme se sna¾ili zvolit jaké optimální textové a speciální pøiznaky pou¾ívat, abychom co nejvíce pozitivnì ovlivnili klasifikaèní schopnosti implementovaného SVM a Bayesovského klasifikátoru.
+V kapitole o testech jsme pro obì námi vytvoøené datové sady a pro oba námi vytvoøené klasifikátory optimální pøíznaky nalezli.
+Na závìr jsme vyu¾ili znalosti optimálních nastavení obou klasifikátorù pro klasifikaci obou námi vytvoøených testovacích datových sad a porovnali jsme jejich klasifikaèní schopností.
+Podle výsledkù tohoto porovnání je SVM klasifikátor jasnì lep¹í ne¾ Bayesovský klasifikátor (viz \ref{porovnani}).
+
+V pøípadì pokraèování na této práci by bylo vhodné vytvoøit vìt¹í sadu speciálních pøíznakù a otestovat jejich vliv na klasifikaèní schopnosti klasifikátorù.
+S velmi dobrými výsledky by zøejmì mohla být pro oba implementované klasifkikátory pou¾ita metoda zvaná boosting popsaná v èlánku Michael Kearnse s názvem \uv{Thoughts on hypothesis boosting} \cite{Kearns1988} (viz také \ref{boosting}).
+
+Bayesovský klasifikátor byl dlouhou dobu pou¾íván v projektu M-Eco, ve kterém participovala výzkumná skupina NLP, pracující pøi Fakultì informaèních technologii VUT v Brnì.
+SVM klasifikátor implementovaný v této diplomové práci v¹ak ji¾ bohu¾el pou¾it nebyl, a to z dùvodu ukonèení spolupráce na projektu M-Eco v prosinci roku 2012.
 
 \nocite{automatic_sumarization}
 \nocite{anonymisation}
@@ -1728,4 +1835,5 @@ F1-measure            & 0.6485                   & 0.8232             \\
 \nocite{boosting_bayesian}
 \nocite{Malik2007thesis}
 \nocite{Abu-Mostafa}
+\nocite{Abu-Mostafa-online}
 %=========================================================================
