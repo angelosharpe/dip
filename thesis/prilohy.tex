@@ -2,63 +2,62 @@
 K diplomové práci je pøilo¾eno CD.
 Toto CD obsahuje:
 \begin{itemize}
-\item Program s implementovaným SVM a Bayesovským klasifikátorem. (adresáø \texttt{/program/})
-\item Ruènì anotované testovací a trénovací datové sady (anglické tweety a anglické èlánky). (adresáø \texttt{/data/})
-\item Dokumentaci k programu vygenerovanou pomocí nástroje Epydoc. (adresáø \texttt{/doc/})
-\item Zdrojové kódy technické zprávy a její verzi ve formátu PDF. (adresáø \texttt{/thesis/})
+\item Program s implementovaným SVM a Bayesovským klasifikátorem. (Adresáø \texttt{/program/})
+\item Ruènì anotované testovací a trénovací datové sady (anglické tweety a anglické èlánky). (Adresáø \texttt{/data/})
+\item Dokumentaci k programu vygenerovanou pomocí nástroje Epydoc. (Adresáø \texttt{/doc/})
+\item Zdrojové kódy technické zprávy a její verzi ve formátu PDF. (Adresáø \texttt{/thesis/})
 \end{itemize}
 
 
 
 \chapter{Manuál}
-V této pøíloze bude popsán zpùsob práce s implementovaným programem a budou zde vypsány texty nápovìdy.
+V této pøíloze bude popsán zpùsob práce s implementovaným programem.
 
-Oba implementované klasifikátory jsou ovládány pomocí spou¹tìcího skriptu nazvaného \texttt{control.py}.
-Tento skript se nachází v adresáøi \texttt{/program/} na pøilo¾eném CD a umo¾ní u¾ivateli s implementovanými klasifikátory jak provádìt testy, tak vytvoøeit klasifikaèní modely a pøímo s tìmito modely provádìt klasifikaci.
+Oba implementované klasifikátory (Bayesovský klasifikátor a SVM klasifikátor) jsou ovládány pomocí spou¹tìcího skriptu, nazvaného \texttt{control.py}.
+Tento skript se nachází v adresáøi \texttt{/program/} na pøilo¾eném CD a umo¾ní u¾ivateli s implementovanými klasifikátory jak provádìt testy, tak vytvoøit klasifikaèní modely a pøímo s tìmito modely provádìt klasifikaci.
 
-Ovládací skript obou klasifikátorù je schopen pracovat buï s jednotlivými klasifikátory samostatnì (\texttt{.-control.py bayes [parametry]}, \texttt{.-control.py svm [parametry]}), nebo oba klasifikátory porovnat (\texttt{.-control.py common [parametry]}).
-V pøípadì práce s jednotlivými klasifikátory je mo¾né s ka¾dým klasifikátorem provést nìkolik mo¾ných operací.
-Tyto operace nyní popí¹eme.
+Ovládací skript obou klasifikátorù je schopen pracovat buï s jednotlivými klasifikátory samostatnì (\texttt{./control.py bayes [parametry]}, \texttt{./control.py svm [parametry]}), nebo oba klasifikátory porovnat (\texttt{./control.py common [parametry]}).
+V pøípadì práce s jednotlivými klasifikátory je mo¾né s ka¾dým klasifikátorem provést nìkolik mo¾ných operací, které nyní popí¹eme.
 Následnì popí¹eme volbu \texttt{common} pro porovnání obou implementovaných klasifikátorù.
 
 \section{Bayesovský klasifikátor}
-Seznam techto operaci lze vypsat spustenim následujícího pøíkazu: \texttt{control.py bayes -h}.
-Detailnìj¹í popis jednotlivých operací s Bayesovským klasifikátorem lze vypsat spu¹tìním následujícího pøíkazu: \texttt{control.py bayes [operace] -h}, kde na místo slova \texttt{[operace]} napí¹eme název po¾adované operace.
+Seznam techto operaci lze vypsat spu¹tìním následujícího pøíkazu: \texttt{./control.py bayes -h}.
+Detailnìj¹í popis jednotlivých operací s Bayesovským klasifikátorem lze vypsat spu¹tìním následujícího pøíkazu: \texttt{./control.py bayes [operace] -h}, kde namísto slova \texttt{[operace]} napí¹eme název po¾adované operace.
 Mo¾né operace proveditelné s Bayesovským klasifikátorem jsou:
 
 \begin{itemize}
 \item \texttt{test} -- spustí test Bayesovského klasifikátoru s danými parametry.
 \item \texttt{features} --spustí proces vyhledávání optimálních speciálních pøíznakù.
 \item \texttt{model} -- vytvoøí klasifikaèní model pro Bayesovský klasifikátor.
-\item \texttt{classify} -- klasifikuje daný vstupní text do za pou¾ití modelu pro Bayesovský klasifikátor.
+\item \texttt{classify} -- klasifikuje daný vstupní text za pou¾ití klasifikaèního modelu pro Bayesovský klasifikátor.
 \end{itemize}
 
 \section{SVM klasifikátor}
-Stejnì jako v pøípadì Bayesovského klaifikátor lze i pro SVM klasifikátor vypsat seznam operací, které lze s SVM klasifikátorem provádìt.
-K tomuto výpisu slou¾í následující pøíkaz:  \texttt{control.py svm -h}.
-Pro detailnìj¹í popis jednotlivých operací SVM klasifikátoru je tøeba spustit pøíkaz (\texttt{.-control.py svm [operace] -h}), kde na místo slova \texttt{[operace]} napí¹eme název po¾adované operace.
+Stejnì jako v pøípadì Bayesovského klaifikátour lze i pro SVM klasifikátor vypsat seznam operací, které lze s SVM klasifikátorem provádìt.
+K tomuto výpisu slou¾í následující pøíkaz:  \texttt{./control.py svm -h}.
+Pro detailnìj¹í popis jednotlivých operací SVM klasifikátoru je tøeba spustit pøíkaz (\texttt{./control.py svm [operace] -h}), kde namísto slova \texttt{[operace]} napí¹eme název po¾adované operace.
 Implementovaný program umo¾òuje s implementovaným SVM klasifikátorem provádìt následující operace:
 
 \begin{itemize}
-\item \texttt{data} -- tato operace vygeneruje vnitøní reprezentaci datové sady, se kterou klasifikátor SVM následnì pracuje. Tato operace je provádìná samostatnì kùli její èasové nároènosti. Pøed prací s SVM klasifikátorem je tøeba tento pøíkaz v¾dy spustit.
+\item \texttt{data} -- tato operace vygeneruje vnitøní reprezentaci datové sady, se kterou klasifikátor SVM následnì pracuje. Tato operace je provádìna samostatnì kvùli její èasové nároènosti. Pøed prací s SVM klasifikátorem je tøeba tento pøíkaz v¾dy spustit.
 \item \texttt{test} -- spustí test SVM klasifikátoru s danými parametry.
-\item \texttt{annealing} --spusti proces simulovaného ¾íhání, který má za úkol hledat optimální nastavení volných parametrù SVM klasifikátoru a pou¾ité jaderné funkce. Pøed spu¹tìním tohoto procesu by mìla být vygenerována data.
+\item \texttt{annealing} -- spustí proces simulovaného ¾íhání, který má za úkol hledat optimální nastavení volných parametrù SVM klasifikátoru a pou¾ité jaderné funkce. Pøed spu¹tìním tohoto procesu by mìla být vygenerována data.
 \item \texttt{model} -- vytvoøí klasifikaèní model pro SVM klasifikátor.
-\item \texttt{classify} -- klasifikuje daný vstupní text do za pou¾ití modelu pro SVM klasifikátor.
+\item \texttt{classify} -- klasifikuje daný vstupní text za pou¾ití klasifikaèního modelu pro SVM klasifikátor.
 \end{itemize}
 
 \section{Porovnání klasifikátorù}
-Tato volba slou¾í pro porovnání obou implementovaných klasifikátorù pøí testech se stejnýmí podmínkami -- ideální volba pøíznakù, stejná délka pou¾ívaných $n$-tic textových pøíznakù a stejná datová sada.
+Tato volba slou¾í pro porovnání obou implementovaných klasifikátorù pøi testech se stejnými podmínkami -- ideální volba pøíznakù, stejná délka pou¾ívaných $n$-tic textových pøíznakù a stejná datová sada.
 Tento proces mù¾e být v závislosti na zvolených parametrech velmi èasovì i pamì»ovì nároèný.
 
-Pro podrobnìj¹í popis parametrù se nachází v nápovìdì progamu, kterou lze zobrazit spu¹tìním pøíkazu \texttt{.-control.py common -h}.
+Podrobnìj¹í popis parametrù se kterými se program spou¹tí se nachází v nápovìdì programu, kterou lze zobrazit spu¹tìním pøíkazu \texttt{./control.py common -h}.
 
 
 
 
 \chapter{Regulární výrazy speciálních pøíznakù} \label{regexp}
 V této pøíloze budou vypsány regulární výrazy, které jsou pou¾ívány pro získávání speciálních pøíznakù z textu.
-Reguulární výrazy budou pro pøehlednost popsány ve formátu v jakém je pøíjmá programovací jazyk Python.
+Regulární výrazy budou pro pøehlednost popsány ve formátu, v jakém je pøijímá programovací jazyk Python.
 
 \section{URL}
 Regulární výraz pro vyhledávání URL v textu: \\
@@ -75,7 +74,7 @@ Regulární výraz pro vyhledávání e-mailových adres v textu: \\
 \verb`emails_re = re.compile(r'\s([\w_\.-]+)(@)([\w\.-]+)(\.)([a-zA-Z]{2,6})')`
 
 \section{Emotikony}
-V pøípadì emotikonù, není regulární výraz tak jednoduchý jako v ostatních pøípadech, a to z toho dùvodu, ¾e je tøeba rozdìlovat emotikony do tøíd podle nálady.
+V pøípadì emotikonù není regulární výraz tak jednoduchý, jako v ostatních pøípadech, a to z toho dùvodu, ¾e je tøeba rozdìlovat emotikony do tøíd podle nálady.
 Proto jsou definovány základní stavební kameny, ze kterých se emotikony skládají:
 \begin{itemize}
 \item Horní èást emotikonu -- \verb`top = r'[<>O}\]3P]?'`
@@ -87,14 +86,14 @@ Proto jsou definovány základní stavební kameny, ze kterých se emotikony skládají
 \item Veselá ústa emotikonu -- \verb`happy_mouths = r'[dD\)\]pP}3]'`
 \item Ostatní ústa emotikonu -- \verb`other_mouths = r'[oO&]'`
 \end{itemize}
-Z tìchto stavebních kamenù jsou potom skládány dohromady jendotlivé typy emotikonù:
+Z tìchto stavebních kamenù jsou potom skládány dohromady jednotlivé typy emotikonù:
 \begin{itemize}
 \item V¹echny emotikony --\verb`faces = ''.join([top, eyes, tear, nose, mouths])`
 \item Smutné emotikony -- \verb`sad_faces = ''.join([top, eyes, tear, nose, sad_mouths])`
 \item Veselé emotikony -- \verb`happy_faces = ''.join([top, eyes, tear, nose, happy_mouths])`
 \item Ostatní emotikony -- \verb`other_faces = ''.join([top, eyes, tear, nose, other_mouths])`
 \end{itemize}
-Mimo tyto klasické emotikony jsou také jako speciální pøíznaky brány ménì standartní (ostatní) emotikony:
+Mimo tyto klasické emotikony jsou také jako speciální pøíznaky brány ménì standardní (ostatní) emotikony:
 \begin{itemize}
 \item V¹echny ostatní emotikony -- \verb`other_emoticons = [r'\^_+\^', r'o\.O', r'@_+@',`\\
 \verb`r'-_+-', r'\.\.+', r',,+', r'<3']`
@@ -103,8 +102,8 @@ Mimo tyto klasické emotikony jsou také jako speciální pøíznaky brány ménì standa
 \item Ostatní ostatní emotikony -- \verb`other_other_emoticons = [r'o\.O', r'@_+@', r'\.\.+',`\\
 \verb` r',,+']`
 \end{itemize}
-Z tìchto z vý¹e zmínìných slo¾ek jsou potom vytvoøeny regulární výrazy popisující jednotlivé typy emotikonù, které lze nalézt v textu.
-Regulární výrazy jsou slo¾eny následovnì.
+Z tìchto vý¹e zmínìných slo¾ek jsou potom vytvoøeny regulární výrazy, popisující jednotlivé typy emotikonù, které lze nalézt v textu.
+Regulární výrazy jsou slo¾eny následovnì:
 \begin{itemize}
 \item V¹echny emotikony -- \\
 \verb`    emoticons_re = re.compile(` \\
