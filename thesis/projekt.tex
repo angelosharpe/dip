@@ -9,8 +9,8 @@
 % p?ipomínky posílejte na e-mail: bidlom AT fit.vutbr.cz
 % vim: set syntax=tex encoding=latin2:
 %============================================================================
-\documentclass[cover]{fitthesis} % odevzdani do wisu - odkazy, na ktere se da klikat
-%\documentclass[cover,print]{fitthesis} % pro tisk - na odkazy se neda klikat
+%\documentclass[cover]{fitthesis} % odevzdani do wisu - odkazy, na ktere se da klikat
+\documentclass[cover,print]{fitthesis} % pro tisk - na odkazy se neda klikat
 %\documentclass[english,print]{fitthesis} % pro tisk - na odkazy se neda klikat
 %      \documentclass[english]{fitthesis}
 % * Je-li prace psana v anglickem jazyce, je zapotrebi u tridy pouzit 
@@ -64,7 +64,7 @@
 %---------------------------------------------------------------------------
 \projectinfo{
   %Prace
-  project=DP,            %typ prace BP/SP/DP/DR
+  project={DP},            %typ prace BP/SP/DP/DR
   year=2013,             %rok
   date=\today,           %datum odevzdani
   %Nazev prace
@@ -85,7 +85,7 @@
   %===========================================================================
   %Klicova slova
   keywords.cs={klasifikace, Bayesovský klasifikátor, Bayesovský teorém, SVM klasifikátor, SVM, jaderné metody, volba parametrù SVM, simulované ¾íhání, klasifikace pøirozeného jazyka, strojové uèení, zpracování pøirozeného jazyka, pøíznaky}, %klicova slova v ceskem jazyce
-  keywords.en={classification, bayesian classifier, bayesian theorem, SVM classifier, SVM, kernel methods, choosing SVM classifier parameters, simulated annealing, natural language classification, machine learning, natural language processing, features}, %klicova slova v anglickem jazyce
+  keywords.en={classification, Bayes classifier, Bayes theorem, SVM classifier, SVM, kernel methods, choosing SVM classifier parameters, simulated annealing, natural language classification, machine learning, natural language processing, features}, %klicova slova v anglickem jazyce
   %Abstract
   abstract.cs={Tato práce se zabývá problematikou klasifikace textových dokumentù, a to pøedev¹ím metodami klasifikace textu.
   Hlavním cílem této práce je rozebrat dva algoritmy pro klasifikaci dokumentù, implementovat je a následnì porovnat.
@@ -94,7 +94,7 @@
   V~závìru práce je provedeno mno¾ství testù, ukazujících úèinnost obou klasifikátorù za rùzných podmínek.}, % abstrakt v ceskem jazyce
   abstract.en={This thesis deals with a document classification, especially with a text classification method.
   Main goal of this thesis is to analyze two arbitrary document classification algorithms to describe them and to create an implementation of those algorithms.
-  Chosen algorithms are bayesian classifier and classifier based on support vector machines (SVM) which were analyzed and implemented in the practical part of this thesis.
+  Chosen algorithms are Bayes classifier and classifier based on support vector machines (SVM) which were analyzed and implemented in the practical part of this thesis.
   One of the main goals of this thesis is to create and choose optimal text features, which are describing the input text best and thus lead to the best classification results.
   At the end of this thesis there is a bunch of tests showing comparison of efficiency of the chosen classifiers under various conditions.}, % abstrakt v anglickem jazyce
   %Prohlaseni

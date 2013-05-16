@@ -2,10 +2,10 @@
 K~diplomové práci je pøilo¾eno CD.
 Toto CD obsahuje:
 \begin{itemize}
-\item Program s~implementovaným SVM a Bayesovským klasifikátorem. (Adresáø \texttt{/program/})
-\item Ruènì anotované testovací a trénovací datové sady (anglické tweety a anglické èlánky). (Adresáø \texttt{/data/})
-\item Dokumentaci k~programu vygenerovanou pomocí nástroje Epydoc. (Adresáø \texttt{/doc/})
-\item Zdrojové kódy technické zprávy a její verzi ve formátu PDF. (Adresáø \texttt{/thesis/})
+\item Zdrojové kódy programu s~implementovaným SVM a Bayesovským klasifikátorem.\\ (Adresáø \texttt{/program/})
+\item Ruènì anotované testovací a trénovací datové sady (anglické tweety a anglické èlánky). \\ (Adresáø \texttt{/data/})
+\item Dokumentaci k~programu vygenerovanou pomocí nástroje Epydoc. \\ (Adresáø \texttt{/doc/})
+\item Zdrojové kódy technické zprávy a její verzi ve formátu PDF. \\ (Adresáø \texttt{/thesis/})
 \end{itemize}
 
 
@@ -22,7 +22,7 @@ Následnì popí¹eme volbu \texttt{common} pro porovnání obou implementovaných klas
 
 \section{Bayesovský klasifikátor}
 Seznam techto operaci lze vypsat spu¹tìním následujícího pøíkazu: \texttt{./control.py bayes -h}.
-Detailnìj¹í popis jednotlivých operací s~Bayesovským klasifikátorem lze vypsat spu¹tìním následujícího pøíkazu: \texttt{./control.py bayes [operace] -h}, kde namísto slova \texttt{[operace]} napí¹eme název po¾adované operace.
+Detailnìj¹í popis jednotlivých operací s~Bayesovským klasifikátorem lze vypsat spu¹tìním pøíkazu: \texttt{./control.py bayes [operace] -h}, kde namísto slova \texttt{[operace]} napí¹eme název po¾adované operace.
 Mo¾né operace proveditelné s~Bayesovským klasifikátorem jsou:
 
 \begin{itemize}
@@ -77,30 +77,47 @@ Regulární výraz pro vyhledávání e-mailových adres v~textu: \\
 V~pøípadì emotikonù není regulární výraz tak jednoduchý, jako v~ostatních pøípadech, a to z~toho dùvodu, ¾e je tøeba rozdìlovat emotikony do tøíd podle nálady.
 Proto jsou definovány základní stavební kameny, ze kterých se emotikony skládají:
 \begin{itemize}
-\item Horní èást emotikonu -- \verb`top = r'[<>O}\]3P]?'`
-\item Oèi emotikonu -- \verb`eyes = r'[:=Xx;]'`
-\item Slzy emotikonu -- \verb`tear = r'\'?'`
-\item Nos emotikonu -- \verb`nose = r'[oO-]?'`
-\item Ústa emotikonu --  \verb`mouths = r'[dD\)\]/S\(\[\\\|pPoOcC@{}3&]'`
-\item Smutná ústa emotikonu -- \verb`sad_mouths = r'[/S\(\[\\\|cC@{]'`
-\item Veselá ústa emotikonu -- \verb`happy_mouths = r'[dD\)\]pP}3]'`
-\item Ostatní ústa emotikonu -- \verb`other_mouths = r'[oO&]'`
+\item Horní èást emotikonu -- \\
+\verb`    top = r'[<>O}\]3P]?'`
+\item Oèi emotikonu -- \\
+\verb`    eyes = r'[:=Xx;]'`
+\item Slzy emotikonu -- \\
+\verb`    tear = r'\'?'`
+\item Nos emotikonu -- \\
+\verb`    nose = r'[oO-]?'`
+\item Ústa emotikonu --  \\
+\verb`    mouths = r'[dD\)\]/S\(\[\\\|pPoOcC@{}3&]'`
+\item Smutná ústa emotikonu -- \\
+\verb`    sad_mouths = r'[/S\(\[\\\|cC@{]'`
+\item Veselá ústa emotikonu -- \\
+\verb`    happy_mouths = r'[dD\)\]pP}3]'`
+\item Ostatní ústa emotikonu -- \\
+\verb`    other_mouths = r'[oO&]'`
 \end{itemize}
 Z~tìchto stavebních kamenù jsou potom skládány dohromady jednotlivé typy emotikonù:
 \begin{itemize}
-\item V¹echny emotikony --\verb`faces = ''.join([top, eyes, tear, nose, mouths])`
-\item Smutné emotikony -- \verb`sad_faces = ''.join([top, eyes, tear, nose, sad_mouths])`
-\item Veselé emotikony -- \verb`happy_faces = ''.join([top, eyes, tear, nose, happy_mouths])`
-\item Ostatní emotikony -- \verb`other_faces = ''.join([top, eyes, tear, nose, other_mouths])`
+\item V¹echny emotikony -- \\
+\verb`    faces = ''.join([top, eyes, tear, nose, mouths])`
+\item Smutné emotikony -- \\
+\verb`    sad_faces = ''.join([top, eyes, tear, nose, sad_mouths])`
+\item Veselé emotikony -- \\
+\verb`    happy_faces = ''.join([top, eyes, tear, nose, happy_mouths])`
+\item Ostatní emotikony -- \\
+\verb`    other_faces = ''.join([top, eyes, tear, nose, other_mouths])`
 \end{itemize}
 Mimo tyto klasické emotikony jsou také jako speciální pøíznaky brány ménì standardní (ostatní) emotikony:
 \begin{itemize}
-\item V¹echny ostatní emotikony -- \verb`other_emoticons = [r'\^_+\^', r'o\.O', r'@_+@',`\\
-\verb`r'-_+-', r'\.\.+', r',,+', r'<3']`
-\item Ostatní smutné emotikony -- \verb`other_sad_emoticons = [r'-_+-']`
-\item Ostatní veselé emotikony -- \verb`other_happy_emoticons = [r'\^_+\^', r'<3']`
-\item Ostatní ostatní emotikony -- \verb`other_other_emoticons = [r'o\.O', r'@_+@', r'\.\.+',`\\
-\verb` r',,+']`
+\item V¹echny ostatní emotikony -- \\
+\verb`    other_emoticons = [`\\
+\verb`        r'\^_+\^', r'o\.O', r'@_+@',`\\
+\verb`        r'-_+-', r'\.\.+', r',,+', r'<3'`\\
+\verb`    ]`
+\item Ostatní smutné emotikony -- \\
+\verb`    other_sad_emoticons = [r'-_+-']`
+\item Ostatní veselé emotikony -- \\
+\verb`    other_happy_emoticons = [r'\^_+\^', r'<3']`
+\item Ostatní ostatní emotikony -- \\
+\verb`    other_other_emoticons = [r'o\.O', r'@_+@', r'\.\.+', r',,+']`
 \end{itemize}
 Z~tìchto vý¹e zmínìných slo¾ek jsou potom vytvoøeny regulární výrazy, popisující jednotlivé typy emotikonù, které lze nalézt v~textu.
 Regulární výrazy jsou slo¾eny následovnì:
@@ -140,7 +157,10 @@ Speciální pøíznak specifikující poèet vìt daného vstupního textu není získáván z
 
 \section{Èasy}
 Regulární výraz pro vyhledávání èasových údajù v~textu: \\
-\verb`time_re = re.compile(r'([0-2][0-9])(:)([0-9]{2})(\s*)(am|pm)?', flags=re.IGNORECASE)`
+\verb`time_re = re.compile(`\\
+\verb`    r'([0-2][0-9])(:)([0-9]{2})(\s*)(am|pm)?',`\\
+\verb`    flags=re.IGNORECASE)`\\
+\verb`)`
 
 \section{Data}
 Regulární výraz pro vyhledávání dat v~textu: \\
