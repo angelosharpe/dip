@@ -102,7 +102,7 @@ class SVMTest():
         res['false_negative'] = 0.0
         for i in xrange(n_fold_cv):
             X1, Y1, X2, Y2 = data.get(i)
-            self._logger.info('Training SVM... (i={0})', i)
+            self._logger.info('Training SVM... (i={0})'.format(str(i)))
             self.svm.train(X1, Y1)
             if self.svm.model_exists:
                 # predict
@@ -112,14 +112,14 @@ class SVMTest():
 
                 # calculate tp, fp, tn, fn
                 test_len = len(Y_predict)
-                Y_predict_P = Y_predict[:(test_len/2)-1]
+                Y_predict_P = Y_predict[:(test_len/2)]
                 Y_predict_N = Y_predict[(test_len/2):]
-                Y2_P = Y2[:(test_len/2)-1]
+                Y2_P = Y2[:(test_len/2)]
                 Y2_N = Y2[(test_len/2):]
                 tp = np.sum(Y_predict_P == Y2_P)
-                fp = np.sum(Y_predict_P != Y2_P)
+                fn = np.sum(Y_predict_P != Y2_P)
                 tn = np.sum(Y_predict_N == Y2_N)
-                fn = np.sum(Y_predict_N != Y2_N)
+                fp = np.sum(Y_predict_N != Y2_N)
                 res['true_positive'] += tp / float(n_fold_cv)
                 res['false_positive'] += fp / float(n_fold_cv)
                 res['true_negative'] += tn / float(n_fold_cv)
@@ -127,7 +127,7 @@ class SVMTest():
 
                 # this iteration result
                 self._logger.info('tp: {0}, fp: {1}, tn: {2}, fn :{3}'.format(
-                    tp, fp, tn, fn))
+                    str(tp), str(fp), str(tn), str(fn)))
 
         # print and return results
         self._calculate_results(res)
