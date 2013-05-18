@@ -18,7 +18,7 @@ Bayesovský klasifikátor, nebo také Bayesovský filtr, jak je obèas nazýván, je v~
 
 Druhou zvolenou metodou je neprobabilistická klasifikaèní metoda \textit{SVM (support vector machines)}, je¾ pomocí namapování vstupního textu do $n$-dimenzionálního prostoru a následným rozdìlením tohoto prostoru na dva poloprostory doká¾e vstupní text klasifikovat.
 
-Obì metody jsou v~této práci podrobnì rozebrány jak z~teoretického, tak z~praktického hlediska.
+Obì metody jsou v~této práci podrobnì rozebrány, a~to jak z~teoretického, tak z~praktického hlediska.
 
 Souèástí této práce je mimo teoretické èásti také èást praktická a èást implementaèní.
 Praktická èást se nachází ve druhé polovinì tohoto dokumentu a popisuje implementaci a pøístupy k~øe¹ení problémù, které nastaly pøi vytváøení implementaèní èásti.
@@ -1083,7 +1083,7 @@ Tento slovník pøíznakù obsahuje pravdìpodobnostní hodnoty jednotlivých pøíznakù,
 Tato tøída také zabezpeèuje ve¹keré operace provádìné s~tímto slovníkem pøíznakù, jako napøíklad jeho ulo¾ení do souboru a opìtovné naètení, díky èemu¾ je mo¾né Bayesovský klasifikátor, stejnì jako klasifikátor zalo¾ený na metodì support vector machines pou¾ívat, ani¾ bychom je museli bezprostøednì pøed klasifikací uèit, co¾ mù¾e být velmi zdlouhavý proces.
 Mimo operací exportu a importu slovníku také tato tøída umo¾òuje exportovat daný slovník do souboru v~jazyce XML.
 
-Podobnì jako Bayesovský klasifikátor, potøebuje i klasifikátor zalo¾ený na metodì support vector machines tøídu, je¾ pracuje se vstupním textem a pøíznaky z~nìj vytvoøenými a pøipraví pøíznaky do podoby, ve které je klasifikátor schopen s~nimi pracovat.
+Podobnì jako Bayesovský klasifikátor, tak i klasifikátor zalo¾ený na metodì support vector machines, potøebuje tøídu, je¾ pracuje se vstupním textem a~s~pøíznaky z~nìj vytvoøenými a pøipraví pøíznaky do podoby, ve které je klasifikátor schopen s~nimi pracovat.
 Tato tøída se u~SVM klasifikátoru jmenuje \texttt{Data}.
 Její funkcí je vytvoøit prostor pøíznakù ze vstupních dat a data následnì rozdìlit na bloky trénovacích a testovacích dat.
 Dal¹í specifickou tøídou, ji¾ klasifikátor zalo¾ený na SVM pou¾ívá, je tøída \texttt{Kernel} a její podtøídy, které klasifikátor potøebuje pro výpoèet jaderné funkce pro klasifikaci.
@@ -1102,13 +1102,13 @@ Pro podrobnìj¹í popis tøíd je vygenerována dokumentace pomocí dokumentaèního nás
 Dokumentace je pøilo¾ena na CD, je¾ je souèástí této práce.
 
 \section{Implementace klasifikaèních algoritmù}
-V~této èásti kapitoly se budeme podrobnìji zabývat postupem implementace jednotlivých klasifikaèních algoritmù, jimi¾ se tato práce zabývá.
+V~této èásti kapitoly se budeme podrobnìji zabývat postupem implementace jednotlivých klasifikaèních algoritmù.
 Pokusíme se zde rozebrat problémy, je¾ pøi implementaci nastaly a jejich øe¹ení.
 Tato sekce bude pro vìt¹í pøehlednost rozdìlena na dvì èásti: implementaci Bayesovského klasifikátoru a klasifikátoru zalo¾eného na SVM.
 
 
 \subsection{Implementace Bayesovského klasifikátoru}
-Pøi implementaci Bayesovského klasifikátoru nastaly pouze dva vìt¹í problémy, a to potøeba ukládání dat slovníku Bayesovského klasifikátoru pro pozdìj¹í vyu¾ití a otázka jakým zpùsobem vytvoøit klasifikaèní algoritmus, aby textové i speciální pøíznaky ovlivòovaly výsledek klasifikace stejnou mìrou.
+Pøi implementaci Bayesovského klasifikátoru nastaly pouze dva vìt¹í problémy, a to potøeba ukládání dat slovníku Bayesovského klasifikátoru pro pozdìj¹í vyu¾ití a otázka, jakým zpùsobem vytvoøit klasifikaèní algoritmus, aby textové i speciální pøíznaky ovlivòovaly výsledek klasifikace stejnou mìrou.
 
 \subsubsection{Ukládání slovníku Bayesovského klasifikátoru}
 Prvním problémem, který bylo tøeba vyøe¹it, bylo ukládání slovníku, obsahujícího pravdìpodobnostní hodnoty jednotlivých pøíznakù, na nì¾ klasifikátor pøi svém uèení narazil, do souboru tak, aby se klasifikátor nemusel pøed ka¾dou klasifikací znovu uèit v¹echna data z~trénovací sady, co¾ by bylo velmi zdlouhavé.
@@ -1123,7 +1123,7 @@ Proto v~implementovaném programu Bayesovský klasifikátor pracuje s~obìma typy pø
 
 \subsection{Implementace SVM klasifikátoru}\label{IMPLEMENTATION-SVM}
 Pøi implementaci programu jsme se rozhodli ze studijních dùvodù vytvoøit vlastní implementaci SVM klasifikátoru namísto pou¾ití ji¾ hotových implementací tohoto algoritmu.
-Podobnì jako pøi implementaci Bayesovského klasifikátoru nastaly i pøi implementaci klasifikátoru, zalo¾eného na support vector machines urèité problémy, z~nich¾ zmíníme následující dva:
+Podobnì jako pøi implementaci Bayesovského klasifikátoru nastaly i pøi implementaci klasifikátoru zalo¾eného na support vector machines urèité problémy, z~nich¾ zmíníme následující dva:
 
 \begin{itemize}
 \item Jaké parametry pøedat balíèku kvadratického programování.
@@ -1336,7 +1336,7 @@ V~této kapitole bude vyhodnocen námi implementovaný program.
 Nejprve popí¹eme datové sady, které byly pou¾ity pro testování a porovnávání implementovaných klasifikátorù a 
 poté se zamìøíme na testování rùzných typù pøíznakù (viz kapitola \ref{TOKENIZACE}).
 
-Závìrem této kapitoly porovnáme oba implementované klasifikátory a shrneme výsledky, ke kterým jsme pøi vyhodnocování testù dspìli.
+Závìrem této kapitoly porovnáme oba implementované klasifikátory a shrneme výsledky, ke kterým jsme pøi vyhodnocování testù dospìli.
 
 \section{Data}\label{TEST-DATA}
 Jak ji¾ bylo zmínìno v~úvodu (viz kapitola \ref{UVOD-MOTIVACE}), tato práce vznikla s~cílem vytvoøit klasifikátor textu pro projekt M-Eco~\footnote{\url{http://www.meco-project.eu/}}, ve kterém participovala výzkumná skupina NLP, pracující pøi Fakultì informaèních technologii VUT v~Brnì.
@@ -1345,7 +1345,7 @@ Hlavním cílem projektu M-Eco bylo pomocí analýzy dat ze sociálních sítí, zpravod
 K~tomuto úèelu byla vytvoøena datová sada pro trénování a testování Bayesovského klasifikátoru a SVM klasifikátoru.
 
 Pro potøeby této práce byly v¹ak vytvoøeny datové sady dvì, aby bylo mo¾né implementované klasifikátory testovat na rùzných typech textù.
-Jedna datová sada byla vytvoøena pro anglické tweety (textové pøíspìvky na ze sociální sítì Twitter) a druhá pro anglické èlánky (z~internetových periodik).
+Jedna datová sada byla vytvoøena pro anglické tweety (textové pøíspìvky ze sociální sítì Twitter) a druhá pro anglické èlánky (z~internetových periodik).
 Zdrojem dat, ze kterých byly vytvoøeny obì datové sady, byla databáze projektu M-Eco.
 
 Datová sada obsahující anglické tweety je rozdìlena do dvou tøíd -- \textbf{Obsahující zmínku o~nemoci (buï  nemoci pisatele, nebo nemoci nìkoho z~pisatelova okolí)}, nebo \textbf{neobsahující takovou zmínku}.
@@ -1615,7 +1615,7 @@ Z~tabulky \ref{TEST_TAB4} vyplývá, ¾e optimálnì zvolené speciální pøíznaky mohou
 \subsubsection{Èlánky}
 % no-features:{'emoticon': 4, 'sentence': 1, 'url': 4, 'tag': 3, 'time': 3, 'date': 4, 'user_tag': 3, 'email': 3}
 % best-fatures: {'emoticon': 4, 'sentence': 1, 'url': 4, 'tag': 3, 'time': 3, 'date': 1, 'user_tag': 0, 'email': 0}
-Obdobnì jako pøi klasifikaci tweetù i díky v~hodnému výbìru speciálních pøíznakù dohcázelo ke zlep¹ení klasifikaèních schopností klasifikátoru, co¾ popisuje následující tabulka.
+Obdobnì jako pøi klasifikaci tweetù i díky vhodnému výbìru speciálních pøíznakù docházelo ke zlep¹ení klasifikaèních schopností klasifikátoru, co¾ popisuje následující tabulka.
 V~tomto pøípadì ale testy klasifikátoru probìhly nad datovou sadou anglických èlánkù.
 V~následující tabulce \ref{TEST_TAB5} je prezentováno do jaké míry jednotlivé speciální pøíznaky zlep¹ovaly, nebo zhor¹ovaly výsledek klasifikace oproti kontrolnímu výsledku.
 Opìt porovnáváme hodnoty korelace (kladná hodnota znamená zlep¹ení a záporná hodnota znamená zhor¹ení klasifikaèních schopností testovaného Bayesovského klasifikátoru).
@@ -1666,7 +1666,7 @@ Z~tabulky \ref{TEST_TAB5} vyplývá, ¾e byly zvoleny následující optimální speciál
 \item \emph{Data} -- data nalezená ve vstupním textu byla pøevedena do formátu DMY a pou¾ita jako speciální pøíznaky.
 \end{itemize}
 
-Ostatní skupiny speciálních pøíznakù, které zde nebyly zmínìny (URL, emotikony, tagy, vìty a èasy) výsledky klasifikace Bayesovského klasifikátoru nad datovou sadou anglických èlánkù nezlep¹ily, a proto nebyly pou¾ity.
+Ostatní skupiny speciálních pøíznakù, které zde nebyly zmínìny (URL, emotikony, tagy, vìty a èasy), nezlep¹ily výsledky klasifikace Bayesovského klasifikátoru nad datovou sadou anglických èlánkù, a proto nebyly pou¾ity.
 
 \begin{table}[H]
 \begin{center}
@@ -1838,11 +1838,11 @@ Z~toho dùvodu je optimální pro SVM klasifikátor pou¾ívat jako textové pøíznaky p
 
 V~poslední, tøetí èásti této kapitoly, bylo pøedstaveno porovnání klasifikaèních schopností obou implementovaných klasifikátorù pøi klasifikaci obou vytvoøených testovacích datových sad.
 Pro porovnávání klasifikátorù bylo pou¾ito optimálních parametrù pro pøíslu¹né datové sady k~nastavení obou klasifikátorù, vycházející z~pøedchozích testù v~této kapitole.
-Z~provedených porovnání SVM a Bayesovského klasifikátoru je jasnì patrné, ¾e SVM klasifikátor je lep¹í metodou pro klasifikaci, která pøi testování na dvou velmi odli¹ných testovacích sadách dává v~pøípadì klasifikace anglických tweetù lep¹í a v~pøípadì klasifikace anglických èlánkù výraznì lep¹í výsledky, ne¾ Bayesovský klasifikátor.
+Z~provedených porovnání SVM a Bayesovského klasifikátoru je jasnì patrné, ¾e SVM klasifikátor je lep¹í metodou pro klasifikaci, která pøi testování na dvou velmi odli¹ných testovacích sadách dává v porovnání s Bayesovským klasifikátorem lep¹í výsledky v~pøípadì klasifikace anglických tweetù a výraznì lep¹í výsledky v~pøípadì klasifikace anglických èlánkù.
 
 
 \chapter{Závìr} 
-V~této diplomové práci jsme se zamìøili na dvì klasifikaèní metody pro klasifikaci textu -- SVM klasifikátoru a Bayesovského klasifikátoru.
+V~této diplomové práci jsme se zamìøili na dvì klasifikaèní metody pro klasifikaci textu -- SVM klasifikátor a Bayesovský klasifikátor.
 Obì tyto metody jsme podrobnì analyzovali, popsali jejich matematický model, implementovali a poté porovnali jejich klasifikaèní schopnosti na rùzných datových sadách.
 
 V~celé diplomové práci jsme kladli velký dùraz  na praktickou vyu¾itelnost implementovaných klasifikátorù.
@@ -1866,7 +1866,7 @@ V~kapitole o~testech jsme pro obì námi vytvoøené datové sady a pro oba námi vytv
 V~závìru jsme vyu¾ili nalezené optimální nastavení obou klasifikátorù pro klasifikaci obou námi vytvoøených testovacích datových sad a porovnali jsme jejich klasifikaèní schopnosti.
 Z~výsledkù tohoto porovnání plyne, ¾e SVM klasifikátor dosahuje pøi klasifikaci obou datových sad lep¹í pøesnosti klasifikace ne¾ Bayesovský klasifikátor (viz kapitola \ref{porovnani}).
 
-Mo¾nou cestou, jak dále pokraèovat v~práci na tomto tématu a navázat na poznatky získané v~této práci by bylo vytvoøení vìt¹í sady speciálních pøíznakù a následné otestování jejich vlivu na klasifikaèní schopnosti obou námi implementovaných klasifikátorù.
+Mo¾nou cestou, jak dále pokraèovat v~práci na tomto tématu a navázat na poznatky získané v~této práci, by bylo vytvoøení vìt¹í sady speciálních pøíznakù a následné otestování jejich vlivu na klasifikaèní schopnosti obou námi implementovaných klasifikátorù.
 S~velmi dobrými výsledky by zøejmì také mohla být pro oba implementované klasifikátory pou¾ita metoda zvaná boosting, popsaná v~èlánku Michaela Kearnse s~názvem \uv{Thoughts on hypothesis boosting} \cite{Kearns1988} (viz také kapitola \ref{boosting}).
 Dal¹ím námìtem pro pøípadné roz¹íøení této práce by mohlo být vyu¾ití nové implementace SVM klasifikátoru nazavané v-SVM popsané v~èlánku \uv{New Support Vector Algorithms} \cite{Schölkopf98newsupport}, které by mohlo pøinést vylep¹ení klasifikaèních schopností SVM klasifikátoru.
 
