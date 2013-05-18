@@ -4,6 +4,7 @@ import logging
 import numpy as np
 import cvxopt
 import cvxopt.solvers
+import pickle
 
 from src.kernels import *
 
@@ -137,7 +138,7 @@ class SVM():
         @param token_list: list of token mapping for future classification
         @return: svm model pickle
         '''
-        self._logger.info('Storing SVM model data')
+        print 'Storing SVM model data...'
         model = {}
         model['lm'] = self.lm
         model['lm_count'] = self.lm_count
@@ -160,7 +161,6 @@ class SVM():
         @param path: path to model file
         @return: list of token mapping for future classification
         '''
-        self._logger.info('Loading SVM model data')
         model = pickle.load(open(path, 'rb'))
         self.lm = model['lm']
         self.lm_count = model['lm_count']

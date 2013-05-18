@@ -317,8 +317,6 @@ class BayesianTest:
             len(to_train_relevant), len(to_train_irelevant)))
 
         self.bcl.store_word_dict(path, used_features)
-        print self.bcl.word_dict.words
-
 
     def run(self, features, count=100, n_fold_cv=10):
         '''

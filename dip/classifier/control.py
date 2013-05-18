@@ -85,8 +85,7 @@ def bayes_test(args):
     Function starts test of bayesian classifier with given dataset and classifier
     parameters.
     '''
-    bt = BayesianTest(dbfile=args.db_file, low=args.low, high=args.high,
-            max_token_size=args.max_token_size)
+    bt = BayesianTest(dbfile=args.db_file, max_token_size=args.max_token_size)
 
     if args.feats is not None:
         features = eval(args.feats)
@@ -107,8 +106,7 @@ def bayes_features(args):
     '''
     # process features
     # run
-    bt = BayesianTest(dbfile=args.db_file, low=args.low, high=args.high,
-            max_token_size=args.max_token_size)
+    bt = BayesianTest(dbfile=args.db_file, max_token_size=args.max_token_size)
     bt.get_best_features(count=args.count, n_fold_cv=args.n_fold_cv)
 
 def bayes_generate_model(args):
@@ -189,10 +187,9 @@ def _thread_svm(db_file, count, max_token_size, n_fold_cv, kernel):
     # return results
     return {'type':'svm', 'result': result, 'state':state, 'emergy':energy}
 
-def _thread_bayes(db_file, low, high, count, n_fold_cv, max_token_size):
+def _thread_bayes(db_file, count, n_fold_cv, max_token_size):
     from src.bayes.bayesian_test import BayesianTest
-    bt = BayesianTest(dbfile=db_file, low=low, high=high,
-            max_token_size=max_token_size)
+    bt = BayesianTest(dbfile=db_file, max_token_size=max_token_size)
     # run feature selection
     features = bt.get_best_features(count=count, n_fold_cv=n_fold_cv)
     # run test with best features
@@ -211,8 +208,8 @@ def common_run(args):
     jobs = []
     jobs.append(job_server.submit(_thread_svm, (args.db_file, args.count,
         args.max_token_size, args.n_fold_cv, args.kernel)))
-    jobs.append(job_server.submit(_thread_bayes, (args.db_file, args.low,
-        args.high, args.count, args.n_fold_cv, args.max_token_size)))
+    jobs.append(job_server.submit(_thread_bayes, (args.db_file, args.count,
+        args.n_fold_cv, args.max_token_size)))
     result = [job() for job in jobs]
     # print result
     print result
